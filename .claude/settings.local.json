@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(powershell *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.dependencies\\),null,2\\)\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "PowerShell(Get-Random *)",
+      "Bash(./mvnw -q test -Dtest=BCryptGenTest -DfailIfNoTests=false)",
+      "Bash(./mvnw test *)",
+      "PowerShell(node -e \"const crypto=require\\('crypto'\\); const pass='SuperAdmin@123'; console.log\\(pass.length, Buffer.from\\(pass\\).toString\\('hex'\\)\\)\")",
+      "Bash(xargs grep *)",
+      "Bash(xargs basename *)"
+    ]
+  }
+}

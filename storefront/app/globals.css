@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Swiper */
+@import "swiper/css";
+@import "swiper/css/pagination";
+@import "swiper/css/navigation";
+
+/* ─── Brand CSS variables ────────────────────────────────────────────────────
+   Single source of truth for colors. Mirrors src/config/theme.ts.
+   Edit theme.ts → copy hex values here.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --color-primary:           #0B3A42;
+  --color-primary-hover:     #0F505B;
+  --color-primary-fg:        #FFFFFF;
+
+  --color-accent:            #E6007E;
+  --color-accent-fg:         #FFFFFF;
+
+  --color-highlight:         #B5A57A;
+
+  --color-background:        #FFFFFF;
+  --color-foreground:        #333333;
+
+  --color-muted:             #F5F5F5;
+  --color-muted-fg:          #666666;
+
+  --color-border:            #E0E0E0;
+  --color-ring:              #0B3A42;
+
+  --color-success:           #16a34a;
+  --color-destructive:       #dc2626;
+  --color-warning:           #d97706;
+
+  /* Font — keep in sync with next/font import in layout.tsx */
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* ─── Base styles ─────────────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    line-height: 1.2;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ─── Utility layer ───────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
