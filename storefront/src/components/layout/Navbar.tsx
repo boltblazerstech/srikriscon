@@ -29,8 +29,8 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-white/95 backdrop-blur-sm shadow-sm"
-          : "bg-white"
+          ? "bg-zinc-950/95 backdrop-blur-sm shadow-sm"
+          : "bg-zinc-950"
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -39,9 +39,16 @@ export default function Navbar() {
           {/* ── Brand ─────────────────────────────────────────────────── */}
           <Link
             href="/"
-            className="flex-shrink-0 text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors"
+            className="flex-shrink-0 flex items-center gap-3 transition-opacity hover:opacity-80"
           >
-            {theme.business.name}
+            <img 
+              src="/sri-kriscon-logo.webp" 
+              alt={theme.business.name} 
+              className="h-12 w-auto object-contain"
+            />
+            <span className="text-white font-bold text-lg sm:text-xl tracking-tight whitespace-nowrap">
+              SRI KRISCON INDUSTRIES
+            </span>
           </Link>
 
           {/* ── Desktop nav links ──────────────────────────────────────── */}
@@ -53,8 +60,8 @@ export default function Navbar() {
                 className={cn(
                   "px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   pathname === link.href
-                    ? "text-primary bg-primary/8"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "text-white bg-white/10"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-800"
                 )}
               >
                 {link.label}
@@ -67,7 +74,7 @@ export default function Navbar() {
             {/* Search */}
             <Link
               href="/search"
-              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
               aria-label="Search"
             >
               <Search className="h-5 w-5" />
@@ -76,7 +83,7 @@ export default function Navbar() {
             {/* Account */}
             <Link
               href="/account"
-              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
               aria-label="My account"
             >
               <User className="h-5 w-5" />
@@ -85,7 +92,7 @@ export default function Navbar() {
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="relative p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
               aria-label="Cart"
             >
               <ShoppingCart className="h-5 w-5" />
@@ -98,7 +105,7 @@ export default function Navbar() {
 
             {/* Hamburger — mobile only */}
             <button
-              className="md:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="md:hidden p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
               onClick={() => setMenuOpen((o) => !o)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
@@ -116,7 +123,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden border-t border-border bg-white"
+            className="md:hidden overflow-hidden border-t border-zinc-800 bg-zinc-950"
           >
             <nav className="flex flex-col px-4 py-3 gap-1">
               {theme.nav.map((link) => (
@@ -126,8 +133,8 @@ export default function Navbar() {
                   className={cn(
                     "px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
                     pathname === link.href
-                      ? "text-primary bg-primary/8 font-semibold"
-                      : "text-foreground hover:bg-muted"
+                      ? "text-white bg-white/10 font-semibold"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-800"
                   )}
                 >
                   {link.label}
