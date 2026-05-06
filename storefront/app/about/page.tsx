@@ -59,7 +59,7 @@ export default function AboutPage() {
             Quality is at the core of everything we do. From selecting premium raw materials to ensuring strict quality control at every stage of production, we maintain the highest standards to deliver durable, reliable, and aesthetically appealing packaging.
           </p>
           <p className="font-medium text-zinc-900 text-xl border-l-4 border-primary pl-6 py-2 my-8 italic">
-            "We believe packaging is a statement of prestige. Our mission is to empower brands with packaging that captivates, differentiates, and leaves a lasting impression in a competitive marketplace."
+            &ldquo;We believe packaging is a statement of prestige. Our mission is to empower brands with packaging that captivates, differentiates, and leaves a lasting impression in a competitive marketplace.&rdquo;
           </p>
         </motion.div>
       </section>

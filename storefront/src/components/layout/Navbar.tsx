@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ShoppingCart, User, Menu, X, Search } from "lucide-react";
@@ -41,9 +42,11 @@ export default function Navbar() {
             href="/"
             className="flex-shrink-0 flex items-center gap-3 transition-opacity hover:opacity-80"
           >
-            <img 
+            <Image 
               src="/sri-kriscon-logo.webp" 
               alt={theme.business.name} 
+              width={120}
+              height={48}
               className="h-12 w-auto object-contain"
             />
             <span className="text-white font-bold text-lg sm:text-xl tracking-tight whitespace-nowrap">
