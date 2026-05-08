@@ -12,7 +12,16 @@
       "Bash(./mvnw test *)",
       "PowerShell(node -e \"const crypto=require\\('crypto'\\); const pass='SuperAdmin@123'; console.log\\(pass.length, Buffer.from\\(pass\\).toString\\('hex'\\)\\)\")",
       "Bash(xargs grep *)",
-      "Bash(xargs basename *)"
+      "Bash(xargs basename *)",
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object -First 30)",
+      "Bash(Get-ChildItem -Path \"D:\\\\GitHub Projects\\\\Ecommerce Store BP\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\GitHub Projects\\\\Ecommerce Store BP\\\\storefront\" -Recurse -Force | Select-Object Name, FullName | Where-Object { $_.FullName -notmatch 'node_modules' } | Format-Table -AutoSize)",
+      "Bash(node -e \"const crypto=require\\('crypto'\\); console.log\\(crypto.createHash\\('sha256'\\).update\\('SuperAdmin@123'\\).digest\\('hex'\\)\\)\")",
+      "Bash(node *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\GitHub Projects\\\\Ecommerce Store BP\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

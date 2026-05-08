@@ -4,6 +4,7 @@ import com.ecommerce.backend.category.dto.CategoryRequest;
 import com.ecommerce.backend.category.dto.CategoryResponse;
 import com.ecommerce.backend.category.service.CategoryService;
 import com.ecommerce.backend.common.response.ApiResponse;
+import com.ecommerce.backend.common.response.PagedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,6 +27,15 @@ public class CategoryController {
     @Operation(summary = "List all active categories (flat)")
     public ApiResponse<List<CategoryResponse>> list() {
         return ApiResponse.success(categoryService.findAll());
+    }
+
+    @GetMapping("/admin")
+    @Operation(summary = "Admin: paginated list of all categories (incl. inactive)")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ApiResponse<PagedResponse<CategoryResponse>> listAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size) {
+        return ApiResponse.success(categoryService.findAllPaged(page, size));
     }
 
     @GetMapping("/tree")

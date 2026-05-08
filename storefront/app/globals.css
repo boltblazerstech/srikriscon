@@ -34,8 +34,9 @@
   --color-destructive:       #dc2626;
   --color-warning:           #d97706;
 
-  /* Font — keep in sync with next/font import in layout.tsx */
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Fonts — keep in sync with next/font imports in layout.tsx */
+  --font-sans:    "Inter",           system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia,  serif;
 }
 
 /* ─── Base styles ─────────────────────────────────────────────────────────── */
@@ -54,7 +55,13 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2 {
+    font-family: var(--font-display);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h3, h4, h5, h6 {
     font-family: var(--font-sans);
     line-height: 1.2;
   }

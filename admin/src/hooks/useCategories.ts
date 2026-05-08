@@ -2,14 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/src/config/api";
 import type { ApiResponse, Category, CategoryRequest, Page } from "@/src/types";
 
-// Backend: GET /api/categories  (public, returns all active categories flat)
-// Admin reuses public list with a large page size to get everything
+// Backend: GET /api/categories/admin  (admin-only, paginated, includes inactive)
 export function useAdminCategories(page = 0, size = 50) {
   return useQuery({
     queryKey: ["admin", "categories", { page, size }],
     queryFn: async () => {
       const { data } = await api.get<ApiResponse<Page<Category>>>(
-        "/api/categories",
+        "/api/categories/admin",
         { params: { page, size } }
       );
       return data.data;

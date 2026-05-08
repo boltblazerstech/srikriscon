@@ -7,7 +7,11 @@ import com.ecommerce.backend.category.repository.CategoryRepository;
 import com.ecommerce.backend.common.exception.BadRequestException;
 import com.ecommerce.backend.common.exception.ConflictException;
 import com.ecommerce.backend.common.exception.ResourceNotFoundException;
+import com.ecommerce.backend.common.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,12 @@ public class CategoryService {
         return categoryRepository.findAllActive().stream()
                 .map(CategoryResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public PagedResponse<CategoryResponse> findAllPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sortOrder").ascending().and(Sort.by("id").ascending()));
+        return PagedResponse.of(categoryRepository.findAll(pageable), CategoryResponse::from);
     }
 
     @Transactional(readOnly = true)

@@ -34,8 +34,8 @@ export const theme = {
   // ── Typography ────────────────────────────────────────────────────────────
   // Keep in sync with the next/font import in app/layout.tsx
   font: {
-    sans: "Inter",
-    display: "Inter",
+    sans:    "Inter",
+    display: "Playfair Display",
   },
 
   // ── Business info ─────────────────────────────────────────────────────────
