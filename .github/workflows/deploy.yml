@@ -1,0 +1,117 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ─── Job 1: Storefront (Next.js) ─────────────────────────────────────────────
+  deploy-storefront:
+    if: >-
+      contains(toJSON(github.event.commits.*.modified), 'storefront/') ||
+      contains(toJSON(github.event.commits.*.added),    'storefront/') ||
+      contains(toJSON(github.event.commits.*.removed),  'storefront/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build Docker image
+        run: |
+          gcloud builds submit ./storefront \
+            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy srikriscon-fe \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
+            --region asia-south1 \
+            --platform managed \
+            --allow-unauthenticated
+
+  # ─── Job 2: Backend (Spring Boot) ────────────────────────────────────────────
+  deploy-backend:
+    if: >-
+      contains(toJSON(github.event.commits.*.modified), 'backend/') ||
+      contains(toJSON(github.event.commits.*.added),    'backend/') ||
+      contains(toJSON(github.event.commits.*.removed),  'backend/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build Docker image
+        run: |
+          gcloud builds submit ./backend \
+            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy srikriscon-be \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be \
+            --region asia-south1 \
+            --platform managed \
+            --allow-unauthenticated
+
+  # ─── Job 3: Admin (Next.js) ──────────────────────────────────────────────────
+  deploy-admin:
+    if: >-
+      contains(toJSON(github.event.commits.*.modified), 'admin/') ||
+      contains(toJSON(github.event.commits.*.added),    'admin/') ||
+      contains(toJSON(github.event.commits.*.removed),  'admin/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build Docker image
+        run: |
+          gcloud builds submit ./admin \
+            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy srikriscon-admin \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
+            --region asia-south1 \
+            --platform managed \
+            --allow-unauthenticated

@@ -1,11 +1,11 @@
 # ── Stage 1: install dependencies ─────────────────────────────────────────────
-FROM node:20-alpine AS deps
+FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # ── Stage 2: build ────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:18-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -18,7 +18,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
 # ── Stage 3: runtime (standalone output) ──────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -32,8 +32,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 3001
-ENV PORT=3001
+EXPOSE 8080
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
 CMD ["node", "server.js"]
