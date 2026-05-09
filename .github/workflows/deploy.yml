@@ -141,7 +141,8 @@ jobs:
         if: steps.admin-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./admin \
-            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
+            --config=admin/cloudbuild.yaml \
+            --substitutions=_NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}",_NEXT_PUBLIC_SITE_URL="${{ secrets.NEXT_PUBLIC_SITE_URL }}",_NEXT_PUBLIC_RAZORPAY_KEY_ID="${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}"
             
       - name: Deploy Admin to Cloud Run
         if: steps.admin-check.outputs.changed == 'true'
