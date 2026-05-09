@@ -45,7 +45,6 @@ jobs:
         run: |
           gcloud builds submit ./storefront \
             --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
-            --build-arg="NEXT_PUBLIC_API_URL=https://srikriscon-be-13514095818.asia-south1.run.app"
 
       - name: Deploy Storefront to Cloud Run
         if: steps.storefront-check.outputs.changed == 'true'
@@ -142,8 +141,7 @@ jobs:
         run: |
           gcloud builds submit ./admin \
             --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
-            --build-arg="NEXT_PUBLIC_API_URL=https://srikriscon-be-13514095818.asia-south1.run.app"
-
+            
       - name: Deploy Admin to Cloud Run
         if: steps.admin-check.outputs.changed == 'true'
         run: |
