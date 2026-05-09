@@ -105,22 +105,22 @@ export default function BlogPostPage() {
           
           <div className="space-y-8 text-zinc-800 leading-loose">
             <p>
-              In today's rapidly evolving industrial landscape, the fusion of sustainability and technological 
-              innovation is no longer a choice but a necessity. Companies are discovering that what's good for 
+              In today&apos;s rapidly evolving industrial landscape, the fusion of sustainability and technological 
+              innovation is no longer a choice but a necessity. Companies are discovering that what&apos;s good for 
               the planet is often better for the bottom line. This article explores the nuanced intersections 
               of these two powerful forces.
             </p>
             
             <h2 className="text-3xl font-black text-primary pt-8">The Future is Circular</h2>
             <p>
-              The transition from a linear "take-make-waste" model to a circular economy is revolutionizing 
+              The transition from a linear &quot;take-make-waste&quot; model to a circular economy is revolutionizing 
               manufacturing. By designing products for longevity, disassembly, and eventual recycling, 
               industrial leaders are minimizing waste and creating more resilient supply chains.
             </p>
             
             <blockquote className="bg-zinc-50 p-10 rounded-3xl border-none my-12">
-              <p className="text-2xl font-bold text-primary mb-4">"Sustainability is the ultimate innovation challenge of our generation."</p>
-              <cite className="text-sm font-bold text-accent uppercase tracking-widest not-italic">— Lead Innovation Officer</cite>
+              <p className="text-2xl font-bold text-primary mb-4">&quot;Sustainability is the ultimate innovation challenge of our generation.&quot;</p>
+              <cite className="text-sm font-bold text-accent uppercase tracking-widest not-italic">&mdash; Lead Innovation Officer</cite>
             </blockquote>
 
             <p>

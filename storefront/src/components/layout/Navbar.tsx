@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { theme } from "@/src/config/theme";
 import { useCart } from "@/src/hooks/useCart";
 import { useAuth } from "@/src/context/AuthContext";
+import { useCategories } from "@/src/hooks/useCategories";
 import { cn } from "@/src/lib/utils";
 import TopBanner from "./TopBanner";
 
@@ -32,8 +33,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const categoriesMenuRef = useRef<HTMLDivElement>(null);
 
   // ── Scroll Effect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -203,22 +207,50 @@ export default function Navbar() {
         <div className="hidden md:block bg-white/80 backdrop-blur-md border-b border-zinc-100">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center justify-center gap-1 py-1">
-              {theme.nav.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "px-4 py-3 text-[13px] font-bold uppercase tracking-widest transition-all relative group",
-                    pathname === link.href ? "text-primary" : "text-zinc-500 hover:text-primary"
-                  )}
-                >
-                  {link.label}
-                  <span className={cn(
-                    "absolute bottom-2 left-4 right-4 h-0.5 bg-primary transition-all duration-300",
-                    pathname === link.href ? "opacity-100" : "opacity-0 group-hover:opacity-40"
-                  )} />
-                </Link>
-              ))}
+              {theme.nav.map((link) => {
+                const isCategories = link.label === "Categories";
+                return (
+                  <div 
+                    key={link.href}
+                    className="relative group"
+                    onMouseEnter={() => isCategories && setCategoriesOpen(true)}
+                    onMouseLeave={() => isCategories && setCategoriesOpen(false)}
+                  >
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "px-4 py-3 text-[13px] font-bold uppercase tracking-widest transition-all relative block",
+                        pathname === link.href || (isCategories && categoriesOpen) ? "text-primary" : "text-zinc-500 hover:text-primary"
+                      )}
+                    >
+                      <div className="flex items-center gap-1">
+                        {link.label}
+                        {isCategories && <ChevronDown className={cn("h-3 w-3 transition-transform duration-300", categoriesOpen && "rotate-180")} />}
+                      </div>
+                      <span className={cn(
+                        "absolute bottom-2 left-4 right-4 h-0.5 bg-primary transition-all duration-300",
+                        pathname === link.href || (isCategories && categoriesOpen) ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+                      )} />
+                    </Link>
+
+                    {/* Categories Dropdown */}
+                    {isCategories && (
+                      <AnimatePresence>
+                        {categoriesOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="absolute left-1/2 -translate-x-1/2 top-full w-[280px] bg-white border border-zinc-100 rounded-2xl shadow-2xl p-3 z-50 overflow-hidden"
+                          >
+                            <CategoriesGrid onClose={() => setCategoriesOpen(false)} />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -247,15 +279,46 @@ export default function Navbar() {
                 </div>
                 
                 <div className="space-y-1 mb-8">
-                  {theme.nav.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="block py-3 text-lg font-bold border-b border-zinc-50"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {theme.nav.map((link) => {
+                    const isCategories = link.label === "Categories";
+                    if (isCategories) {
+                      return (
+                        <div key={link.href} className="border-b border-zinc-50">
+                          <button 
+                            onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                            className="flex items-center justify-between w-full py-4 text-lg font-bold text-left"
+                          >
+                            {link.label}
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", mobileCategoriesOpen && "rotate-180")} />
+                          </button>
+                          <AnimatePresence>
+                            {mobileCategoriesOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden bg-zinc-50 rounded-xl mb-4"
+                              >
+                                <div className="p-4 space-y-3">
+                                  <Link href="/categories" className="block text-sm font-bold text-primary">All Categories</Link>
+                                  <MobileCategoriesList onClick={() => setMenuOpen(false)} />
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    }
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block py-4 text-lg font-bold border-b border-zinc-50"
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 <div className="bg-zinc-50 rounded-2xl p-4">
@@ -269,5 +332,61 @@ export default function Navbar() {
         </AnimatePresence>
       </div>
     </header>
+  );
+}
+
+function CategoriesGrid({ onClose }: { onClose: () => void }) {
+  const { data: categories, isLoading } = useCategories();
+
+  if (isLoading) return <div className="h-40 flex items-center justify-center"><div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+
+  const parentCategories = categories?.filter(c => !c.parentId) || [];
+
+  return (
+    <div className="space-y-1">
+      <div className="grid grid-cols-1 gap-1">
+        {parentCategories.map((cat) => (
+          <Link
+            key={cat.id}
+            href={`/categories/${cat.slug}`}
+            onClick={onClose}
+            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 transition-all"
+          >
+            <p className="text-sm font-bold text-zinc-900 group-hover:text-primary transition-colors">{cat.name}</p>
+            <ChevronDown className="h-3.5 w-3.5 text-zinc-300 -rotate-90 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+          </Link>
+        ))}
+      </div>
+      
+      <div className="h-px bg-zinc-50 my-2" />
+      
+      <Link 
+        href="/categories" 
+        onClick={onClose}
+        className="flex items-center justify-center py-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary transition-all"
+      >
+        View All Categories
+      </Link>
+    </div>
+  );
+}
+
+function MobileCategoriesList({ onClick }: { onClick: () => void }) {
+  const { data: categories } = useCategories();
+  const parentCategories = categories?.filter(c => !c.parentId) || [];
+
+  return (
+    <div className="space-y-1">
+      {parentCategories.map((cat) => (
+        <Link
+          key={cat.id}
+          href={`/categories/${cat.slug}`}
+          onClick={onClick}
+          className="block py-2 text-sm text-zinc-600 font-medium"
+        >
+          {cat.name}
+        </Link>
+      ))}
+    </div>
   );
 }

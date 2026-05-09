@@ -27,18 +27,19 @@ All design tokens live in **one file per app**. You only need to edit two files:
 ```ts
 export const theme = {
   colors: {
-    primary:   "#4f46e5",   // ← change to client brand colour
+    primary: "#4f46e5", // ← change to client brand colour
     secondary: "#7c3aed",
   },
   fonts: {
-    heading: "Inter",       // ← swap for client's Google Font
-    body:    "Inter",
+    heading: "Inter", // ← swap for client's Google Font
+    body: "Inter",
   },
-  storeName: "My Store",    // ← appears in nav, footer, meta tags
+  storeName: "Sri Kriscon", // ← appears in nav, footer, meta tags
 };
 ```
 
 Also update `storefront/app/layout.tsx`:
+
 - `<title>` / `metadata.title`
 - `metadata.description`
 - Favicon path in `<head>` or Next.js `icons` config
@@ -49,7 +50,7 @@ Admin uses neutral colours and rarely needs reskinning. If the client wants bran
 
 ```css
 :root {
-  --color-primary: #4f46e5;   /* ← client accent */
+  --color-primary: #4f46e5; /* ← client accent */
 }
 ```
 
@@ -63,15 +64,15 @@ cp .env.example .env
 
 Work through each section in order:
 
-| Section | What to get |
-|---|---|
-| **Database** | Create MySQL DB (local or Aiven); copy credentials |
-| **JWT** | Run `openssl rand -base64 64`; paste as `JWT_SECRET` |
-| **R2** | Cloudflare dashboard → R2 → create bucket → API tokens |
-| **Razorpay** | Razorpay dashboard → Settings → API Keys |
-| **Shiprocket** | Shiprocket account email + password |
-| **SMTP** | Gmail App Password or transactional email provider |
-| **URLs** | Set to `http://localhost:3000` etc. for local; update for prod |
+| Section        | What to get                                                    |
+| -------------- | -------------------------------------------------------------- |
+| **Database**   | Create MySQL DB (local or Aiven); copy credentials             |
+| **JWT**        | Run `openssl rand -base64 64`; paste as `JWT_SECRET`           |
+| **R2**         | Cloudflare dashboard → R2 → create bucket → API tokens         |
+| **Razorpay**   | Razorpay dashboard → Settings → API Keys                       |
+| **Shiprocket** | Shiprocket account email + password                            |
+| **SMTP**       | Gmail App Password or transactional email provider             |
+| **URLs**       | Set to `http://localhost:3000` etc. for local; update for prod |
 
 ---
 
@@ -106,18 +107,18 @@ This creates all tables and seeds the default super admin (`admin` / `Admin@123`
 
 Work through each section to set up the store before launch:
 
-| Admin section | What to do |
-|---|---|
-| **Settings → General** | Store name, tagline, logo, favicon, currency, shipping rates |
-| **Settings → Contact** | Phone, WhatsApp, email, physical address, GST number |
-| **Settings → Social** | Facebook, Instagram, YouTube URLs |
-| **Settings → Integrations** | Paste Razorpay public key, Google Analytics ID |
-| **Categories** | Create product categories (slug auto-generates) |
-| **Products** | Add products with images, variants, pricing, SEO |
-| **Banners** | Upload hero banners with CTA links; drag to reorder |
-| **Gallery** | Upload brand/lifestyle images |
-| **Testimonials** | Add customer reviews (can fake initial ones) |
-| **CMS Pages** | Edit About, Privacy Policy, Terms, Shipping Policy content |
+| Admin section               | What to do                                                   |
+| --------------------------- | ------------------------------------------------------------ |
+| **Settings → General**      | Store name, tagline, logo, favicon, currency, shipping rates |
+| **Settings → Contact**      | Phone, WhatsApp, email, physical address, GST number         |
+| **Settings → Social**       | Facebook, Instagram, YouTube URLs                            |
+| **Settings → Integrations** | Paste Razorpay public key, Google Analytics ID               |
+| **Categories**              | Create product categories (slug auto-generates)              |
+| **Products**                | Add products with images, variants, pricing, SEO             |
+| **Banners**                 | Upload hero banners with CTA links; drag to reorder          |
+| **Gallery**                 | Upload brand/lifestyle images                                |
+| **Testimonials**            | Add customer reviews (can fake initial ones)                 |
+| **CMS Pages**               | Edit About, Privacy Policy, Terms, Shipping Policy content   |
 
 ---
 
@@ -126,6 +127,7 @@ Work through each section to set up the store before launch:
 Follow the deployment guide in [`README.md`](README.md#deployment).
 
 For Option A (Render + Vercel + Aiven):
+
 1. Push code to GitHub
 2. Create Aiven MySQL, Render backend service, two Vercel projects
 3. Set all env vars in each platform's dashboard
@@ -137,29 +139,29 @@ For Option A (Render + Vercel + Aiven):
 
 ### Always change
 
-| What | Where |
-|---|---|
-| Brand colours | `storefront/src/styles/theme.ts` or CSS variables |
-| Store name / tagline | `theme.ts`, `layout.tsx` metadata |
-| Logo and favicon | Upload via admin panel after deploy |
-| All `.env` values | Copy `.env.example`, fill every field |
-| Admin password | First login via Users page |
-| Categories and products | Admin panel |
-| Banner images | Admin panel |
-| CMS page content | Admin panel → Pages |
-| Social links | Admin panel → Settings → Social |
-| Domain / URLs | `.env` + DNS + OAuth redirect lists |
+| What                    | Where                                             |
+| ----------------------- | ------------------------------------------------- |
+| Brand colours           | `storefront/src/styles/theme.ts` or CSS variables |
+| Store name / tagline    | `theme.ts`, `layout.tsx` metadata                 |
+| Logo and favicon        | Upload via admin panel after deploy               |
+| All `.env` values       | Copy `.env.example`, fill every field             |
+| Admin password          | First login via Users page                        |
+| Categories and products | Admin panel                                       |
+| Banner images           | Admin panel                                       |
+| CMS page content        | Admin panel → Pages                               |
+| Social links            | Admin panel → Settings → Social                   |
+| Domain / URLs           | `.env` + DNS + OAuth redirect lists               |
 
 ### Never change (shared infrastructure)
 
-| What | Reason |
-|---|---|
-| Database schema / migrations | Schema is additive — never edit applied migrations |
-| API contracts | Storefront and admin depend on fixed endpoint shapes |
-| Auth flow (JWT) | Changing this breaks all sessions |
-| Flyway migration filenames | Flyway checksums will fail if filenames change |
-| `V1__create_initial_schema.sql` | Deleting or editing breaks every environment |
-| Docker multi-stage build structure | Works as-is; only change env vars |
+| What                               | Reason                                               |
+| ---------------------------------- | ---------------------------------------------------- |
+| Database schema / migrations       | Schema is additive — never edit applied migrations   |
+| API contracts                      | Storefront and admin depend on fixed endpoint shapes |
+| Auth flow (JWT)                    | Changing this breaks all sessions                    |
+| Flyway migration filenames         | Flyway checksums will fail if filenames change       |
+| `V1__create_initial_schema.sql`    | Deleting or editing breaks every environment         |
+| Docker multi-stage build structure | Works as-is; only change env vars                    |
 
 ### Safe to extend (add, don't remove)
 
