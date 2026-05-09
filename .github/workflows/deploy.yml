@@ -3,10 +3,6 @@ name: Deploy to Cloud Run
 on:
   push:
     branches: [main]
-    paths:
-      - 'storefront/**'
-      - 'backend/**'
-      - 'admin/**'
 
 jobs:
 
@@ -15,31 +11,43 @@ jobs:
   # ─────────────────────────────────────
   deploy-storefront:
     runs-on: ubuntu-latest
-    if: |
-      contains(toJson(github.event.commits.*.modified), 'storefront/') ||
-      contains(toJson(github.event.commits.*.added), 'storefront/')
-
+    # No if condition needed
     permissions:
       contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # ← needed to detect changed files
+
+      - name: Check storefront changes
+        id: storefront-check
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q "^storefront/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Authenticate to GCP
+        if: steps.storefront-check.outputs.changed == 'true'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Setup gcloud
+        if: steps.storefront-check.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build & Push Storefront Image
+        if: steps.storefront-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./storefront \
             --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe
 
       - name: Deploy Storefront to Cloud Run
+        if: steps.storefront-check.outputs.changed == 'true'
         run: |
           gcloud run deploy srikriscon-fe \
             --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
@@ -52,31 +60,42 @@ jobs:
   # ─────────────────────────────────────
   deploy-backend:
     runs-on: ubuntu-latest
-    if: |
-      contains(toJson(github.event.commits.*.modified), 'backend/') ||
-      contains(toJson(github.event.commits.*.added), 'backend/')
-
     permissions:
       contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check backend changes
+        id: backend-check
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q "^backend/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Authenticate to GCP
+        if: steps.backend-check.outputs.changed == 'true'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Setup gcloud
+        if: steps.backend-check.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build & Push Backend Image
+        if: steps.backend-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./backend \
             --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be
 
       - name: Deploy Backend to Cloud Run
+        if: steps.backend-check.outputs.changed == 'true'
         run: |
           gcloud run deploy srikriscon-be \
             --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be \
@@ -89,31 +108,42 @@ jobs:
   # ─────────────────────────────────────
   deploy-admin:
     runs-on: ubuntu-latest
-    if: |
-      contains(toJson(github.event.commits.*.modified), 'admin/') ||
-      contains(toJson(github.event.commits.*.added), 'admin/')
-
     permissions:
       contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check admin changes
+        id: admin-check
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -q "^admin/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Authenticate to GCP
+        if: steps.admin-check.outputs.changed == 'true'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Setup gcloud
+        if: steps.admin-check.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build & Push Admin Image
+        if: steps.admin-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./admin \
             --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin
 
       - name: Deploy Admin to Cloud Run
+        if: steps.admin-check.outputs.changed == 'true'
         run: |
           gcloud run deploy srikriscon-admin \
             --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
