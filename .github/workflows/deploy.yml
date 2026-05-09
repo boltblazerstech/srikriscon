@@ -40,7 +40,7 @@ jobs:
         if: steps.storefront-check.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
 
-       - name: Build & Push Storefront Image
+      - name: Build & Push Storefront Image
         if: steps.storefront-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./storefront \
