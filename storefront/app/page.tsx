@@ -2,6 +2,7 @@ import HeroBanner from "@/src/components/home/HeroBanner";
 import MarqueeBanner from "@/src/components/home/MarqueeBanner";
 import CategoryGrid from "@/src/components/home/CategoryGrid";
 import FeaturedProducts from "@/src/components/home/FeaturedProducts";
+import BlogSection from "@/src/components/home/BlogSection";
 import WhyChooseUs from "@/src/components/home/WhyChooseUs";
 import TestimonialsSection from "@/src/components/home/TestimonialsSection";
 import CtaBanner from "@/src/components/home/CtaBanner";
@@ -14,6 +15,7 @@ export default function HomePage() {
       <MarqueeBanner />
       <CategoryGrid />
       <FeaturedProducts />
+      <BlogSection />
 
       {/* white → teal */}
       <WaveDivider from="#ffffff" to="#0B3A42" />

@@ -44,9 +44,15 @@ jobs:
         if: steps.storefront-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./storefront \
+<<<<<<< Updated upstream
             --config=storefront/cloudbuild.yaml \
             --substitutions=_NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}",_NEXT_PUBLIC_SITE_URL="${{ secrets.NEXT_PUBLIC_SITE_URL }}",_NEXT_PUBLIC_RAZORPAY_KEY_ID="${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}"
       
+=======
+            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
+            --build-arg="NEXT_PUBLIC_API_URL=https://srikriscon-be-13514095818.asia-south1.run.app"
+
+>>>>>>> Stashed changes
       - name: Deploy Storefront to Cloud Run
         if: steps.storefront-check.outputs.changed == 'true'
         run: |
@@ -141,8 +147,13 @@ jobs:
         if: steps.admin-check.outputs.changed == 'true'
         run: |
           gcloud builds submit ./admin \
+<<<<<<< Updated upstream
             --config=admin/cloudbuild.yaml \
             --substitutions=_NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}"
+=======
+            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
+            --build-arg="NEXT_PUBLIC_API_URL=https://srikriscon-be-13514095818.asia-south1.run.app"
+>>>>>>> Stashed changes
             
       - name: Deploy Admin to Cloud Run
         if: steps.admin-check.outputs.changed == 'true'

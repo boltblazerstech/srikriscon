@@ -23,8 +23,14 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const fillSuperAdmin = () => {
+    setValue("username", "superadmin@example.com", { shouldValidate: true });
+    setValue("password", "SuperAdmin@123", { shouldValidate: true });
+  };
 
   async function onSubmit(data: FormData) {
     setError("");
@@ -105,6 +111,14 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
+
+            <button
+              type="button"
+              onClick={fillSuperAdmin}
+              className="w-full h-10 rounded-lg border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors mb-2"
+            >
+              Fill SuperAdmin Credentials
+            </button>
 
             <button
               type="submit"

@@ -3,17 +3,71 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCategories } from "@/src/hooks/useCategories";
 import Spinner from "@/src/components/ui/Spinner";
-import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
+import { fadeUp } from "@/src/lib/animations";
+
+const CIRCLE_PALETTES = [
+  "bg-red-50",
+  "bg-orange-50",
+  "bg-amber-50",
+  "bg-teal-50",
+  "bg-sky-50",
+  "bg-pink-50",
+  "bg-purple-50",
+  "bg-emerald-50",
+  "bg-rose-50",
+  "bg-cyan-50",
+  "bg-lime-50",
+  "bg-indigo-50",
+];
 
 export default function CategoryGrid() {
   const { data: categories, isLoading } = useCategories();
-  const active = categories?.filter((c) => c.active).slice(0, 8) ?? [];
+  const active = categories?.filter((c) => c.active) ?? [];
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, scrollLeft: 0 });
+
+  // ── Arrow scroll ─────────────────────────────────────────────────────────
+  function scrollBy(dir: "left" | "right") {
+    scrollRef.current?.scrollBy({
+      left: dir === "left" ? -320 : 320,
+      behavior: "smooth",
+    });
+  }
+
+  // ── Mouse drag to scroll ──────────────────────────────────────────────────
+  function onMouseDown(e: React.MouseEvent) {
+    setIsDragging(false);
+    dragStart.current = {
+      x: e.pageX - (scrollRef.current?.offsetLeft ?? 0),
+      scrollLeft: scrollRef.current?.scrollLeft ?? 0,
+    };
+    scrollRef.current?.classList.add("cursor-grabbing");
+
+    const onMove = (ev: MouseEvent) => {
+      const x = ev.pageX - (scrollRef.current?.offsetLeft ?? 0);
+      const dist = x - dragStart.current.x;
+      if (Math.abs(dist) > 4) setIsDragging(true);
+      if (scrollRef.current)
+        scrollRef.current.scrollLeft = dragStart.current.scrollLeft - dist;
+    };
+    const onUp = () => {
+      scrollRef.current?.classList.remove("cursor-grabbing");
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-12">
+      <div className="flex justify-center py-16">
         <Spinner />
       </div>
     );
@@ -21,76 +75,110 @@ export default function CategoryGrid() {
   if (active.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        className="flex items-center justify-between mb-8"
-      >
-        <h2 className="text-3xl font-extrabold text-primary tracking-tight">
-          Curated Collections
-        </h2>
-        <Link
-          href="/categories"
-          className="text-sm font-semibold text-accent hover:text-[#C2006A] transition-colors uppercase tracking-wider"
+    <section className="py-14 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="flex items-end justify-between mb-8"
         >
-          View All
-        </Link>
-      </motion.div>
+          <div>
+            <h2 className="text-3xl font-extrabold text-primary tracking-tight">
+              Shop by Category
+            </h2>
+            <p className="mt-1 text-sm text-zinc-400 font-medium">
+              Browse our curated product collections
+            </p>
+          </div>
 
-      {/* Staggered grid */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
-      >
-        {active.map((cat) => (
-          <motion.div key={cat.id} variants={staggerItem}>
-            <Link
-              href={`/categories/${cat.slug}`}
-              className="group relative block overflow-hidden rounded-2xl aspect-[4/5] bg-muted shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300"
+          <div className="flex items-center gap-3">
+            {/* Arrow buttons */}
+            <button
+              onClick={() => scrollBy("left")}
+              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all"
+              aria-label="Scroll left"
             >
-              {/* Image */}
-              {cat.imageUrl ? (
-                <Image
-                  src={cat.imageUrl}
-                  alt={cat.name}
-                  fill
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                  sizes="(max-width: 640px) 50vw, 25vw"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-highlight/40" />
-              )}
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => scrollBy("right")}
+              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
 
-              {/* Cinematic vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-
-              {/* Shine sweep on hover */}
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-in-out pointer-events-none z-10"
-              />
-
-              {/* ── Frosted glass text panel ── */}
-              <div className="absolute bottom-0 left-0 right-0 z-20 p-4 bg-white/10 backdrop-blur-md border-t border-white/15 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                <span className="block text-base font-bold text-white tracking-wide truncate">
-                  {cat.name}
-                </span>
-                <span className="flex items-center gap-1 text-[11px] font-semibold text-white/55 mt-0.5 max-h-0 overflow-hidden group-hover:max-h-5 transition-[max-height] duration-300 ease-out">
-                  Explore Collection
-                  <span className="text-accent text-xs">→</span>
-                </span>
-              </div>
+            <Link
+              href="/categories"
+              className="ml-1 text-sm font-bold text-accent hover:text-[#C2006A] transition-colors uppercase tracking-wider"
+            >
+              View All →
             </Link>
-          </motion.div>
-        ))}
-      </motion.div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Scrollable Row — full-bleed so items peek at edges */}
+      <div className="relative">
+        {/* Left fade */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
+        {/* Right fade */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
+
+        <div
+          ref={scrollRef}
+          onMouseDown={onMouseDown}
+          className="flex gap-6 overflow-x-auto scroll-smooth select-none cursor-grab px-8 sm:px-16 pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {active.map((cat, idx) => (
+            <Link
+              key={cat.id}
+              href={`/categories/${cat.slug}`}
+              className="group flex flex-col items-center gap-3 flex-shrink-0 w-36 sm:w-40"
+              onClick={(e) => isDragging && e.preventDefault()}
+            >
+              {/* Circle */}
+              <div
+                className={[
+                  "relative w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden flex-shrink-0",
+                  "shadow-md transition-all duration-300",
+                  "group-hover:shadow-2xl group-hover:scale-105 group-hover:-translate-y-1.5",
+                  CIRCLE_PALETTES[idx % CIRCLE_PALETTES.length],
+                ].join(" ")}
+              >
+                {cat.imageUrl ? (
+                  <Image
+                    src={cat.imageUrl}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="160px"
+                    draggable={false}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-5xl font-black text-primary/20">
+                      {cat.name[0]}
+                    </span>
+                  </div>
+                )}
+
+                {/* Hover ring */}
+                <div className="absolute inset-0 rounded-full ring-0 group-hover:ring-4 ring-primary/25 transition-all duration-300" />
+              </div>
+
+              {/* Label */}
+              <span className="text-center text-xs sm:text-[13px] font-bold text-zinc-700 group-hover:text-accent transition-colors duration-200 leading-snug line-clamp-2 w-full">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

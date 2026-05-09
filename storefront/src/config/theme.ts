@@ -40,7 +40,7 @@ export const theme = {
 
   // ── Business info ─────────────────────────────────────────────────────────
   business: {
-    name:           "My Store",
+    name:           "Sri Kriscon",
     tagline:        "Quality products delivered fast",
     phone:          "+91 98765 43210",
     /** Digits only, with country code — used for wa.me link */
