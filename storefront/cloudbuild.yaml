@@ -13,3 +13,9 @@ steps:
       - '.'
 images:
   - 'gcr.io/$PROJECT_ID/srikriscon-fe'
+
+# ← ADD THESE 4 LINES
+substitutions:
+  _NEXT_PUBLIC_API_URL: ''
+  _NEXT_PUBLIC_SITE_URL: ''
+  _NEXT_PUBLIC_RAZORPAY_KEY_ID: ''
