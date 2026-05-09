@@ -5,6 +5,11 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/src/hooks/useAuth";
 import { useState } from "react";
 
+
+
+
+
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>

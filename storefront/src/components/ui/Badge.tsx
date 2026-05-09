@@ -11,6 +11,9 @@ const variants: Record<BadgeVariant, string> = {
   outline: "border border-border text-muted-foreground",
 };
 
+
+
+
 export default function Badge({
   children,
   variant = "muted",
