@@ -55,7 +55,7 @@ export default function ProductCard({ product, hero = false }: Props) {
       productName: product.name,
       productSlug: product.slug,
       imageUrl:    imageUrl ?? undefined,
-      sku:         v?.sku   ?? product.sku,
+      sku:         product.sku,
       price:       v?.price ?? product.price,
       minOrderQty: product.minOrderQty,
       variantId:   v?.id,

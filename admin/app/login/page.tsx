@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,7 +17,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const router = useRouter();
+  const { login, user, isLoading } = useAuth();
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,6 +29,13 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
+  // If already authenticated, redirect to dashboard immediately
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace("/dashboard");
+    }
+  }, [isLoading, user, router]);
+
   const fillSuperAdmin = () => {
     setValue("username", "superadmin@example.com", { shouldValidate: true });
     setValue("password", "SuperAdmin@123", { shouldValidate: true });
@@ -36,10 +45,23 @@ export default function LoginPage() {
     setError("");
     try {
       await login(data.username, data.password);
+      // login() calls router.push("/dashboard") internally
     } catch (err) {
       setError(extractApiError(err));
     }
   }
+
+  // Show spinner while auth state is being restored from localStorage
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Already logged in — render nothing while effect fires the redirect
+  if (user) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">

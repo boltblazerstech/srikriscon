@@ -18,7 +18,7 @@ interface LoginFormValues {
 function LoginContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
   const [showPw, setShowPw] = useState(false);
 
   const {
@@ -27,10 +27,12 @@ function LoginContent() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>();
 
-  // Already logged in → redirect
+  // Wait for auth to finish loading, then redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) router.replace(searchParams.get("from") ?? "/account/overview");
-  }, [isAuthenticated, router, searchParams]);
+    if (!loading && isAuthenticated) {
+      router.replace(searchParams.get("from") ?? "/account/overview");
+    }
+  }, [loading, isAuthenticated, router, searchParams]);
 
   async function onSubmit(values: LoginFormValues) {
     try {
@@ -41,6 +43,18 @@ function LoginContent() {
       toast.error(err?.message ?? "Invalid email or password");
     }
   }
+
+  // While auth state is being restored from localStorage/server, show spinner
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </main>
+    );
+  }
+
+  // Auth loaded and user is already authenticated — render nothing while effect redirects
+  if (isAuthenticated) return null;
 
   return (
     <main className="min-h-screen bg-muted/30 flex items-center justify-center px-4 py-20">
@@ -146,9 +160,12 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-muted/30 flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
       <LoginContent />
     </Suspense>
   );
 }
-
