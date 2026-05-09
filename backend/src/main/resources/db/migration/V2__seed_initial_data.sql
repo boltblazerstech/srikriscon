@@ -62,9 +62,9 @@ INSERT INTO products (name, slug, description, short_description, price, stock_q
 
 -- ─── Default settings ─────────────────────────────────────────────────────────
 INSERT INTO settings (setting_key, setting_value, setting_group, description, is_public) VALUES
-    ('store_name',               'My Store',           'general',  'Store display name',               1),
-    ('store_email',              'store@example.com',  'general',  'Store contact email',              1),
-    ('store_phone',              '',                   'general',  'Store contact phone',              1),
+    ('store_name',               'Sri Kriscon',        'general',  'Store display name',               1),
+    ('store_email',              'info@srikriscon.com','general',  'Store contact email',              1),
+    ('store_phone',              '7999921111',         'general',  'Store contact phone',              1),
     ('store_currency',           'INR',                'general',  'Default currency code',            1),
     ('store_timezone',           'Asia/Kolkata',       'general',  'Store timezone',                   0),
     ('store_logo_url',           '',                   'general',  'URL of the store logo',            1),

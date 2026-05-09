@@ -340,7 +340,7 @@ function CategoriesGrid({ onClose }: { onClose: () => void }) {
 
   if (isLoading) return <div className="h-40 flex items-center justify-center"><div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
 
-  const parentCategories = categories?.filter(c => !c.parentId) || [];
+  const parentCategories = categories?.filter(c => !c.parent) || [];
 
   return (
     <div className="space-y-1">
@@ -373,7 +373,7 @@ function CategoriesGrid({ onClose }: { onClose: () => void }) {
 
 function MobileCategoriesList({ onClick }: { onClick: () => void }) {
   const { data: categories } = useCategories();
-  const parentCategories = categories?.filter(c => !c.parentId) || [];
+  const parentCategories = categories?.filter(c => !c.parent) || [];
 
   return (
     <div className="space-y-1">

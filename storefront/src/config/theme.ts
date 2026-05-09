@@ -42,10 +42,10 @@ export const theme = {
   business: {
     name:           "Sri Kriscon",
     tagline:        "Quality products delivered fast",
-    phone:          "+91 98765 43210",
+    phone:          "+91 79999 21111",
     /** Digits only, with country code — used for wa.me link */
-    whatsapp:       "919876543210",
-    email:          "hello@mystore.com",
+    whatsapp:       "917999921111",
+    email:          "info@srikriscon.com",
     address:        "123, Main Street, Mumbai, Maharashtra 400001",
     gst:            "GSTIN: 27XXXXX1234X1Z5",
     currency:       "INR",

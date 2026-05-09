@@ -21,7 +21,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "May 12, 2024",
     category: "Insights",
     author: "Aditya Sharma",
-    imageUrl: "https://images.unsplash.com/photo-1605600611284-195205ef91b2?q=80&w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop",
     readTime: "5 min read",
   },
   {
