@@ -168,11 +168,11 @@ export default function ProductCard({ product, hero = false }: Props) {
             {/* Price */}
             <div className="flex items-center justify-center gap-2 flex-wrap">
               <span className={cn("font-extrabold text-zinc-800", hero ? "text-xl" : "text-sm")}>
-                ₹{currentPrice.toFixed ? currentPrice.toFixed(0) : currentPrice}
+                ₹{currentPrice.toFixed(0)}
               </span>
               {isOnSale && (
                 <span className="text-xs text-zinc-400 line-through">
-                  ₹{product.comparePrice!.toFixed ? product.comparePrice!.toFixed(0) : product.comparePrice}
+                  ₹{product.comparePrice!.toFixed(0)}
                 </span>
               )}
             </div>
