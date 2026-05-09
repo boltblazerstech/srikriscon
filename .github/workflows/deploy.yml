@@ -3,115 +3,120 @@ name: Deploy to Cloud Run
 on:
   push:
     branches: [main]
+    paths:
+      - 'storefront/**'
+      - 'backend/**'
+      - 'admin/**'
 
 jobs:
-  # ─── Job 1: Storefront (Next.js) ─────────────────────────────────────────────
+
+  # ─────────────────────────────────────
+  # Deploy Storefront → srikriscon-fe
+  # ─────────────────────────────────────
   deploy-storefront:
-    if: >-
-      contains(toJSON(github.event.commits.*.modified), 'storefront/') ||
-      contains(toJSON(github.event.commits.*.added),    'storefront/') ||
-      contains(toJSON(github.event.commits.*.removed),  'storefront/')
     runs-on: ubuntu-latest
+    if: |
+      contains(toJson(github.event.commits.*.modified), 'storefront/') ||
+      contains(toJson(github.event.commits.*.added), 'storefront/')
+
     permissions:
       contents: read
-      id-token: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Cloud SDK
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Build Docker image
+      - name: Build & Push Storefront Image
         run: |
           gcloud builds submit ./storefront \
-            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe
+            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe
 
-      - name: Deploy to Cloud Run
+      - name: Deploy Storefront to Cloud Run
         run: |
           gcloud run deploy srikriscon-fe \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
-            --region asia-south1 \
-            --platform managed \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-fe \
+            --region=asia-south1 \
+            --platform=managed \
             --allow-unauthenticated
 
-  # ─── Job 2: Backend (Spring Boot) ────────────────────────────────────────────
+  # ─────────────────────────────────────
+  # Deploy Backend → srikriscon-be
+  # ─────────────────────────────────────
   deploy-backend:
-    if: >-
-      contains(toJSON(github.event.commits.*.modified), 'backend/') ||
-      contains(toJSON(github.event.commits.*.added),    'backend/') ||
-      contains(toJSON(github.event.commits.*.removed),  'backend/')
     runs-on: ubuntu-latest
+    if: |
+      contains(toJson(github.event.commits.*.modified), 'backend/') ||
+      contains(toJson(github.event.commits.*.added), 'backend/')
+
     permissions:
       contents: read
-      id-token: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Cloud SDK
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Build Docker image
+      - name: Build & Push Backend Image
         run: |
           gcloud builds submit ./backend \
-            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be
+            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be
 
-      - name: Deploy to Cloud Run
+      - name: Deploy Backend to Cloud Run
         run: |
           gcloud run deploy srikriscon-be \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be \
-            --region asia-south1 \
-            --platform managed \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-be \
+            --region=asia-south1 \
+            --platform=managed \
             --allow-unauthenticated
 
-  # ─── Job 3: Admin (Next.js) ──────────────────────────────────────────────────
+  # ─────────────────────────────────────
+  # Deploy Admin → srikriscon-admin
+  # ─────────────────────────────────────
   deploy-admin:
-    if: >-
-      contains(toJSON(github.event.commits.*.modified), 'admin/') ||
-      contains(toJSON(github.event.commits.*.added),    'admin/') ||
-      contains(toJSON(github.event.commits.*.removed),  'admin/')
     runs-on: ubuntu-latest
+    if: |
+      contains(toJson(github.event.commits.*.modified), 'admin/') ||
+      contains(toJson(github.event.commits.*.added), 'admin/')
+
     permissions:
       contents: read
-      id-token: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Cloud SDK
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Build Docker image
+      - name: Build & Push Admin Image
         run: |
           gcloud builds submit ./admin \
-            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin
+            --tag=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin
 
-      - name: Deploy to Cloud Run
+      - name: Deploy Admin to Cloud Run
         run: |
           gcloud run deploy srikriscon-admin \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
-            --region asia-south1 \
-            --platform managed \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/srikriscon-admin \
+            --region=asia-south1 \
+            --platform=managed \
             --allow-unauthenticated
