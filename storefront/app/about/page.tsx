@@ -10,6 +10,7 @@ import {
   ArrowRight, CheckCircle,
 } from "lucide-react";
 import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
+
 import GrainOverlay from "@/src/components/ui/GrainOverlay";
 
 
