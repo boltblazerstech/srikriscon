@@ -142,7 +142,7 @@ jobs:
         run: |
           gcloud builds submit ./admin \
             --config=admin/cloudbuild.yaml \
-            --substitutions=_NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}",_NEXT_PUBLIC_SITE_URL="${{ secrets.NEXT_PUBLIC_SITE_URL }}",_NEXT_PUBLIC_RAZORPAY_KEY_ID="${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}"
+            --substitutions=_NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}"
             
       - name: Deploy Admin to Cloud Run
         if: steps.admin-check.outputs.changed == 'true'
