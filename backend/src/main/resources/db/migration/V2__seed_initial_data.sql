@@ -2,7 +2,7 @@
 INSERT INTO users (email, password, first_name, last_name, role, is_active, email_verified) VALUES
     ('admin@example.com',
      '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-     'Admin', 'User', 'ADMIN', 1, 1);
+     'Admin', 'User', 'ADMIN', TRUE, TRUE);
 
 -- ─── Categories ───────────────────────────────────────────────────────────────
 INSERT INTO categories (name, slug, description, sort_order) VALUES
@@ -27,7 +27,7 @@ INSERT INTO products (name, slug, description, short_description, price, stock_q
         'Premium noise-canceling wireless headphones with 30-hour battery life and foldable design.',
         'Premium noise-canceling headphones, 30-hour battery.',
         79.99, 50, 'AUDIO-001',
-        id, 1
+        id, TRUE
     FROM categories WHERE slug = 'audio';
 
 INSERT INTO products (name, slug, description, short_description, price, stock_quantity, sku, category_id)
@@ -62,15 +62,15 @@ INSERT INTO products (name, slug, description, short_description, price, stock_q
 
 -- ─── Default settings ─────────────────────────────────────────────────────────
 INSERT INTO settings (setting_key, setting_value, setting_group, description, is_public) VALUES
-    ('store_name',               'My Store',           'general',  'Store display name',               1),
-    ('store_email',              'store@example.com',  'general',  'Store contact email',              1),
-    ('store_phone',              '',                   'general',  'Store contact phone',              1),
-    ('store_currency',           'INR',                'general',  'Default currency code',            1),
-    ('store_timezone',           'Asia/Kolkata',       'general',  'Store timezone',                   0),
-    ('store_logo_url',           '',                   'general',  'URL of the store logo',            1),
-    ('free_shipping_threshold',  '500',                'shipping', 'Min order amount for free shipping', 1),
-    ('default_shipping_cost',    '50',                 'shipping', 'Default flat shipping rate',       1),
-    ('tax_rate_percent',         '0',                  'tax',      'Default tax rate percentage',      0),
-    ('order_prefix',             'ORD',                'orders',   'Prefix for order numbers',         0),
-    ('low_stock_notification',   'true',               'inventory','Send email on low stock',          0),
-    ('maintenance_mode',         'false',              'general',  'Put the store in maintenance mode', 0);
+    ('store_name',               'My Store',           'general',  'Store display name',               TRUE),
+    ('store_email',              'store@example.com',  'general',  'Store contact email',              TRUE),
+    ('store_phone',              '',                   'general',  'Store contact phone',              TRUE),
+    ('store_currency',           'INR',                'general',  'Default currency code',            TRUE),
+    ('store_timezone',           'Asia/Kolkata',       'general',  'Store timezone',                   FALSE),
+    ('store_logo_url',           '',                   'general',  'URL of the store logo',            TRUE),
+    ('free_shipping_threshold',  '500',                'shipping', 'Min order amount for free shipping', TRUE),
+    ('default_shipping_cost',    '50',                 'shipping', 'Default flat shipping rate',       TRUE),
+    ('tax_rate_percent',         '0',                  'tax',      'Default tax rate percentage',      FALSE),
+    ('order_prefix',             'ORD',                'orders',   'Prefix for order numbers',         FALSE),
+    ('low_stock_notification',   'true',               'inventory','Send email on low stock',          FALSE),
+    ('maintenance_mode',         'false',              'general',  'Put the store in maintenance mode', FALSE);

@@ -1,34 +1,36 @@
 -- ─── Admin Users ──────────────────────────────────────────────────────────────
 CREATE TABLE admin_users (
-    id         BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id         BIGSERIAL    PRIMARY KEY,
     email      VARCHAR(255) NOT NULL,
     password   VARCHAR(255) NOT NULL,
     first_name VARCHAR(100),
     last_name  VARCHAR(100),
     role       VARCHAR(30)  NOT NULL DEFAULT 'ADMIN',
-    is_active  TINYINT(1)   NOT NULL DEFAULT 1,
-    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_admin_users_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    is_active  BOOLEAN      NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uk_admin_users_email UNIQUE (email)
+);
 
 -- ─── Password Reset Tokens ────────────────────────────────────────────────────
 CREATE TABLE password_reset_tokens (
-    id         BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id         BIGSERIAL    PRIMARY KEY,
     token      VARCHAR(255) NOT NULL,
     email      VARCHAR(255) NOT NULL,
     user_type  VARCHAR(20)  NOT NULL DEFAULT 'CUSTOMER',  -- CUSTOMER | ADMIN
-    expires_at DATETIME     NOT NULL,
-    used       TINYINT(1)   NOT NULL DEFAULT 0,
-    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_prt_token (token),
-    INDEX      idx_prt_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    expires_at TIMESTAMP    NOT NULL,
+    used       BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uk_prt_token UNIQUE (token)
+);
+CREATE INDEX idx_prt_email ON password_reset_tokens(email);
 
 -- ─── Alter refresh_tokens to support admin refresh tokens ─────────────────────
 ALTER TABLE refresh_tokens
-    MODIFY COLUMN user_id BIGINT NULL,
-    ADD COLUMN admin_user_id BIGINT NULL AFTER user_id,
+    ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE refresh_tokens
+    ADD COLUMN admin_user_id BIGINT;
+ALTER TABLE refresh_tokens
     ADD CONSTRAINT fk_refresh_admin
         FOREIGN KEY (admin_user_id) REFERENCES admin_users(id) ON DELETE CASCADE;
 
