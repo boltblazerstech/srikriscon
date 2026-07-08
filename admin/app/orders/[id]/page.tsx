@@ -15,7 +15,7 @@ import Select from "@/src/components/ui/Select";
 import LoadingSpinner from "@/src/components/ui/LoadingSpinner";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/src/components/ui/Badge";
 import ConfirmDialog from "@/src/components/ui/ConfirmDialog";
-import { useAdminOrder, useUpdateOrderStatus, useCreateShipment, useRefundOrder } from "@/src/hooks/useOrders";
+import { useAdminOrder, useUpdateOrderStatus, useCreateShipment, useRefundOrder, useMarkOrderPaid } from "@/src/hooks/useOrders";
 import { formatPrice, formatDateTime, formatDate, extractApiError } from "@/src/lib/utils";
 import type { OrderStatus } from "@/src/types";
 
@@ -39,9 +39,19 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const updateStatus  = useUpdateOrderStatus();
   const addShipment   = useCreateShipment();
   const refund        = useRefundOrder();
+  const markPaid      = useMarkOrderPaid();
 
   const [newStatus, setNewStatus]       = useState<OrderStatus | "">("");
   const [refundConfirm, setRefundConfirm] = useState(false);
+
+  async function handleMarkPaid() {
+    try {
+      await markPaid.mutateAsync(orderId);
+      toast.success("Order marked as paid");
+    } catch (err) {
+      toast.error(extractApiError(err));
+    }
+  }
 
   const {
     register, handleSubmit, formState: { errors, isSubmitting },
@@ -242,6 +252,16 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 )}
                 {order.razorpayPaymentId && (
                   <Row label="Payment ID" value={order.razorpayPaymentId} mono />
+                )}
+                {order.paymentStatus === "PENDING" && (
+                  <Button
+                    className="mt-3 w-full"
+                    variant="secondary"
+                    loading={markPaid.isPending}
+                    onClick={handleMarkPaid}
+                  >
+                    Mark as Paid
+                  </Button>
                 )}
               </div>
             </Card>

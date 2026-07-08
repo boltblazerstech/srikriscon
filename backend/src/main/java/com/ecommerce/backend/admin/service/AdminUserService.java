@@ -34,8 +34,14 @@ public class AdminUserService {
 
     @Transactional
     public AdminUserResponse create(AdminUserRequest req) {
+        if (req.getEmail() == null || req.getEmail().isBlank()) {
+            throw new BadRequestException("Email is required when creating an admin user");
+        }
         if (req.getPassword() == null || req.getPassword().isBlank()) {
             throw new BadRequestException("Password is required when creating an admin user");
+        }
+        if (req.getRole() == null) {
+            throw new BadRequestException("Role is required when creating an admin user");
         }
         if (adminUserRepository.existsByEmail(req.getEmail())) {
             throw new ConflictException("Email already in use: " + req.getEmail());

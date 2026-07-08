@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -7,37 +8,41 @@ import {
   Package,
   Tag,
   ShoppingCart,
-  Image,
+  Users,
   FileText,
+  BookOpen,
   Megaphone,
   MessageSquare,
   Settings,
-  Users,
+  Shield,
   LogOut,
   ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/src/hooks/useAuth";
 import { cn, getInitials } from "@/src/lib/utils";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 const NAV_ITEMS = [
   { href: "/dashboard",     label: "Dashboard",    icon: LayoutDashboard },
   { href: "/products",      label: "Products",     icon: Package },
   { href: "/categories",    label: "Categories",   icon: Tag },
   { href: "/orders",        label: "Orders",       icon: ShoppingCart },
-  { href: "/gallery",       label: "Gallery",      icon: Image },
+  { href: "/customers",     label: "Customers",    icon: Users },
   { href: "/pages",         label: "Pages",        icon: FileText },
+  { href: "/blogs",         label: "Blogs",        icon: BookOpen },
   { href: "/banners",       label: "Banners",      icon: Megaphone },
   { href: "/testimonials",  label: "Testimonials", icon: MessageSquare },
   { href: "/settings",      label: "Settings",     icon: Settings },
 ];
 
 const SUPER_ADMIN_ITEMS = [
-  { href: "/users", label: "Users", icon: Users },
+  { href: "/users", label: "Users", icon: Shield },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, isSuperAdmin, logout } = useAuth();
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
   const allItems = isSuperAdmin ? [...NAV_ITEMS, ...SUPER_ADMIN_ITEMS] : NAV_ITEMS;
 
@@ -93,13 +98,24 @@ export default function Sidebar() {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={() => setShowConfirmLogout(true)}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:bg-white/8 hover:text-destructive transition-colors"
         >
           <LogOut className="h-4 w-4" />
           Sign out
         </button>
       </div>
+
+      <ConfirmDialog
+        open={showConfirmLogout}
+        onConfirm={logout}
+        onCancel={() => setShowConfirmLogout(false)}
+        title="Sign Out"
+        description="Are you sure you want to sign out of the admin panel?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        variant="destructive"
+      />
     </aside>
   );
 }

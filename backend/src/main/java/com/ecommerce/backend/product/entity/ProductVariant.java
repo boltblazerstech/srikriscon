@@ -14,7 +14,20 @@ import java.math.BigDecimal;
 @Builder
 public class ProductVariant {
 
-    public enum VariantType { SIZE, DESIGN, MATERIAL }
+    public enum VariantType {
+        SIZE, DESIGN, MATERIAL, COLOR;
+
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static VariantType fromString(String value) {
+            if (value == null) return null;
+            try {
+                return VariantType.valueOf(value.toUpperCase().trim());
+            } catch (IllegalArgumentException e) {
+                // Return null or throw custom readable exception if not matched
+                throw new IllegalArgumentException("Invalid variant type: " + value + ". Must be one of: SIZE, DESIGN, MATERIAL, COLOR");
+            }
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +44,7 @@ public class ProductVariant {
     @Column(nullable = false, length = 100)
     private String value;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(name = "stock_quantity", nullable = false)

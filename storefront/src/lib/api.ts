@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
   headers: { "Content-Type": "application/json" },
   withCredentials: false,
 });
@@ -16,6 +16,34 @@ api.interceptors.request.use((config) => {
 });
 
 // ── Response: unwrap ApiResponse wrapper ───────────────────────────────────
+function cleanErrorMessage(msg: string): string {
+  if (!msg) return "An unexpected error occurred. Please try again.";
+  const lower = msg.toLowerCase();
+
+  if (lower.includes("json parse") || lower.includes("malformed json") || lower.includes("cannot deserialize")) {
+    return "Invalid data format received. Please check your inputs.";
+  }
+  if (lower.includes("constraint") || lower.includes("sql") || lower.includes("foreign key") || lower.includes("duplicate entry")) {
+    if (lower.includes("duplicate") || lower.includes("already exists")) {
+      return "This record or value already exists.";
+    }
+    return "A database conflict occurred. Please verify your data.";
+  }
+  if (lower.includes("nullpointer") || lower.includes("exception") || lower.includes("java.") || lower.includes("hibernate")) {
+    return "Internal server error. Please contact support.";
+  }
+  if (lower.includes("jwt expired") || lower.includes("token expired")) {
+    return "Your session has expired. Please log in again.";
+  }
+  if (lower.includes("access is denied") || lower.includes("forbidden") || lower.includes("unauthorized")) {
+    return "You do not have permission to perform this action.";
+  }
+  if (lower.includes("network error") || lower.includes("timeout") || lower.includes("failed to fetch")) {
+    return "Network connection issue. Please check your internet connection.";
+  }
+  return msg;
+}
+
 api.interceptors.response.use(
   (response) => {
     // Our backend always wraps in { success, message, data }
@@ -53,42 +81,47 @@ api.interceptors.response.use(
 
       // Duck-type check for Product
       if ("id" in obj && "name" in obj && "slug" in obj && "price" in obj) {
-        const id = Number(obj.id) || 1;
-        const index = (id % 17) + 1;
-        obj.images = [
-          {
-            id: 999900 + id,
-            url: `/product_images/SKI_SWEET-BOXES (${index}).webp`,
-            altText: obj.name,
-            primary: true,
-            sortOrder: 0,
-          },
-        ];
+        if (!obj.images || obj.images.length === 0) {
+          const id = Number(obj.id) || 1;
+          const index = (id % 17) + 1;
+          obj.images = [
+            {
+              id: 999900 + id,
+              url: `/product_images/SKI_SWEET-BOXES (${index}).webp`,
+              altText: obj.name,
+              primary: true,
+              sortOrder: 0,
+            },
+          ];
+        }
       }
 
       // Duck-type check for Category
       // Make sure it's not a Product (no price) and has standard category fields
       if ("id" in obj && "name" in obj && "slug" in obj && !("price" in obj) && "sortOrder" in obj) {
-        const slug = String(obj.slug).toLowerCase();
-        let matchedImage = null;
+        // Only inject fallback mock images if there is no real image URL in the database
+        if (!obj.imageUrl || obj.imageUrl.trim() === "") {
+          const slug = String(obj.slug).toLowerCase();
+          let matchedImage = null;
 
-        if (slug.includes("pizza")) matchedImage = "/categories_images/pizza_boxes.webp";
-        else if (slug.includes("sweet") || slug.includes("mithai")) matchedImage = "/categories_images/sweet_boxes.webp";
-        else if (slug.includes("cake")) matchedImage = "/categories_images/cake_boxes.webp";
-        else if (slug.includes("noodle") || slug.includes("chowmein")) matchedImage = "/categories_images/noodle_boxes.webp";
-        else if (slug.includes("bag") || slug.includes("carry")) matchedImage = "/categories_images/paper_bags.webp";
-        else if (slug.includes("cup") || slug.includes("glass")) matchedImage = "/categories_images/paper_cups.webp";
-        else if (slug.includes("popcorn")) matchedImage = "/categories_images/popcorn_box.webp";
-        else if (slug.includes("restaurant") || slug.includes("food") || slug.includes("meal")) matchedImage = "/categories_images/restaurant_boxes.webp";
-        else if (slug.includes("lid") || slug.includes("cover")) matchedImage = "/categories_images/lids.webp";
-        else if (slug.includes("modak")) matchedImage = "/categories_images/modak.webp";
+          if (slug.includes("pizza")) matchedImage = "/categories_images/pizza_boxes.webp";
+          else if (slug.includes("sweet") || slug.includes("mithai")) matchedImage = "/categories_images/sweet_boxes.webp";
+          else if (slug.includes("cake")) matchedImage = "/categories_images/cake_boxes.webp";
+          else if (slug.includes("noodle") || slug.includes("chowmein")) matchedImage = "/categories_images/noodle_boxes.webp";
+          else if (slug.includes("bag") || slug.includes("carry")) matchedImage = "/categories_images/paper_bags.webp";
+          else if (slug.includes("cup") || slug.includes("glass")) matchedImage = "/categories_images/paper_cups.webp";
+          else if (slug.includes("popcorn")) matchedImage = "/categories_images/popcorn_box.webp";
+          else if (slug.includes("restaurant") || slug.includes("food") || slug.includes("meal")) matchedImage = "/categories_images/restaurant_boxes.webp";
+          else if (slug.includes("lid") || slug.includes("cover")) matchedImage = "/categories_images/lids.webp";
+          else if (slug.includes("modak")) matchedImage = "/categories_images/modak.webp";
 
-        if (matchedImage) {
-          obj.imageUrl = matchedImage;
-        } else {
-          const id = Number(obj.id) || 1;
-          const index = id % CATEGORY_IMAGES.length;
-          obj.imageUrl = CATEGORY_IMAGES[index];
+          if (matchedImage) {
+            obj.imageUrl = matchedImage;
+          } else {
+            const id = Number(obj.id) || 1;
+            const index = id % CATEGORY_IMAGES.length;
+            obj.imageUrl = CATEGORY_IMAGES[index];
+          }
         }
       }
 
@@ -117,7 +150,7 @@ api.interceptors.response.use(
       localStorage.removeItem("refreshToken");
     }
 
-    return Promise.reject(new Error(message));
+    return Promise.reject(new Error(cleanErrorMessage(message)));
   }
 );
 

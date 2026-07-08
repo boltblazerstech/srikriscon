@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/src/config/api";
-import type { AdminUser, AdminUserRequest, ApiResponse } from "@/src/types";
+import type { AdminUser, AdminUserRequest, ApiResponse, Page } from "@/src/types";
 
 export function useAdminUsers() {
   return useQuery({
     queryKey: ["admin", "users"],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<AdminUser[]>>(
+      const { data } = await api.get<ApiResponse<Page<AdminUser>>>(
         "/api/admin/users"
       );
       return data.data;

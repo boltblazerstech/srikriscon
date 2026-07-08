@@ -79,7 +79,7 @@ export interface ProductVariant {
   /** Variant type: SIZE | DESIGN | MATERIAL */
   type: string;
   value: string;
-  price: number;
+  price?: number | null;
   stockQuantity: number;
   active: boolean;
   sortOrder: number;
@@ -118,7 +118,7 @@ export interface VariantRequest {
   /** Variant type: SIZE | DESIGN | MATERIAL */
   type: string;
   value: string;
-  price: number;
+  price?: number | null;
   stockQuantity: number;
   active: boolean;
 }
@@ -328,4 +328,51 @@ export interface AdminUserRequest {
   lastName: string;
   password?: string;
   role: AdminRole;
+}
+
+// ─── Customer ──────────────────────────────────────────────────────────────────
+export interface Customer {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  active: boolean;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomerRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  active: boolean;
+}
+
+// ─── BlogPost ──────────────────────────────────────────────────────────────────
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  category?: string;
+  author?: string;
+  imageUrl?: string;
+  readTime?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogPostRequest {
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  category?: string;
+  author?: string;
+  imageUrl?: string;
+  readTime?: string;
 }

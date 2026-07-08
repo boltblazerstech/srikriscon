@@ -10,6 +10,7 @@ import { ArrowRight } from "lucide-react";
 import Spinner from "@/src/components/ui/Spinner";
 import { useBanners } from "@/src/hooks/useBanners";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 
 const FALLBACK = [
   {
@@ -26,6 +27,8 @@ export default function HeroBanner() {
   useEffect(() => setMounted(true), []);
 
   const sectionRef = useRef<HTMLElement>(null);
+  const { value: storeName } = useSetting("storeName");
+  const { value: storeTagline } = useSetting("storeTagline");
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -33,8 +36,18 @@ export default function HeroBanner() {
   // Image drifts down 80px as the hero scrolls out → appears to move slower than the page
   const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
+  const fallbackBanners = [
+    {
+      id: 0,
+      title: storeName || theme.business.name,
+      subtitle: storeTagline || theme.business.tagline,
+      imageUrl: "",
+      linkUrl: "/products",
+    },
+  ];
+
   const { data: banners, isLoading } = useBanners();
-  const slides = banners && banners.length > 0 ? banners : FALLBACK;
+  const slides = banners && banners.length > 0 ? banners : fallbackBanners;
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden bg-primary">

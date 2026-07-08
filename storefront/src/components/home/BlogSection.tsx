@@ -4,11 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { BLOG_POSTS } from "@/src/config/blogs";
+import { useBlogs } from "@/src/hooks/useBlogs";
 import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
+import { formatDate } from "@/src/lib/utils";
 
 export default function BlogSection() {
-  const featuredPosts = BLOG_POSTS.slice(0, 3);
+  const { data: blogs, isLoading } = useBlogs();
+
+  if (isLoading || !blogs || blogs.length === 0) return null;
+
+  const featuredPosts = blogs.slice(0, 3);
 
   return (
     <section className="bg-white py-24">
@@ -50,29 +55,39 @@ export default function BlogSection() {
           {featuredPosts.map((post) => (
             <motion.article key={post.id} variants={staggerItem} className="group flex flex-col h-full">
               <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-zinc-100 mb-6">
-                <Image
-                  src={post.imageUrl}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
-                    {post.category}
-                  </span>
-                </div>
+                {post.imageUrl ? (
+                  <Image
+                    src={post.imageUrl}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-primary/5 flex items-center justify-center text-primary font-bold">
+                    Sri Kriscon Journal
+                  </div>
+                )}
+                {post.category && (
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
+                      {post.category}
+                    </span>
+                  </div>
+                )}
               </Link>
 
               <div className="flex items-center gap-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3" />
-                  {post.date}
+                  {formatDate(post.createdAt)}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3" />
-                  {post.readTime}
-                </div>
+                {post.readTime && (
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-3 w-3" />
+                    {post.readTime}
+                  </div>
+                )}
               </div>
 
               <Link href={`/blog/${post.slug}`} className="block group-hover:text-accent transition-colors">

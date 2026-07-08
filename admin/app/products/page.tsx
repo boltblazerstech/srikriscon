@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
 import toast from "react-hot-toast";
 import AdminLayout from "@/src/components/layout/AdminLayout";
 import PageHeader from "@/src/components/ui/PageHeader";
@@ -182,6 +182,22 @@ export default function ProductsPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search products…"
               prefix={<Search className="h-3.5 w-3.5" />}
+              suffix={
+                searchInput ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchInput("");
+                      setSearch("");
+                      setPage(0);
+                    }}
+                    className="p-1 hover:bg-muted rounded text-muted-foreground transition-colors flex items-center justify-center"
+                    title="Clear search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : null
+              }
               className="flex-1"
             />
             <Button type="submit" variant="secondary" size="md">Search</Button>
@@ -192,6 +208,21 @@ export default function ProductsPage() {
             options={categoryOptions}
             className="w-48"
           />
+          {(search || categoryId) && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setSearchInput("");
+                setSearch("");
+                setCategoryId("");
+                setPage(0);
+              }}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Reset Filters
+            </Button>
+          )}
         </div>
 
         <DataTable

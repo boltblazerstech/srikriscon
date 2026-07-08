@@ -37,7 +37,7 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", content: "", metaTitle: "", metaDescription: "", active: true },
+    defaultValues: { title: "", content: "", metaTitle: "", metaDescription: "", active: page?.active ?? false },
   });
 
   useEffect(() => {
@@ -55,7 +55,13 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
   async function onSubmit(data: FormData) {
     if (!page?.id) return;
     try {
-      await update.mutateAsync({ id: page.id, body: data });
+      await update.mutateAsync({
+        id: page.id,
+        body: {
+          ...data,
+          slug: page.slug,
+        },
+      });
       toast.success("Page saved");
     } catch (err) {
       toast.error(extractApiError(err));

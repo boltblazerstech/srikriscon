@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Package, MapPin, Truck } from "lucide-react";
 import { useMyOrder, useCancelOrder } from "@/src/hooks/useOrders";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/src/components/account/OrderStatusBadge";
-import { formatPrice } from "@/src/lib/utils";
+import { formatPrice, parseSafeDate } from "@/src/lib/utils";
 import Spinner from "@/src/components/ui/Spinner";
 import toast from "react-hot-toast";
 
@@ -69,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           <div>
             <h1 className="text-xl font-bold text-foreground">Order #{order.orderNumber}</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Placed on {new Date(order.createdAt).toLocaleDateString("en-IN", {
+              Placed on {parseSafeDate(order.createdAt).toLocaleDateString("en-IN", {
                 weekday: "long", day: "numeric", month: "long", year: "numeric",
               })}
             </p>

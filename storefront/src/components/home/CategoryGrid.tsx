@@ -131,7 +131,7 @@ export default function CategoryGrid() {
         <div
           ref={scrollRef}
           onMouseDown={onMouseDown}
-          className="flex gap-6 overflow-x-auto scroll-smooth select-none cursor-grab px-8 sm:px-16 pb-4"
+          className="flex gap-6 overflow-x-auto scroll-smooth select-none cursor-grab px-8 sm:px-16 pt-3 pb-6"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {active.map((cat, idx) => (
@@ -141,34 +141,38 @@ export default function CategoryGrid() {
               className="group flex flex-col items-center gap-3 flex-shrink-0 w-36 sm:w-40"
               onClick={(e) => isDragging && e.preventDefault()}
             >
-              {/* Circle */}
+              {/* Circle Container with Border */}
               <div
                 className={[
-                  "relative w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden flex-shrink-0",
-                  "shadow-md transition-all duration-300",
-                  "group-hover:shadow-2xl group-hover:scale-105 group-hover:-translate-y-1.5",
-                  CIRCLE_PALETTES[idx % CIRCLE_PALETTES.length],
+                  "relative w-36 h-36 sm:w-40 sm:h-40 rounded-full flex-shrink-0 flex items-center justify-center",
+                  "border-2 border-primary p-1.5 bg-white",
+                  "shadow-md transition-all duration-300 ease-out",
+                  "group-hover:shadow-[0_0_15px_rgba(11,58,66,0.35)] group-hover:scale-105 group-hover:-translate-y-1.5",
                 ].join(" ")}
               >
-                {cat.imageUrl ? (
-                  <Image
-                    src={cat.imageUrl}
-                    alt={cat.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    sizes="160px"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-5xl font-black text-primary/20">
-                      {cat.name[0]}
-                    </span>
-                  </div>
-                )}
-
-                {/* Hover ring */}
-                <div className="absolute inset-0 rounded-full ring-0 group-hover:ring-4 ring-primary/25 transition-all duration-300" />
+                <div
+                  className={[
+                    "relative w-full h-full rounded-full overflow-hidden flex-shrink-0",
+                    CIRCLE_PALETTES[idx % CIRCLE_PALETTES.length],
+                  ].join(" ")}
+                >
+                  {cat.imageUrl ? (
+                    <Image
+                      src={cat.imageUrl}
+                      alt={cat.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="160px"
+                      draggable={false}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-5xl font-black text-primary/20">
+                        {cat.name[0]}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Label */}

@@ -61,6 +61,10 @@ public class Order {
     @Builder.Default
     private String currency = "INR";
 
+    @Column(name = "payment_method", nullable = false, length = 50)
+    @Builder.Default
+    private String paymentMethod = "RAZORPAY";
+
     // Shipping snapshot (denormalized — never changes even if address is edited later)
     @Column(name = "shipping_name")         private String shippingName;
     @Column(name = "shipping_phone")        private String shippingPhone;

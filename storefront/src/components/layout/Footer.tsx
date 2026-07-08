@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
+import { useSetting } from "@/src/hooks/useSettings";
 
 const { business, nav } = theme;
 
@@ -32,6 +35,28 @@ const icons = {
 export default function Footer() {
   const year = new Date().getFullYear();
 
+  const { value: storeName } = useSetting("storeName");
+  const { value: storeTagline } = useSetting("storeTagline");
+  const { value: storeEmail } = useSetting("storeEmail");
+  const { value: storePhone } = useSetting("storePhone");
+  const { value: storeAddress } = useSetting("storeAddress");
+  const { value: whatsappNumber } = useSetting("whatsappNumber");
+  const { value: facebookUrl } = useSetting("facebookUrl");
+  const { value: instagramUrl } = useSetting("instagramUrl");
+  const { value: youtubeUrl } = useSetting("youtubeUrl");
+  const { value: gstNumber } = useSetting("gstNumber");
+
+  const name = storeName || business.name;
+  const tagline = storeTagline || business.tagline;
+  const email = storeEmail || business.email;
+  const phone = storePhone || business.phone;
+  const address = storeAddress || business.address;
+  const whatsapp = whatsappNumber || business.whatsapp;
+  const facebook = facebookUrl || business.facebook;
+  const instagram = instagramUrl || business.instagram;
+  const youtube = youtubeUrl || business.youtube;
+  const gst = gstNumber || business.gst;
+
   return (
     <footer>
 
@@ -43,7 +68,7 @@ export default function Footer() {
           aria-hidden
           className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex justify-center text-[13vw] font-black text-white/[0.04] leading-none whitespace-nowrap overflow-hidden"
         >
-          {business.name}
+          {name}
         </span>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-14">
@@ -54,33 +79,33 @@ export default function Footer() {
             {/* Brand column */}
             <div className="lg:col-span-2">
               <p className="font-display text-2xl font-bold text-white tracking-tight leading-tight">
-                {business.name}
+                {name}
               </p>
               <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
-                {business.tagline}
+                {tagline}
               </p>
 
               {/* Social icons — brand-specific hover colours */}
               <div className="mt-7 flex flex-wrap gap-2.5">
-                {business.whatsapp && (
+                {whatsapp && (
                   <SocialIcon
-                    href={whatsappLink(business.whatsapp)}
+                    href={whatsappLink(whatsapp)}
                     label="WhatsApp"
                     icon={<MessageCircle className="h-4 w-4" />}
                     hoverBg="hover:bg-[#25D366]"
                   />
                 )}
-                {business.instagram && (
+                {instagram && (
                   <SocialIcon
-                    href={business.instagram}
+                    href={instagram}
                     label="Instagram"
                     icon={<icons.Instagram />}
                     hoverBg="hover:bg-[#E1306C]"
                   />
                 )}
-                {business.facebook && (
+                {facebook && (
                   <SocialIcon
-                    href={business.facebook}
+                    href={facebook}
                     label="Facebook"
                     icon={<icons.Facebook />}
                     hoverBg="hover:bg-[#1877F2]"
@@ -94,9 +119,9 @@ export default function Footer() {
                     hoverBg="hover:bg-white/20"
                   />
                 )}
-                {business.youtube && (
+                {youtube && (
                   <SocialIcon
-                    href={business.youtube}
+                    href={youtube}
                     label="YouTube"
                     icon={<icons.Youtube />}
                     hoverBg="hover:bg-[#FF0000]"
@@ -140,32 +165,32 @@ export default function Footer() {
                 Get In Touch
               </h3>
               <ul className="space-y-4">
-                {business.phone && (
+                {phone && (
                   <li>
                     <a
-                      href={`tel:${business.phone}`}
+                      href={`tel:${phone}`}
                       className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
                     >
                       <Phone className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                      {business.phone}
+                      {phone}
                     </a>
                   </li>
                 )}
-                {business.email && (
+                {email && (
                   <li>
                     <a
-                      href={`mailto:${business.email}`}
+                      href={`mailto:${email}`}
                       className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
                     >
                       <Mail className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                      <span className="break-all">{business.email}</span>
+                      <span className="break-all">{email}</span>
                     </a>
                   </li>
                 )}
-                {business.address && (
+                {address && (
                   <li className="flex items-start gap-3 text-sm text-white/55">
                     <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                    <span>{business.address}</span>
+                    <span>{address}</span>
                   </li>
                 )}
               </ul>
@@ -178,10 +203,10 @@ export default function Footer() {
       {/* ── Legal strip — near-black ──────────────────────────────────────── */}
       <div className="bg-zinc-950">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30">
-          <p>© {year} {business.name}. All rights reserved.</p>
+          <p>© {year} {name}. All rights reserved.</p>
           <div className="flex flex-wrap gap-5 items-center justify-center">
-            {business.gst && (
-              <span className="font-mono">{business.gst}</span>
+            {gst && (
+              <span className="font-mono">{gst}</span>
             )}
             <Link href="/privacy-policy" className="hover:text-white/60 transition-colors">
               Privacy Policy

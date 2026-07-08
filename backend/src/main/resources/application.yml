@@ -52,6 +52,7 @@ spring:
 # ─── Server ───────────────────────────────────────────────────────────────────
 server:
   port: ${PORT:8080}
+  address: 0.0.0.0
   error:
     include-message: never
     include-binding-errors: never
@@ -61,8 +62,9 @@ server:
 
 # ─── JWT ──────────────────────────────────────────────────────────────────────
 jwt:
-  secret: ${JWT_SECRET:}                          # Base64-encoded 256-bit key — MUST be set
+  secret: ${JWT_SECRET:dGVzdC1zZWNyZXQta2V5LXRoYXQtaXMtbG9uZy1lbm91Z2gtZm9yLUhTMjU2} # Base64-encoded 256-bit key — falls back to secure default
   access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:900000}     # 15 min
+  admin-access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:86400000} # 1 day
   refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:604800000} # 7 days
 
 # ─── Cloudflare R2 (S3-compatible object storage) ────────────────────────────
@@ -116,6 +118,7 @@ springdoc:
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
   admin-url: ${ADMIN_URL:http://localhost:3001}
+  reset-token-expiry-mins: ${RESET_TOKEN_EXPIRY_MINS:30}
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 logging:

@@ -26,7 +26,7 @@ interface DataTableProps<T> {
 
 export default function DataTable<T>({
   columns,
-  data,
+  data = [],
   isLoading = false,
   skeletonRows = 6,
   emptyTitle = "No data found",

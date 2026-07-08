@@ -11,14 +11,15 @@ import java.math.BigDecimal;
 @Data
 public class ProductVariantRequest {
 
+    private Long id;
+
     @NotNull(message = "Variant type is required (SIZE, DESIGN, MATERIAL)")
     private VariantType type;
 
     @NotBlank(message = "Variant value is required")
     private String value;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.01", message = "Price must be > 0")
+    @DecimalMin(value = "0.00", message = "Price must be >= 0")
     private BigDecimal price;
 
     private int stockQuantity = 0;

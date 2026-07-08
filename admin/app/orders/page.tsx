@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import AdminLayout from "@/src/components/layout/AdminLayout";
 import PageHeader from "@/src/components/ui/PageHeader";
 import DataTable, { type Column } from "@/src/components/ui/DataTable";
@@ -12,7 +12,7 @@ import Button from "@/src/components/ui/Button";
 import Pagination from "@/src/components/ui/Pagination";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/src/components/ui/Badge";
 import { useAdminOrders } from "@/src/hooks/useOrders";
-import { formatPrice, formatDateTime } from "@/src/lib/utils";
+import { formatPrice, formatDateTime, formatDate } from "@/src/lib/utils";
 import type { Order, OrderStatus } from "@/src/types";
 
 const STATUS_OPTIONS = [
@@ -65,7 +65,7 @@ const columns: Column<Order>[] = [
   {
     key: "createdAt",
     header: "Date",
-    cell: (o) => <span className="text-xs text-muted-foreground">{formatDateTime(o.createdAt)}</span>,
+    cell: (o) => <span className="text-xs text-muted-foreground">{formatDate(o.createdAt)}</span>,
   },
   {
     key: "actions",
@@ -90,6 +90,12 @@ export default function OrdersPage() {
     search: search || undefined,
   });
 
+  const handleClear = () => {
+    setSearchInput("");
+    setSearch("");
+    setPage(0);
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 max-w-7xl mx-auto">
@@ -105,6 +111,17 @@ export default function OrdersPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search order number or customer…"
               prefix={<Search className="h-3.5 w-3.5" />}
+              suffix={
+                searchInput ? (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="hover:text-foreground transition-colors p-0.5 rounded-full hover:bg-muted"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : null
+              }
               className="flex-1"
             />
             <Button type="submit" variant="secondary">Search</Button>

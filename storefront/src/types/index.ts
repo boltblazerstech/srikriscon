@@ -29,7 +29,7 @@ export interface Category {
 }
 
 // ─── Product ─────────────────────────────────────────────────────────────────
-export type VariantType = "SIZE" | "DESIGN" | "MATERIAL";
+export type VariantType = "SIZE" | "DESIGN" | "MATERIAL" | "COLOR";
 
 export interface ProductVariant {
   id: number;
@@ -153,6 +153,7 @@ export interface OrderRequest {
   shippingPostalCode: string;
   shippingCountry: string;
   notes?: string;
+  paymentMethod?: string;
   items: {
     productId: number;
     variantId?: number;

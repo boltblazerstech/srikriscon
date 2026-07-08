@@ -95,3 +95,19 @@ export function useRefundOrder() {
     },
   });
 }
+
+export function useMarkOrderPaid() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await api.patch<ApiResponse<Order>>(
+        `/api/orders/${id}/mark-paid`
+      );
+      return data.data;
+    },
+    onSuccess: (_, id) => {
+      qc.invalidateQueries({ queryKey: ["admin", "orders"] });
+      qc.invalidateQueries({ queryKey: ["admin", "orders", id] });
+    },
+  });
+}

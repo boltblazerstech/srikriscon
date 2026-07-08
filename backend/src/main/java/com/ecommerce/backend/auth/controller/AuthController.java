@@ -59,12 +59,10 @@ public class AuthController {
     // ─── Password reset ───────────────────────────────────────────────────────
 
     @PostMapping("/forgot-password")
-    @Operation(summary = "Request a password reset link (valid 1 h) sent to the email")
+    @Operation(summary = "Request a password reset link sent to the email")
     public ApiResponse<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
         authService.forgotPassword(req);
-        // Always respond with success to prevent email enumeration
-        return ApiResponse.success(
-                "If that address is registered, you will receive a reset link shortly");
+        return ApiResponse.success("Password reset link has been sent to your email address");
     }
 
     @GetMapping("/validate-reset-token")

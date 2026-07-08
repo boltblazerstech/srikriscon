@@ -16,6 +16,7 @@ public class CmsPageRequest {
     private String content;
     private String excerpt;
     private CmsPage.Status status = CmsPage.Status.DRAFT;
+    private Boolean active;
     private String metaTitle;
     private String metaDescription;
 }

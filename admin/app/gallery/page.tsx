@@ -1,25 +1,21 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import {
-  DragDropContext, Droppable, Draggable, type DropResult,
+  type DropResult,
 } from "@hello-pangea/dnd";
-import { GripVertical, Trash2, Upload, X, Plus } from "lucide-react";
+import { Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "@/src/config/api";
-import AdminLayout from "@/src/components/layout/AdminLayout";
-import PageHeader from "@/src/components/ui/PageHeader";
-import Button from "@/src/components/ui/Button";
-import Modal from "@/src/components/ui/Modal";
 import LoadingSpinner from "@/src/components/ui/LoadingSpinner";
-import ConfirmDialog from "@/src/components/ui/ConfirmDialog";
 import {
   useGalleryImages, useAddGalleryImages, useDeleteGalleryImage, useReorderGallery,
 } from "@/src/hooks/useGallery";
 import { cn, extractApiError } from "@/src/lib/utils";
 import type { GalleryImage, UploadResponse } from "@/src/types";
+import { notFound } from "next/navigation";
+
 
 export default function GalleryPage() {
   const { data: images, isLoading } = useGalleryImages();
@@ -63,128 +59,129 @@ export default function GalleryPage() {
   }
 
   return (
-    <AdminLayout>
-      <div className="p-6 max-w-7xl mx-auto">
-        <PageHeader
-          title="Gallery"
-          description="Manage site images — drag to reorder"
-          action={
-            <Button icon={<Plus className="h-4 w-4" />} onClick={() => setUploadModal(true)}>
-              Upload Images
-            </Button>
-          }
-        />
+    notFound()
+    // <AdminLayout>
+    //   <div className="p-6 max-w-7xl mx-auto">
+    //     <PageHeader
+    //       title="Gallery"
+    //       description="Manage site images — drag to reorder"
+    //       action={
+    //         <Button icon={<Plus className="h-4 w-4" />} onClick={() => setUploadModal(true)}>
+    //           Upload Images
+    //         </Button>
+    //       }
+    //     />
 
-        {isLoading && (
-          <div className="flex justify-center py-20"><LoadingSpinner size="lg" /></div>
-        )}
+    //     {isLoading && (
+    //       <div className="flex justify-center py-20"><LoadingSpinner size="lg" /></div>
+    //     )}
 
-        {!isLoading && displayed.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-muted-foreground text-sm">No images yet.</p>
-            <Button
-              className="mt-4"
-              icon={<Upload className="h-4 w-4" />}
-              onClick={() => setUploadModal(true)}
-            >
-              Upload first images
-            </Button>
-          </div>
-        )}
+    //     {!isLoading && displayed.length === 0 && (
+    //       <div className="flex flex-col items-center justify-center py-20 text-center">
+    //         <p className="text-muted-foreground text-sm">No images yet.</p>
+    //         <Button
+    //           className="mt-4"
+    //           icon={<Upload className="h-4 w-4" />}
+    //           onClick={() => setUploadModal(true)}
+    //         >
+    //           Upload first images
+    //         </Button>
+    //       </div>
+    //     )}
 
-        {displayed.length > 0 && (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="gallery" direction="horizontal">
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="flex flex-wrap gap-3"
-                >
-                  {displayed.map((img, i) => (
-                    <Draggable
-                      key={img.id.toString()}
-                      draggableId={img.id.toString()}
-                      index={i}
-                    >
-                      {(dragProvided, snapshot) => (
-                        <div
-                          ref={dragProvided.innerRef}
-                          {...dragProvided.draggableProps}
-                          className={cn(
-                            "relative h-40 w-40 rounded-xl overflow-hidden border border-border group bg-muted flex-shrink-0",
-                            snapshot.isDragging && "ring-2 ring-primary shadow-xl"
-                          )}
-                        >
-                          <Image
-                            src={img.url}
-                            alt={img.altText ?? ""}
-                            fill
-                            className="object-cover"
-                          />
+    //     {displayed.length > 0 && (
+    //       <DragDropContext onDragEnd={handleDragEnd}>
+    //         <Droppable droppableId="gallery" direction="horizontal">
+    //           {(provided) => (
+    //             <div
+    //               ref={provided.innerRef}
+    //               {...provided.droppableProps}
+    //               className="flex flex-wrap gap-3"
+    //             >
+    //               {displayed.map((img, i) => (
+    //                 <Draggable
+    //                   key={img.id.toString()}
+    //                   draggableId={img.id.toString()}
+    //                   index={i}
+    //                 >
+    //                   {(dragProvided, snapshot) => (
+    //                     <div
+    //                       ref={dragProvided.innerRef}
+    //                       {...dragProvided.draggableProps}
+    //                       className={cn(
+    //                         "relative h-40 w-40 rounded-xl overflow-hidden border border-border group bg-muted flex-shrink-0",
+    //                         snapshot.isDragging && "ring-2 ring-primary shadow-xl"
+    //                       )}
+    //                     >
+    //                       <Image
+    //                         src={img.url}
+    //                         alt={img.altText ?? ""}
+    //                         fill
+    //                         className="object-cover"
+    //                       />
 
-                          {/* Drag handle */}
-                          <div
-                            {...dragProvided.dragHandleProps}
-                            className="absolute top-1.5 left-1.5 h-6 w-6 rounded-lg bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing"
-                          >
-                            <GripVertical className="h-3.5 w-3.5" />
-                          </div>
+    //                       {/* Drag handle */}
+    //                       <div
+    //                         {...dragProvided.dragHandleProps}
+    //                         className="absolute top-1.5 left-1.5 h-6 w-6 rounded-lg bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing"
+    //                       >
+    //                         <GripVertical className="h-3.5 w-3.5" />
+    //                       </div>
 
-                          {/* Delete */}
-                          <button
-                            type="button"
-                            onClick={() => setDeleteTarget(img)}
-                            className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-destructive text-destructive-fg flex items-center justify-center opacity-0 group-hover:opacity-100"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
+    //                       {/* Delete */}
+    //                       <button
+    //                         type="button"
+    //                         onClick={() => setDeleteTarget(img)}
+    //                         className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-destructive text-destructive-fg flex items-center justify-center opacity-0 group-hover:opacity-100"
+    //                       >
+    //                         <X className="h-3.5 w-3.5" />
+    //                       </button>
 
-                          {/* Order badge */}
-                          <div className="absolute bottom-1.5 left-1.5 h-5 min-w-5 px-1 rounded bg-black/50 text-white text-xs font-medium flex items-center justify-center">
-                            {i + 1}
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        )}
-      </div>
+    //                       {/* Order badge */}
+    //                       <div className="absolute bottom-1.5 left-1.5 h-5 min-w-5 px-1 rounded bg-black/50 text-white text-xs font-medium flex items-center justify-center">
+    //                         {i + 1}
+    //                       </div>
+    //                     </div>
+    //                   )}
+    //                 </Draggable>
+    //               ))}
+    //               {provided.placeholder}
+    //             </div>
+    //           )}
+    //         </Droppable>
+    //       </DragDropContext>
+    //     )}
+    //   </div>
 
-      {/* Upload Modal */}
-      <Modal
-        open={uploadModal}
-        onClose={() => setUploadModal(false)}
-        title="Upload Gallery Images"
-        size="md"
-      >
-        <UploadDropzone
-          onUploaded={async (urls) => {
-            try {
-              await addImages.mutateAsync(urls.map((url) => ({ imageUrl: url })));
-              toast.success(`${urls.length} image(s) added`);
-              setUploadModal(false);
-            } catch (err) {
-              toast.error(extractApiError(err));
-            }
-          }}
-        />
-      </Modal>
+    //   {/* Upload Modal */}
+    //   <Modal
+    //     open={uploadModal}
+    //     onClose={() => setUploadModal(false)}
+    //     title="Upload Gallery Images"
+    //     size="md"
+    //   >
+    //     <UploadDropzone
+    //       onUploaded={async (urls) => {
+    //         try {
+    //           await addImages.mutateAsync(urls.map((url) => ({ imageUrl: url })));
+    //           toast.success(`${urls.length} image(s) added`);
+    //           setUploadModal(false);
+    //         } catch (err) {
+    //           toast.error(extractApiError(err));
+    //         }
+    //       }}
+    //     />
+    //   </Modal>
 
-      <ConfirmDialog
-        open={!!deleteTarget}
-        onCancel={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-        title="Delete Image"
-        description="Remove this image from the gallery?"
-        confirmLabel="Delete"
-      />
-    </AdminLayout>
+    //   <ConfirmDialog
+    //     open={!!deleteTarget}
+    //     onCancel={() => setDeleteTarget(null)}
+    //     onConfirm={handleDelete}
+    //     title="Delete Image"
+    //     description="Remove this image from the gallery?"
+    //     confirmLabel="Delete"
+    //   />
+    // </AdminLayout>
   );
 }
 

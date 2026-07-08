@@ -67,9 +67,12 @@ public class ProductController {
 
     @GetMapping("/admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
-    @Operation(summary = "Admin: list all products including inactive (paginated)")
-    public ApiResponse<PagedResponse<ProductResponse>> adminList(@PageableDefault(size = 20) Pageable pageable) {
-        return ApiResponse.success(productService.findAllAdmin(pageable));
+    @Operation(summary = "Admin: list all products including inactive (paginated, with filters)")
+    public ApiResponse<PagedResponse<ProductResponse>> adminList(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ApiResponse.success(productService.findAllAdmin(categoryId, search, pageable));
     }
 
     @PostMapping
@@ -93,6 +96,14 @@ public class ProductController {
     public ApiResponse<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ApiResponse.success("Product deleted");
+    }
+
+    @PatchMapping("/{id}/active")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
+    @Operation(summary = "Admin: toggle product active status")
+    public ApiResponse<ProductResponse> toggleActive(
+            @PathVariable Long id, @RequestParam boolean active) {
+        return ApiResponse.success("Product status updated", productService.toggleActive(id, active));
     }
 
     // ─── Admin: image management ──────────────────────────────────────────────

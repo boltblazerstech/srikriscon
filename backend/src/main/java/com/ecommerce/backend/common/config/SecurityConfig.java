@@ -25,6 +25,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.ecommerce.backend.common.response.ApiResponse;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -66,17 +68,13 @@ public class SecurityConfig {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     objectMapper.writeValue(response.getWriter(),
-                            Map.of("success", false,
-                                   "message", "Authentication required",
-                                   "data",    null));
+                            ApiResponse.error("Authentication required"));
                 })
                 .accessDeniedHandler((request, response, e) -> {
                     response.setStatus(HttpStatus.FORBIDDEN.value());
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     objectMapper.writeValue(response.getWriter(),
-                            Map.of("success", false,
-                                   "message", "Access denied — insufficient permissions",
-                                   "data",    null));
+                            ApiResponse.error("Access denied — insufficient permissions"));
                 })
             );
 

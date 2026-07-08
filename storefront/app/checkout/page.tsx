@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,11 +42,27 @@ const STEPS = ["Contact", "Address", "Review & Pay"] as const;
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clear } = useCart();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const createOrder = useCreateOrder();
   const { pay, loading: payLoading } = useRazorpay();
   const [step, setStep] = useState(0);
   const [contactData, setContactData] = useState<ContactData | null>(null);
+
+  // Redirect to login if user is not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      toast.error("Please login to proceed to checkout");
+      router.push("/login?from=/checkout");
+    }
+  }, [loading, user, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // Redirect if cart is empty
   if (items.length === 0) {
@@ -117,7 +133,7 @@ export default function CheckoutPage() {
           <StepMotion key="address">
             <AddressStep
               onBack={() => setStep(0)}
-              onNext={async (address) => {
+              onNext={async (address, selectedPaymentMethod) => {
                 if (!contactData) return;
                 const name = `${contactData.firstName} ${contactData.lastName}`;
                 const req: OrderRequest = {
@@ -129,6 +145,7 @@ export default function CheckoutPage() {
                   shippingState:      address.state,
                   shippingPostalCode: address.postalCode,
                   shippingCountry:    address.country ?? "India",
+                  paymentMethod:      selectedPaymentMethod,
                   items: items.map((i) => ({
                     productId: i.productId,
                     variantId: i.variantId,
@@ -137,17 +154,22 @@ export default function CheckoutPage() {
                 };
                 try {
                   const order = await createOrder.mutateAsync(req);
-                  await pay({
-                    orderId: order.id,
-                    name,
-                    email: contactData.email,
-                    contact: contactData.phone,
-                    onSuccess: () => {
-                      clear();
-                      router.push(`/order-confirmation?orderId=${order.id}`);
-                    },
-                    onError: (err) => toast.error(err.message),
-                  });
+                  if (selectedPaymentMethod === "COD") {
+                    clear();
+                    router.push(`/order-confirmation?orderId=${order.id}`);
+                  } else {
+                    await pay({
+                      orderId: order.id,
+                      name,
+                      email: contactData.email,
+                      contact: contactData.phone,
+                      onSuccess: () => {
+                        clear();
+                        router.push(`/order-confirmation?orderId=${order.id}`);
+                      },
+                      onError: (err) => toast.error(err.message),
+                    });
+                  }
                 } catch (err: unknown) {
                   const msg = err instanceof Error ? err.message : "Something went wrong";
                   toast.error(msg);
@@ -217,7 +239,7 @@ function AddressStep({
   total,
 }: {
   onBack: () => void;
-  onNext: (data: AddressData) => void;
+  onNext: (data: AddressData, paymentMethod: "COD" | "RAZORPAY") => void;
   loading: boolean;
   items: ReturnType<typeof useCart>["items"];
   subtotal: number;
@@ -230,9 +252,15 @@ function AddressStep({
     formState: { errors },
   } = useForm<AddressData>({ resolver: zodResolver(addressSchema) });
 
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "RAZORPAY">("RAZORPAY");
+
+  const onSubmitForm = (data: AddressData) => {
+    onNext(data, paymentMethod);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-      <form onSubmit={handleSubmit(onNext)} className="lg:col-span-3 space-y-4">
+      <form onSubmit={handleSubmit(onSubmitForm)} className="lg:col-span-3 space-y-4">
         <Field label="Address Line 1" error={errors.line1?.message}>
           <input {...register("line1")} className={inputCls()} placeholder="House / Flat no., Street" />
         </Field>
@@ -255,12 +283,56 @@ function AddressStep({
             <input {...register("country")} className={inputCls()} defaultValue="India" readOnly />
           </Field>
         </div>
-        <div className="flex gap-3 pt-2">
+
+        <div className="space-y-3 pt-4 border-t border-border">
+          <h3 className="text-md font-semibold text-foreground">Select Payment Method</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div
+              onClick={() => setPaymentMethod("COD")}
+              className={`p-4 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition-all select-none ${
+                paymentMethod === "COD"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-muted-foreground"
+              }`}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-sm">Cash On Delivery</span>
+                <div className={`h-4 w-4 rounded-full border flex items-center justify-center ${
+                  paymentMethod === "COD" ? "border-primary bg-primary" : "border-muted-foreground"
+                }`}>
+                  {paymentMethod === "COD" && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">Pay in cash when your order is delivered.</p>
+            </div>
+
+            <div
+              onClick={() => setPaymentMethod("RAZORPAY")}
+              className={`p-4 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition-all select-none ${
+                paymentMethod === "RAZORPAY"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-muted-foreground"
+              }`}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-sm">Pay Online (UPI/Cards)</span>
+                <div className={`h-4 w-4 rounded-full border flex items-center justify-center ${
+                  paymentMethod === "RAZORPAY" ? "border-primary bg-primary" : "border-muted-foreground"
+                }`}>
+                  {paymentMethod === "RAZORPAY" && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">Pay securely via UPI, Cards, or NetBanking.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3 pt-6">
           <Button variant="outline" onClick={onBack} type="button" size="lg" className="flex-1">
             Back
           </Button>
           <Button type="submit" loading={loading} size="lg" className="flex-2 flex-1">
-            Pay {formatPrice(total)}
+            {paymentMethod === "COD" ? `Place Order (COD) - ${formatPrice(total)}` : `Pay & Place Order - ${formatPrice(total)}`}
           </Button>
         </div>
       </form>

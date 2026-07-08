@@ -16,6 +16,7 @@ public class CmsPageResponse {
     private String content;
     private String excerpt;
     private String status;
+    private boolean active;
     private String metaTitle;
     private String metaDescription;
     private LocalDateTime createdAt;
@@ -29,6 +30,7 @@ public class CmsPageResponse {
                 .content(p.getContent())
                 .excerpt(p.getExcerpt())
                 .status(p.getStatus().name())
+                .active(p.getStatus() == CmsPage.Status.PUBLISHED)
                 .metaTitle(p.getMetaTitle())
                 .metaDescription(p.getMetaDescription())
                 .createdAt(p.getCreatedAt())

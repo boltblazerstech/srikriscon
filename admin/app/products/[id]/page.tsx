@@ -26,7 +26,7 @@ const variantSchema = z.object({
   id:            z.number().optional(),
   type:          z.string().min(1, "Required"),
   value:         z.string().min(1, "Required"),
-  price:         z.number().min(0),
+  price:         z.preprocess((val) => val === "" || val === undefined || val === null || isNaN(Number(val)) ? null : Number(val), z.number().min(0).nullable().optional()),
   stockQuantity: z.number().int().min(0),
   active:        z.boolean(),
 });
@@ -57,12 +57,13 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const update = useUpdateProduct();
 
   const {
-    register, handleSubmit, control, reset,
+    register, handleSubmit, control, reset, watch, setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       name: "", slug: "", description: "", price: 0, stockQuantity: 0,
+      categoryId: "",
       active: true, featured: false, images: [], variants: [],
       metaTitle: "", metaDescription: "",
     },
@@ -71,7 +72,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const { fields, append, remove } = useFieldArray({ control, name: "variants" });
 
   useEffect(() => {
-    if (product) {
+    if (product && categories) {
       reset({
         name:            product.name,
         slug:            product.slug,
@@ -90,7 +91,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         metaDescription: product.metaDescription ?? "",
       });
     }
-  }, [product, reset]);
+  }, [product, categories, reset]);
 
   const categoryOptions = [
     { value: "", label: "No category" },
@@ -104,7 +105,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         body: {
           ...data,
           categoryId: data.categoryId ? Number(data.categoryId) : undefined,
-        },
+        } as any,
       });
       toast.success("Product updated");
       router.push("/products");
@@ -173,14 +174,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               <Controller
                 control={control}
                 name="categoryId"
-                render={({ field }) => (
-                  <Select
-                    label="Category"
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                    options={categoryOptions}
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <Select
+                      label="Category"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      options={categoryOptions}
+                    />
+                  );
+                }}
               />
             </div>
 
@@ -237,10 +240,47 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                     className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg border border-border bg-muted/30"
                   >
                     <div className="col-span-2">
-                      <Input {...register(`variants.${i}.type`)} placeholder="Color" />
+                      <Controller
+                        control={control}
+                        name={`variants.${i}.type`}
+                        render={({ field: f, fieldState: { error } }) => (
+                          <Select
+                            value={f.value}
+                            onChange={f.onChange}
+                            error={error?.message}
+                            options={[
+                              { value: "SIZE", label: "Size" },
+                              { value: "DESIGN", label: "Design" },
+                              { value: "MATERIAL", label: "Material" },
+                              { value: "COLOR", label: "Color" },
+                            ]}
+                            placeholder="Type"
+                          />
+                        )}
+                      />
                     </div>
                     <div className="col-span-2">
-                      <Input {...register(`variants.${i}.value`)} placeholder="Red" />
+                      {watch(`variants.${i}.type`) === "COLOR" ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            {...register(`variants.${i}.value`)}
+                            placeholder="#C9A84C or Red"
+                            error={errors.variants?.[i]?.value?.message}
+                          />
+                          <input
+                            type="color"
+                            value={watch(`variants.${i}.value`)?.startsWith("#") ? watch(`variants.${i}.value`) : "#000000"}
+                            onChange={(e) => setValue(`variants.${i}.value`, e.target.value)}
+                            className="w-10 h-9 p-0.5 border border-border rounded-lg cursor-pointer bg-white flex-shrink-0"
+                          />
+                        </div>
+                      ) : (
+                        <Input
+                          {...register(`variants.${i}.value`)}
+                          placeholder="Red"
+                          error={errors.variants?.[i]?.value?.message}
+                        />
+                      )}
                     </div>
                     <div className="col-span-2">
                       <Input

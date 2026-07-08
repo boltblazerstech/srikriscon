@@ -9,6 +9,8 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 
 import java.net.URI;
 
@@ -21,13 +23,19 @@ public class S3Config {
 
     @Bean
     public S3Client s3Client() {
+        S3Configuration s3Config = S3Configuration.builder()
+                .chunkedEncodingEnabled(false)
+                .build();
+
         return S3Client.builder()
+                .httpClient(UrlConnectionHttpClient.builder().build())
                 .endpointOverride(URI.create(r2Properties.getEndpoint()))
                 .region(Region.of(r2Properties.getRegion()))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(
                                 r2Properties.getAccessKey(),
                                 r2Properties.getSecretKey())))
+                .serviceConfiguration(s3Config)
                 .forcePathStyle(true) // required for R2
                 .build();
     }

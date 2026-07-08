@@ -133,9 +133,7 @@ public class AuthService {
         String userType = resolveUserType(email);
 
         if (userType == null) {
-            // Unknown email — log silently, return success to caller
-            log.debug("Password reset requested for unknown email: {}", email);
-            return;
+            throw new BadRequestException("Email address is not registered");
         }
 
         // Invalidate any existing unused tokens for this email
@@ -151,11 +149,11 @@ public class AuthService {
                 .token(token)
                 .email(email)
                 .userType(userType)
-                .expiresAt(LocalDateTime.now().plusHours(1))
+                .expiresAt(LocalDateTime.now().plusMinutes(appProperties.getResetTokenExpiryMins()))
                 .build();
         passwordResetTokenRepository.save(prt);
 
-        emailService.sendPasswordReset(email, resetLink);
+        emailService.sendPasswordReset(email, resetLink, appProperties.getResetTokenExpiryMins());
         log.info("Password reset token issued for {} (type={})", email, userType);
     }
 
@@ -222,7 +220,7 @@ public class AuthService {
         String at  = jwtService.generateAccessToken(admin);
         String raw = generateSecureToken();
         saveRefreshToken(raw, null, admin);
-        return AuthResponse.of(at, raw, jwtProperties.getAccessTokenExpiryMs() / 1000, admin);
+        return AuthResponse.of(at, raw, jwtProperties.getAdminAccessTokenExpiryMs() / 1000, admin);
     }
 
     private void saveRefreshToken(String raw, User user, AdminUser admin) {

@@ -15,6 +15,7 @@ import GrainOverlay from "@/src/components/ui/GrainOverlay";
 
 
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 
 
 
@@ -89,6 +90,7 @@ const INDUSTRIES = [
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AboutPage() {
+  const { value: storeName } = useSetting("storeName");
   return (
     <div className="min-h-screen">
 
@@ -136,7 +138,7 @@ export default function AboutPage() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-base sm:text-lg text-white/45 font-light max-w-xl mx-auto leading-relaxed"
           >
-            {theme.business.name} — a trusted name in premium packaging, combining structural strength with visual excellence.
+            {storeName || theme.business.name} — a trusted name in premium packaging, combining structural strength with visual excellence.
           </motion.p>
         </div>
       </section>

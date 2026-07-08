@@ -13,6 +13,7 @@ const labels: Record<VariantType, string> = {
   SIZE: "Size",
   DESIGN: "Design",
   MATERIAL: "Material",
+  COLOR: "Color",
 };
 
 export default function VariantSelector({
@@ -59,7 +60,17 @@ export default function VariantSelector({
                         "opacity-40 cursor-not-allowed line-through"
                     )}
                   >
-                    {v.value}
+                    <span className="flex items-center gap-1.5">
+                      {type === "COLOR" && (
+                        <span
+                          className="w-3.5 h-3.5 rounded-full border border-black/10 flex-shrink-0"
+                          style={{
+                            backgroundColor: v.value.startsWith("#") ? v.value : v.value.toLowerCase(),
+                          }}
+                        />
+                      )}
+                      {v.value}
+                    </span>
                   </button>
                 );
               })}

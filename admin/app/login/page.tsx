@@ -48,6 +48,7 @@ export default function LoginPage() {
       // login() calls router.push("/dashboard") internally
     } catch (err) {
       setError(extractApiError(err));
+      console.error("Login error:", err);
     }
   }
 

@@ -26,6 +26,7 @@ export function useUpdateSettings() {
       const requests = Object.entries(body).map(([key, value]) => ({
         key,
         value: String(value ?? ""),
+        "public": true,
       }));
       const { data } = await api.put<ApiResponse<StoreSettings>>(
         "/api/settings/batch",
@@ -33,8 +34,18 @@ export function useUpdateSettings() {
       );
       return data.data;
     },
-    onSuccess: (updated) => {
-      qc.setQueryData(["admin", "settings"], updated);
+    onSuccess: (updatedList) => {
+      qc.setQueryData(["admin", "settings"], (old: any) => {
+        const next = { ...old };
+        if (Array.isArray(updatedList)) {
+          updatedList.forEach((s: any) => {
+            if (s && s.key) {
+              next[s.key] = s.value ?? "";
+            }
+          });
+        }
+        return next;
+      });
     },
   });
 }

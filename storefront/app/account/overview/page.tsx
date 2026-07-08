@@ -5,7 +5,7 @@ import { Package, ArrowRight, Clock, CheckCircle, Truck } from "lucide-react";
 import { useAuth } from "@/src/context/AuthContext";
 import { useMyOrders } from "@/src/hooks/useOrders";
 import { OrderStatusBadge } from "@/src/components/account/OrderStatusBadge";
-import { formatPrice } from "@/src/lib/utils";
+import { formatPrice, parseSafeDate } from "@/src/lib/utils";
 import Spinner from "@/src/components/ui/Spinner";
 
 export default function OverviewPage() {
@@ -89,7 +89,7 @@ export default function OverviewPage() {
                     #{order.orderNumber}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                    {parseSafeDate(order.createdAt).toLocaleDateString("en-IN", {
                       day: "numeric", month: "short", year: "numeric",
                     })}
                     {" · "}

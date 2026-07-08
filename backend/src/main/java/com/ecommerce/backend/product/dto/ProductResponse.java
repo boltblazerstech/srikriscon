@@ -125,7 +125,7 @@ public class ProductResponse {
                     .id(v.getId())
                     .type(v.getType().name())
                     .value(v.getValue())
-                    .price(v.getPrice())
+                    .price(v.getPrice() != null ? v.getPrice() : v.getProduct().getPrice())
                     .stockQuantity(v.getStockQuantity())
                     .active(v.isActive())
                     .sortOrder(v.getSortOrder())

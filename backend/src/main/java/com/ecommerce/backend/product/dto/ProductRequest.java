@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProductRequest {
@@ -41,4 +42,7 @@ public class ProductRequest {
     private int sortOrder = 0;
     private String metaTitle;
     private String metaDescription;
+
+    private List<String> images;
+    private List<ProductVariantRequest> variants;
 }

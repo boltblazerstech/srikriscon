@@ -31,7 +31,7 @@ public class CategoryController {
 
     @GetMapping("/admin")
     @Operation(summary = "Admin: paginated list of all categories (incl. inactive)")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<PagedResponse<CategoryResponse>> listAdmin(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size) {
@@ -56,19 +56,19 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<CategoryResponse> create(@Valid @RequestBody CategoryRequest req) {
         return ApiResponse.success("Category created", categoryService.create(req));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<CategoryResponse> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest req) {
         return ApiResponse.success("Category updated", categoryService.update(id, req));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         categoryService.delete(id);
         return ApiResponse.success("Category deleted");

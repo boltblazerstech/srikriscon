@@ -17,7 +17,7 @@ export const theme = {
 
     highlight:         "#B5A57A", // Muted Beige — hero sections, highlights
 
-    background:        "#FFFFFF", // main background for product sections
+    background:        "#F5F7F7", // main background for product sections
     foreground:        "#333333", // body text
 
     muted:             "#F5F5F5", // Light Gray — secondary backgrounds and cards
@@ -62,6 +62,7 @@ export const theme = {
     { label: "Home",       href: "/" },
     { label: "Products",   href: "/products" },
     { label: "Categories", href: "/categories" },
+    { label: "Blogs", href: "/blog" },
     { label: "About",      href: "/about" },
     { label: "Contact",    href: "/contact" },
   ],

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Package, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMyOrders } from "@/src/hooks/useOrders";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/src/components/account/OrderStatusBadge";
-import { formatPrice } from "@/src/lib/utils";
+import { formatPrice, parseSafeDate } from "@/src/lib/utils";
 import Spinner from "@/src/components/ui/Spinner";
 
 export default function OrdersPage() {
@@ -69,7 +69,7 @@ export default function OrdersPage() {
                         </p>
                       </td>
                       <td className="px-4 py-4 text-muted-foreground">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        {parseSafeDate(order.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric", month: "short", year: "numeric",
                         })}
                       </td>
@@ -108,7 +108,7 @@ export default function OrdersPage() {
                     <div>
                       <p className="text-sm font-semibold text-foreground">#{order.orderNumber}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        {parseSafeDate(order.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric", month: "short", year: "numeric",
                         })}
                         {" · "}{order.items.length} item{order.items.length !== 1 ? "s" : ""}

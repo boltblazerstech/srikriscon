@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import Button from "@/src/components/ui/Button";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
+import { useSetting } from "@/src/hooks/useSettings";
 
 const schema = z.object({
   name:    z.string().min(1, "Required"),
@@ -21,6 +22,16 @@ type FormData = z.infer<typeof schema>;
 const { business } = theme;
 
 export default function ContactPage() {
+  const { value: storePhone } = useSetting("storePhone");
+  const { value: storeEmail } = useSetting("storeEmail");
+  const { value: storeAddress } = useSetting("storeAddress");
+  const { value: whatsappNumber } = useSetting("whatsappNumber");
+
+  const phone = storePhone || business.phone;
+  const email = storeEmail || business.email;
+  const address = storeAddress || business.address;
+  const whatsapp = whatsappNumber || business.whatsapp;
+
   const {
     register,
     handleSubmit,
@@ -29,10 +40,9 @@ export default function ContactPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(data: FormData) {
-    // Forward to WhatsApp if configured, otherwise show success (backend contact form can be wired later)
     const msg = `*Contact Form Enquiry*\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone ?? "-"}\n\nMessage:\n${data.message}`;
-    if (business.whatsapp) {
-      window.open(whatsappLink(business.whatsapp, msg), "_blank");
+    if (whatsapp) {
+      window.open(whatsappLink(whatsapp, msg), "_blank");
     }
     toast.success("Message sent! We'll get back to you shortly.");
     reset();
@@ -76,29 +86,29 @@ export default function ContactPage() {
         {/* Info */}
         <div className="space-y-6">
           <div className="rounded-2xl border border-border bg-white p-6 space-y-5">
-            {business.phone && (
+            {phone && (
               <InfoRow icon={Phone} label="Phone">
-                <a href={`tel:${business.phone}`} className="text-sm text-foreground hover:text-primary transition-colors">
-                  {business.phone}
+                <a href={`tel:${phone}`} className="text-sm text-foreground hover:text-primary transition-colors">
+                  {phone}
                 </a>
               </InfoRow>
             )}
-            {business.email && (
+            {email && (
               <InfoRow icon={Mail} label="Email">
-                <a href={`mailto:${business.email}`} className="text-sm text-foreground hover:text-primary transition-colors break-all">
-                  {business.email}
+                <a href={`mailto:${email}`} className="text-sm text-foreground hover:text-primary transition-colors break-all">
+                  {email}
                 </a>
               </InfoRow>
             )}
-            {business.address && (
+            {address && (
               <InfoRow icon={MapPin} label="Address">
-                <p className="text-sm text-muted-foreground">{business.address}</p>
+                <p className="text-sm text-muted-foreground">{address}</p>
               </InfoRow>
             )}
-            {business.whatsapp && (
+            {whatsapp && (
               <InfoRow icon={MessageCircle} label="WhatsApp">
                 <a
-                  href={whatsappLink(business.whatsapp)}
+                  href={whatsappLink(whatsapp)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-success hover:underline"

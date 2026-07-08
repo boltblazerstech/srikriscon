@@ -210,7 +210,7 @@ export default function UsersPage() {
 
         <DataTable
           columns={columns}
-          data={users ?? []}
+          data={users?.content ?? []}
           isLoading={isLoading}
           rowKey={(u) => u.id}
           emptyTitle="No admin users found"

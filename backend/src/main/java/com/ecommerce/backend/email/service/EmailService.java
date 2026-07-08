@@ -109,13 +109,13 @@ public class EmailService {
     // ─── Auth emails ──────────────────────────────────────────────────────────
 
     @Async
-    public void sendPasswordReset(String to, String resetLink) {
+    public void sendPasswordReset(String to, String resetLink, int expiryMins) {
         String subject = "Reset Your Password";
         String body = """
-                <p>Click the link below to reset your password. This link is valid for 1 hour.</p>
+                <p>Click the link below to reset your password. This link is valid for %d minutes.</p>
                 <p><a href="%s">Reset Password</a></p>
                 <p>If you did not request this, please ignore this email.</p>
-                """.formatted(resetLink);
+                """.formatted(expiryMins, resetLink);
         sendHtml(to, subject, body);
     }
 }

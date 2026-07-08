@@ -16,22 +16,27 @@ import com.ecommerce.backend.product.entity.ProductVariant;
 import com.ecommerce.backend.product.repository.ProductImageRepository;
 import com.ecommerce.backend.product.repository.ProductRepository;
 import com.ecommerce.backend.product.repository.ProductVariantRepository;
+import com.ecommerce.backend.upload.service.StorageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductImageRepository imageRepository;
     private final ProductVariantRepository variantRepository;
     private final CategoryRepository categoryRepository;
+    private final StorageService storageService;
 
     // ─── Public listing endpoints ─────────────────────────────────────────────
 
@@ -73,8 +78,9 @@ public class ProductService {
     // ─── Admin listing ────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
-    public PagedResponse<ProductResponse> findAllAdmin(Pageable pageable) {
-        return PagedResponse.of(productRepository.findByDeletedAtIsNull(pageable), ProductResponse::from);
+    public PagedResponse<ProductResponse> findAllAdmin(Long categoryId, String search, Pageable pageable) {
+        String trimmedSearch = (search != null && !search.isBlank()) ? search.trim() : null;
+        return PagedResponse.of(productRepository.searchAdmin(categoryId, trimmedSearch, pageable), ProductResponse::from);
     }
 
     // ─── CRUD ─────────────────────────────────────────────────────────────────
@@ -106,7 +112,27 @@ public class ProductService {
         Product p = getOrThrow(id);
         p.setDeletedAt(LocalDateTime.now());
         p.setActive(false);
+
+        // Physically delete all product images from storage
+        if (p.getImages() != null && !p.getImages().isEmpty()) {
+            p.getImages().forEach(img -> {
+                try {
+                    storageService.deleteByUrl(img.getUrl());
+                } catch (Exception e) {
+                    log.error("Failed to delete product image from storage on product delete: {}", img.getUrl(), e);
+                }
+            });
+            p.getImages().clear();
+        }
+
         productRepository.save(p);
+    }
+
+    @Transactional
+    public ProductResponse toggleActive(Long id, boolean active) {
+        Product p = getOrThrow(id);
+        p.setActive(active);
+        return ProductResponse.from(productRepository.save(p));
     }
 
     // ─── Image management ─────────────────────────────────────────────────────
@@ -131,10 +157,19 @@ public class ProductService {
     @Transactional
     public ProductResponse removeImage(Long productId, Long imageId) {
         Product p = getOrThrow(productId);
-        boolean removed = p.getImages().removeIf(i -> i.getId().equals(imageId));
-        if (!removed) {
-            throw new ResourceNotFoundException("Image", imageId);
+        ProductImage image = p.getImages().stream()
+                .filter(i -> i.getId().equals(imageId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Image", imageId));
+
+        p.getImages().remove(image);
+
+        try {
+            storageService.deleteByUrl(image.getUrl());
+        } catch (Exception e) {
+            log.error("Failed to delete product image from storage: {}", image.getUrl(), e);
         }
+
         return ProductResponse.from(productRepository.save(p));
     }
 
@@ -233,6 +268,87 @@ public class ProductService {
         } else {
             p.setCategory(null);
         }
+
+        // Process images
+        if (req.getImages() != null) {
+            // Remove images that are not in the request anymore
+            List<ProductImage> removedImages = p.getImages().stream()
+                    .filter(img -> !req.getImages().contains(img.getUrl()))
+                    .collect(Collectors.toList());
+            p.getImages().removeAll(removedImages);
+
+            // Delete files from storage
+            removedImages.forEach(img -> {
+                try {
+                    storageService.deleteByUrl(img.getUrl());
+                } catch (Exception e) {
+                    log.error("Failed to delete product image from storage: {}", img.getUrl(), e);
+                }
+            });
+            
+            // Add new images or update existing positions
+            for (int i = 0; i < req.getImages().size(); i++) {
+                String url = req.getImages().get(i);
+                final int index = i;
+                java.util.Optional<ProductImage> existing = p.getImages().stream()
+                        .filter(img -> img.getUrl().equals(url))
+                        .findFirst();
+                if (existing.isPresent()) {
+                    ProductImage img = existing.get();
+                    img.setSortOrder(index);
+                    img.setPrimary(index == 0);
+                } else {
+                    p.getImages().add(ProductImage.builder()
+                            .product(p)
+                            .url(url)
+                            .sortOrder(index)
+                            .primary(index == 0)
+                            .build());
+                }
+            }
+        }
+
+        // Process variants
+        if (req.getVariants() != null) {
+            java.util.Set<Long> reqVariantIds = req.getVariants().stream()
+                    .map(ProductVariantRequest::getId)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toSet());
+
+            // Remove variants not in the request
+            p.getVariants().removeIf(v -> v.getId() != null && !reqVariantIds.contains(v.getId()));
+
+            // Update existing or add new ones
+            for (int i = 0; i < req.getVariants().size(); i++) {
+                ProductVariantRequest vReq = req.getVariants().get(i);
+                if (vReq.getId() != null) {
+                    final Long vId = vReq.getId();
+                    java.util.Optional<ProductVariant> existing = p.getVariants().stream()
+                            .filter(v -> v.getId().equals(vId))
+                            .findFirst();
+                    if (existing.isPresent()) {
+                        ProductVariant v = existing.get();
+                        v.setType(vReq.getType());
+                        v.setValue(vReq.getValue());
+                        v.setPrice(vReq.getPrice());
+                        v.setStockQuantity(vReq.getStockQuantity());
+                        v.setActive(vReq.isActive());
+                        v.setSortOrder(i);
+                    }
+                } else {
+                    p.getVariants().add(ProductVariant.builder()
+                            .product(p)
+                            .type(vReq.getType())
+                            .value(vReq.getValue())
+                            .price(vReq.getPrice())
+                            .stockQuantity(vReq.getStockQuantity())
+                            .active(vReq.isActive())
+                            .sortOrder(i)
+                            .build());
+                }
+            }
+        }
+
         return p;
     }
 

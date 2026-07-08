@@ -4,10 +4,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 import { fadeUp } from "@/src/lib/animations";
 import GrainOverlay from "@/src/components/ui/GrainOverlay";
 
 export default function CtaBanner() {
+  const { value: storeName } = useSetting("storeName");
   return (
     <section className="relative overflow-hidden bg-zinc-950 py-28 sm:py-36">
 
@@ -58,7 +60,7 @@ export default function CtaBanner() {
 
           {/* Subtext */}
           <p className="mt-8 text-base sm:text-lg text-white/40 font-light max-w-lg mx-auto leading-relaxed">
-            {theme.business.name}&apos;s full range of premium packaging —
+            {storeName || theme.business.name}&apos;s full range of premium packaging —
             designed for excellence, built for lasting impact.
           </p>
 

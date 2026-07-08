@@ -22,7 +22,7 @@ export default function ProductDetailPage() {
 
   const [selectedVariants, setSelectedVariants] = useState<
     Record<VariantType, number | undefined>
-  >({ SIZE: undefined, DESIGN: undefined, MATERIAL: undefined });
+  >({ SIZE: undefined, DESIGN: undefined, MATERIAL: undefined, COLOR: undefined });
   const [qty, setQty] = useState(1);
 
   // Related products from same category
@@ -49,6 +49,7 @@ export default function ProductDetailPage() {
       SIZE: undefined,
       DESIGN: undefined,
       MATERIAL: undefined,
+      COLOR: undefined,
       [type]: id,
     }));
   }
