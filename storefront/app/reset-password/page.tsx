@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,13 +11,14 @@ import api from "@/src/lib/api";
 import { theme } from "@/src/config/theme";
 import { useSetting } from "@/src/hooks/useSettings";
 import Button from "@/src/components/ui/Button";
+import Spinner from "@/src/components/ui/Spinner";
 
 interface ResetPasswordFormValues {
   newPassword:      string;
   confirmPassword:  string;
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -255,5 +256,17 @@ export default function ResetPasswordPage() {
         </div>
       </motion.div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
