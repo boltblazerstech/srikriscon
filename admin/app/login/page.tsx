@@ -37,8 +37,7 @@ export default function LoginPage() {
   }, [isLoading, user, router]);
 
   const fillSuperAdmin = () => {
-    setValue("username", "superadmin@example.com", { shouldValidate: true });
-    setValue("password", "SuperAdmin@123", { shouldValidate: true });
+   
   };
 
   async function onSubmit(data: FormData) {
