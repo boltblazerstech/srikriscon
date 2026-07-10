@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import { useStoreSettings } from "@/src/hooks/useSettings";
+import { useAuth } from "@/src/hooks/useAuth";
 
 export default function Favicon() {
-  const { data: settings } = useStoreSettings();
+  const { token } = useAuth();
+  const { data: settings } = useStoreSettings(!!token);
   const faviconUrl = settings?.faviconUrl;
 
   useEffect(() => {

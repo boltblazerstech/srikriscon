@@ -19,7 +19,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && typeof window !== "undefined") {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_user");
-      window.location.href = "/login";
+      const path = window.location.pathname;
+      if (path !== "/login" && path !== "/forgot-password" && path !== "/reset-password") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }

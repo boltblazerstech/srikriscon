@@ -52,6 +52,7 @@ public class ProductVariant {
     private int stockQuantity = 0;
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 

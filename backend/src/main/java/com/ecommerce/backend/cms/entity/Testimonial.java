@@ -28,9 +28,9 @@ public class Testimonial {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, columnDefinition = "TINYINT")
+    @Column(nullable = false)
     @Builder.Default
-    private int rating = 5;
+    private byte rating = 5;
 
     @Column(name = "image_url", length = 512)
     private String imageUrl;
@@ -40,6 +40,7 @@ public class Testimonial {
     private int sortOrder = 0;
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 

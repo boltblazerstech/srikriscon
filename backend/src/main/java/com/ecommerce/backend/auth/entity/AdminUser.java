@@ -46,6 +46,7 @@ public class AdminUser implements UserDetails {
     private Role role = Role.ADMIN;
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 

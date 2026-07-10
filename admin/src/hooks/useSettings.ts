@@ -3,7 +3,7 @@ import api from "@/src/config/api";
 import type { ApiResponse, StoreSettings } from "@/src/types";
 
 // Backend: GET /api/settings  (returns Map<String,String> of all settings, admin-only)
-export function useStoreSettings() {
+export function useStoreSettings(enabled: boolean = true) {
   return useQuery({
     queryKey: ["admin", "settings"],
     queryFn: async () => {
@@ -13,6 +13,7 @@ export function useStoreSettings() {
       return data.data;
     },
     staleTime: 300_000,
+    enabled,
   });
 }
 

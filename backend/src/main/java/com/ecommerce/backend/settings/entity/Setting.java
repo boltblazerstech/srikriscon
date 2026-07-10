@@ -31,6 +31,7 @@ public class Setting {
     private String description;
 
     @Column(name = "is_public", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean isPublic = false;
 

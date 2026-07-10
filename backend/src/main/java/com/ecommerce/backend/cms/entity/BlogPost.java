@@ -27,7 +27,7 @@ public class BlogPost {
     @Column(columnDefinition = "TEXT")
     private String excerpt;
 
-    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     private String category;

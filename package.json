@@ -1,5 +1,26 @@
 {
   "dependencies": {
-    "bcryptjs": "^3.0.3"
-  }
+    "bcryptjs": "^3.0.3",
+    "mysql2": "^3.22.6",
+    "pg": "^8.22.0"
+  },
+  "name": "srikriscon",
+  "version": "1.0.0",
+  "description": "A production-ready, full-stack ecommerce monorepo. White-label — clone once, skin per client.",
+  "main": "check.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boltblazerstech/srikriscon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/boltblazerstech/srikriscon/issues"
+  },
+  "homepage": "https://github.com/boltblazerstech/srikriscon#readme"
 }

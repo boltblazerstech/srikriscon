@@ -41,6 +41,7 @@ public class Category {
     private List<Category> children = new ArrayList<>();
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 

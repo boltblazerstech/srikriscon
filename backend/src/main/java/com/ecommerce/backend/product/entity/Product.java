@@ -76,10 +76,12 @@ public class Product {
     private List<ProductVariant> variants = new ArrayList<>();
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 
     @Column(name = "is_featured", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean featured = false;
 
