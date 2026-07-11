@@ -2,6 +2,7 @@ import HeroBanner from "@/src/components/home/HeroBanner";
 import MarqueeBanner from "@/src/components/home/MarqueeBanner";
 import CategoryGrid from "@/src/components/home/CategoryGrid";
 import FeaturedProducts from "@/src/components/home/FeaturedProducts";
+import FeaturedBanner from "@/src/components/home/FeaturedBanner";
 import BlogSection from "@/src/components/home/BlogSection";
 import WhyChooseUs from "@/src/components/home/WhyChooseUs";
 import TestimonialsSection from "@/src/components/home/TestimonialsSection";
@@ -15,19 +16,24 @@ export default function HomePage() {
       <MarqueeBanner />
       <CategoryGrid />
       <FeaturedProducts />
-      <BlogSection />
+      
 
       {/* white → teal */}
       <WaveDivider from="#ffffff" to="#0B3A42" />
       <WhyChooseUs />
       {/* teal → muted (testimonials bg ≈ muted colour) */}
-      <WaveDivider from="#0B3A42" to="#f5f5f5" />
+      {/* <WaveDivider from="#0B3A42" to="#f5f5f5" />
+
+      <br />
+      <br /> */}
+      <FeaturedBanner />
 
       <TestimonialsSection />
-
+      
       {/* muted → near-black (zinc-950) */}
       <WaveDivider from="#f5f5f5" to="#09090b" />
       <CtaBanner />
+      <BlogSection />
     </>
   );
 }

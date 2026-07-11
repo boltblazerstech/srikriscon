@@ -43,8 +43,6 @@ function slugify(text: string) {
 export default function NewBlogPage() {
   const router = useRouter();
   const createMutation = useCreateBlog();
-  const [isSlugEdited, setIsSlugEdited] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -69,10 +67,10 @@ export default function NewBlogPage() {
   const title = watch("title");
 
   useEffect(() => {
-    if (title && !isSlugEdited) {
+    if (title) {
       setValue("slug", slugify(title), { shouldDirty: true });
     }
-  }, [title, isSlugEdited, setValue]);
+  }, [title, setValue]);
 
   async function onSubmit(data: FormData) {
     try {
@@ -110,23 +108,12 @@ export default function NewBlogPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="bg-white rounded-xl border border-border p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Title"
-                placeholder="e.g. The Future of Packaging"
-                error={errors.title?.message}
-                {...register("title")}
-              />
-
-              <Input
-                label="Slug"
-                placeholder="e.g. future-of-packaging"
-                error={errors.slug?.message}
-                {...register("slug", {
-                  onChange: () => setIsSlugEdited(true),
-                })}
-              />
-            </div>
+            <Input
+              label="Title"
+              placeholder="e.g. The Future of Packaging"
+              error={errors.title?.message}
+              {...register("title")}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Input

@@ -34,7 +34,7 @@ export default function BlogsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-7xl mx-auto">
         <PageHeader
           title="Blogs"
           description="Manage your website's journal, articles, and industry insights"
