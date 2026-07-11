@@ -17,6 +17,12 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderNumber(String orderNumber);
     Page<Order> findByUserId(Long userId, Pageable pageable);
+    boolean existsByUserId(Long userId);
+    
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
+    void unlinkUserOrders(@Param("userId") Long userId);
+
     Page<Order> findByStatus(Order.Status status, Pageable pageable);
 
     @Query("SELECT o FROM Order o WHERE " +

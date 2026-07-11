@@ -7,6 +7,7 @@ import com.ecommerce.backend.auth.repository.UserRepository;
 import com.ecommerce.backend.common.exception.BadRequestException;
 import com.ecommerce.backend.common.exception.ResourceNotFoundException;
 import com.ecommerce.backend.common.response.PagedResponse;
+import com.ecommerce.backend.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminCustomerService {
 
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
     public PagedResponse<CustomerResponse> findAll(Pageable pageable) {
@@ -66,6 +68,7 @@ public class AdminCustomerService {
         if (customer.getRole() != User.Role.CUSTOMER) {
             throw new BadRequestException("User is not a customer");
         }
+        orderRepository.unlinkUserOrders(id);
         userRepository.delete(customer);
     }
 }

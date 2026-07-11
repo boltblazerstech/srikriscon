@@ -1,0 +1,3 @@
+ALTER TABLE orders DROP FOREIGN KEY fk_order_user;
+ALTER TABLE orders MODIFY user_id BIGINT NULL;
+ALTER TABLE orders ADD CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
