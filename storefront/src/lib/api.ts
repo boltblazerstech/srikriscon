@@ -17,6 +17,7 @@ api.interceptors.request.use((config) => {
 
 // ── Response: unwrap ApiResponse wrapper ───────────────────────────────────
 function cleanErrorMessage(msg: string): string {
+  console.log("Raw error message:", msg);
   if (!msg) return "An unexpected error occurred. Please try again.";
   const lower = msg.toLowerCase();
 

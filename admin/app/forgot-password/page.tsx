@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
   async function onSubmit(data: FormData) {
     setError("");
     try {
-      await api.post("/api/admin/auth/forgot-password", { email: data.email });
+      await api.post("/api/auth/forgot-password", { email: data.email });
       setSent(true);
     } catch (err) {
       setError(extractApiError(err));
