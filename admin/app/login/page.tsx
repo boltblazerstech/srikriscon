@@ -134,13 +134,13 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button
+            {/* <button
               type="button"
               onClick={fillSuperAdmin}
               className="w-full h-10 rounded-lg border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors mb-2"
             >
               Fill SuperAdmin Credentials
-            </button>
+            </button> */}
 
             <button
               type="submit"
