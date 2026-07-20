@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function TopBanner() {
   return (
-    <div className="bg-[#0B3A42] text-white h-10 px-4 relative z-[60] overflow-hidden flex items-center">
+    <div className="bg-[#0B3A42] text-white h-10 px-4 relative overflow-hidden flex items-center">
       <div className="max-w-7xl mx-auto w-full flex items-center justify-center gap-3 sm:gap-6 text-center">
         
         {/* Left Icon */}
