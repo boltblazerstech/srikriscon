@@ -14,7 +14,6 @@ import {
   Package,
   Settings,
   ChevronDown,
-  Heart,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { theme } from "@/src/config/theme";
@@ -141,13 +140,6 @@ export default function Navbar() {
                   <Search className="h-5 w-5" />
                 </Link>
 
-                {/* Wishlist */}
-                <Link 
-                  href="/wishlist" 
-                  className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-[#fafafa] hover:bg-[#f4f4f4] text-zinc-600 hover:text-accent transition-all duration-200"
-                >
-                  <Heart className="h-5 w-5" />
-                </Link>
 
                 {/* Account */}
                 <div className="relative flex items-center" ref={userMenuRef}>
