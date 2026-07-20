@@ -82,32 +82,36 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col pointer-events-none">
-      <div className="pointer-events-auto shadow-sm">
+      <div className={cn(
+        "pointer-events-auto transition-all duration-300 shadow-[0_2px_18px_rgba(0,0,0,0.05)]",
+        scrolled ? "bg-white/85 backdrop-blur-[14px]" : "bg-[#FCFAF7]"
+      )}>
         <TopBanner />
+        <div className="h-[17px]" />
 
         {/* ── Main Header Row ───────────────────────────────────────────────── */}
         <div className={cn(
-          "bg-white transition-all duration-300 border-b border-zinc-100",
-          scrolled ? "py-2" : "py-4"
+          "transition-all duration-300 flex items-center w-full",
+          scrolled ? "h-[60px]" : "h-[70px]"
         )}>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-8">
+          <div className="mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 w-full">
+            <div className="flex items-center justify-between gap-16 sm:gap-20">
               
               {/* Logo */}
-              <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
-                <div className="relative h-10 w-10 sm:h-12 sm:w-12 transition-transform group-hover:scale-105">
+              <Link href="/" className="flex-shrink-0 flex items-center gap-3.5 group mr-6 lg:mr-12">
+                <div className="relative h-[50px] w-[50px] sm:h-[56px] sm:w-[56px] transition-transform group-hover:scale-105 bg-[#0D4A50] rounded-full">
                   <Image
                     src={logoUrl || "/sri-kriscon-logo.webp"}
                     alt={theme.business.name}
                     fill
-                    className="object-contain"
+                    className="object-contain p-2"
                   />
                 </div>
                 <div className="hidden lg:block">
-                  <h1 className="text-primary font-black text-xl leading-none tracking-tighter">
+                  <h1 className="text-primary font-black text-xl sm:text-[22px] leading-none tracking-tighter">
                     {(storeName || theme.business.name).toUpperCase()}
                   </h1>
-                  <p className="text-[10px] text-zinc-400 font-bold tracking-[0.2em] mt-0.5">
+                  <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold tracking-[0.38em] mt-0.5 sm:mt-1.5">
                     {(storeTagline || "INDUSTRIES").toUpperCase()}
                   </p>
                 </div>
@@ -116,39 +120,47 @@ export default function Navbar() {
               {/* Centered Search Bar */}
               <form 
                 onSubmit={handleSearch}
-                className="hidden md:flex flex-1 max-w-xl relative group"
+                className="hidden md:flex flex-1 max-w-[60rem] relative group h-[54px] items-center"
               >
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products, categories..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-2.5 pl-11 pr-4 text-sm outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary/20"
+                  placeholder="Search boxes, bags & packaging..."
+                  className="w-full bg-white border border-accent rounded-[28px] h-full pl-12 pr-4 text-sm outline-none transition-all shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.04),_0_2px_8px_rgba(0,0,0,0.04)] focus:border-2 focus:border-accent focus:shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
                 />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-primary transition-colors" />
+                <Search className="absolute left-[18px] top-1/2 -translate-y-1/2 h-5 w-5 text-accent transition-colors" />
                 <button type="submit" className="hidden">Search</button>
               </form>
 
               {/* Right Actions */}
-              <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 ml-6 lg:ml-12">
                 
                 {/* Mobile Search Icon */}
                 <Link href="/search" className="md:hidden p-2 text-zinc-600">
                   <Search className="h-5 w-5" />
                 </Link>
 
+                {/* Wishlist */}
+                <Link 
+                  href="/wishlist" 
+                  className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-[#fafafa] hover:bg-[#f4f4f4] text-zinc-600 hover:text-accent transition-all duration-200"
+                >
+                  <Heart className="h-5 w-5" />
+                </Link>
+
                 {/* Account */}
-                <div className="relative" ref={userMenuRef}>
+                <div className="relative flex items-center" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-50 transition-colors text-zinc-600"
+                    className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-[#fafafa] hover:bg-[#f4f4f4] text-zinc-600 hover:text-accent transition-all duration-200"
                   >
                     {isAuthenticated ? (
                       <span className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white">
                         {initials}
                       </span>
                     ) : (
-                      <User className="h-6 w-6" />
+                      <User className="h-5 w-5" />
                     )}
                   </button>
 
@@ -158,7 +170,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="absolute right-0 mt-2 w-56 bg-white border border-zinc-100 rounded-2xl shadow-2xl p-2 z-50"
+                        className="absolute right-0 mt-2 w-56 bg-white border border-zinc-100 rounded-2xl shadow-2xl p-2 z-50 pointer-events-auto"
                       >
                         {isAuthenticated ? (
                           <>
@@ -188,10 +200,13 @@ export default function Navbar() {
                 </div>
 
                 {/* Cart */}
-                <Link href="/cart" className="relative p-2 group">
-                  <ShoppingCart className="h-6 w-6 text-zinc-600 group-hover:text-primary transition-colors" />
+                <Link 
+                  href="/cart" 
+                  className="relative hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-[#fafafa] hover:bg-[#f4f4f4] text-zinc-600 hover:text-accent transition-all duration-200 group"
+                >
+                  <ShoppingCart className="h-5 w-5" />
                   {hydrated && count > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-5 w-5 bg-accent text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white">
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-accent text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-[#FCFAF7]">
                       {count > 99 ? "9+" : count}
                     </span>
                   )}
@@ -210,32 +225,32 @@ export default function Navbar() {
         </div>
 
         {/* ── Navigation Row ────────────────────────────────────────────────── */}
-        <div className="hidden md:block bg-white/80 backdrop-blur-md border-b border-zinc-100">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="flex items-center justify-center gap-1 py-1">
+        <div className="hidden md:block border-b border-[#EBE6DD] h-[55px]">
+          <div className="mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 h-full">
+            <nav className="flex items-center justify-center gap-2 h-full">
               {theme.nav.map((link) => {
                 const isCategories = link.label === "Categories";
                 return (
                   <div 
                     key={link.href}
-                    className="relative group"
+                    className="relative group h-full flex items-center"
                     onMouseEnter={() => isCategories && setCategoriesOpen(true)}
                     onMouseLeave={() => isCategories && setCategoriesOpen(false)}
                   >
                     <Link
                       href={link.href}
                       className={cn(
-                        "px-4 py-3 text-[13px] font-bold uppercase tracking-widest transition-all relative block",
-                        pathname === link.href || (isCategories && categoriesOpen) ? "text-primary" : "text-zinc-500 hover:text-primary"
+                        "px-5 py-2 text-xs font-medium uppercase tracking-[0.18em] transition-colors relative flex items-center h-full",
+                        pathname === link.href || (isCategories && categoriesOpen) ? "text-zinc-900" : "text-zinc-700 hover:text-zinc-900"
                       )}
                     >
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         {link.label}
-                        {isCategories && <ChevronDown className={cn("h-3 w-3 transition-transform duration-300", categoriesOpen && "rotate-180")} />}
+                        {isCategories && <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300", categoriesOpen && "rotate-180")} />}
                       </div>
                       <span className={cn(
-                        "absolute bottom-2 left-4 right-4 h-0.5 bg-primary transition-all duration-300",
-                        pathname === link.href || (isCategories && categoriesOpen) ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+                        "absolute bottom-2 left-5 right-5 h-0.5 bg-accent transition-transform duration-300 origin-center ease-out",
+                        pathname === link.href || (isCategories && categoriesOpen) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                       )} />
                     </Link>
 
@@ -247,7 +262,7 @@ export default function Navbar() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="absolute left-1/2 -translate-x-1/2 top-full w-[280px] bg-white border border-zinc-100 rounded-2xl shadow-2xl p-3 z-50 overflow-hidden"
+                            className="absolute left-1/2 -translate-x-1/2 top-full w-[280px] bg-white border border-[#EBE6DD] rounded-2xl shadow-2xl p-3 z-50 overflow-hidden"
                           >
                             <CategoriesGrid onClose={() => setCategoriesOpen(false)} />
                           </motion.div>
@@ -292,7 +307,7 @@ export default function Navbar() {
                         <div key={link.href} className="border-b border-zinc-50">
                           <button 
                             onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                            className="flex items-center justify-between w-full py-4 text-lg font-bold text-left"
+                            className="flex items-center justify-between w-full py-4 text-lg font-medium text-left"
                           >
                             {link.label}
                             <ChevronDown className={cn("h-5 w-5 transition-transform", mobileCategoriesOpen && "rotate-180")} />
@@ -306,7 +321,7 @@ export default function Navbar() {
                                 className="overflow-hidden bg-zinc-50 rounded-xl mb-4"
                               >
                                 <div className="p-4 space-y-3">
-                                  <Link href="/categories" className="block text-sm font-bold text-primary">All Categories</Link>
+                                  <Link href="/categories" className="block text-sm font-medium text-primary">All Categories</Link>
                                   <MobileCategoriesList onClick={() => setMenuOpen(false)} />
                                 </div>
                               </motion.div>
@@ -319,7 +334,7 @@ export default function Navbar() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="block py-4 text-lg font-bold border-b border-zinc-50"
+                        className="block py-4 text-lg font-medium border-b border-zinc-50"
                       >
                         {link.label}
                       </Link>
@@ -393,7 +408,7 @@ function CategoriesGrid({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 transition-all"
           >
-            <p className="text-sm font-bold text-zinc-900 group-hover:text-primary transition-colors">{cat.name}</p>
+            <p className="text-sm font-medium text-zinc-900 group-hover:text-primary transition-colors">{cat.name}</p>
             <ChevronDown className="h-3.5 w-3.5 text-zinc-300 -rotate-90 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
           </Link>
         ))}

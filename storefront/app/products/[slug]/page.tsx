@@ -12,6 +12,8 @@ import ProductGrid from "@/src/components/product/ProductGrid";
 import Button from "@/src/components/ui/Button";
 import Badge from "@/src/components/ui/Badge";
 import Spinner from "@/src/components/ui/Spinner";
+import FaqSection from "@/src/components/home/FaqSection";
+import ProductReviews from "@/src/components/product/ProductReviews";
 import { formatPrice, cn } from "@/src/lib/utils";
 import type { ProductVariant, VariantType } from "@/src/types";
 
@@ -248,6 +250,9 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      {/* Product Reviews */}
+      <ProductReviews />
+
       {/* Related products */}
       {related.length > 0 && (
         <section className="mt-16">
@@ -255,6 +260,9 @@ export default function ProductDetailPage() {
           <ProductGrid products={related} />
         </section>
       )}
+
+      {/* FAQ Section */}
+      <FaqSection className="mt-20 md:mt-24 px-0 max-w-none border-t border-border pt-16" />
     </div>
   );
 }

@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
 import { useSetting } from "@/src/hooks/useSettings";
 
-const { business, nav } = theme;
+const { business } = theme;
 
-// ─── Inline brand SVGs (lucide-react doesn't include brand icons) ─────────────
+// ─── Inline brand SVGs ─────────────────────────────────────────────
 const icons = {
   Instagram: () => (
     <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
@@ -45,6 +46,7 @@ export default function Footer() {
   const { value: instagramUrl } = useSetting("instagramUrl");
   const { value: youtubeUrl } = useSetting("youtubeUrl");
   const { value: gstNumber } = useSetting("gstNumber");
+  const { value: logoUrlSetting } = useSetting("logoUrl");
 
   const name = storeName || business.name;
   const tagline = storeTagline || business.tagline;
@@ -56,37 +58,55 @@ export default function Footer() {
   const instagram = instagramUrl || business.instagram;
   const youtube = youtubeUrl || business.youtube;
   const gst = gstNumber || business.gst;
+  const logoUrl = logoUrlSetting || "/sri-kriscon-logo.webp";
 
   return (
     <footer>
-
-      {/* ── Body — primary teal ───────────────────────────────────────────── */}
-      <div className="relative bg-primary overflow-hidden">
-
-        {/* Large watermark — decorative background text */}
+      {/* ── Main Footer Block — primary theme teal ────────────────────────── */}
+      <div className="relative bg-[#0B3A42] overflow-hidden text-zinc-300">
+        
+        {/* Subtle decorative background text */}
         <span
           aria-hidden
-          className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex justify-center text-[13vw] font-black text-white/[0.04] leading-none whitespace-nowrap overflow-hidden"
+          className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex justify-center text-[13vw] font-black text-white/[0.015] leading-none whitespace-nowrap overflow-hidden"
         >
           {name}
         </span>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-14">
-
-          {/* ── Main grid ─────────────────────────────────────────────────── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-14 border-b border-white/[0.08]">
-
-            {/* Brand column */}
-            <div className="lg:col-span-2">
-              <p className="font-display text-2xl font-bold text-white tracking-tight leading-tight">
-                {name}
+        <div className="relative z-10 mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 pt-16 pb-14">
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-14 pb-14 border-b border-white/[0.08]">
+            
+            {/* Column 1: Brand & Logo */}
+            <div className="flex flex-col items-start">
+              <Link href="/" className="flex items-center gap-3 mb-4 group">
+                <div className="relative h-11 w-11 bg-[#0D4A50] rounded-full flex-shrink-0 transition-transform group-hover:scale-105">
+                  <Image
+                    src={logoUrl || "/sri-kriscon-logo.webp"}
+                    alt={name}
+                    fill
+                    className="object-contain p-1.5"
+                  />
+                </div>
+                <div>
+                  <p className="font-display text-lg font-bold text-white tracking-tight leading-none uppercase">
+                    {name}
+                  </p>
+                  <p className="text-[8px] text-zinc-400 font-bold tracking-[0.25em] mt-1.5 uppercase">
+                    {(tagline.split("•")[0] || "INDUSTRIES").toUpperCase()}
+                  </p>
+                </div>
+              </Link>
+              <div className="w-8 h-[2px] bg-accent mb-4" />
+              <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+                Premium industrial packaging solutions. Built for performance, designed for durability.
               </p>
-              <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
-                {tagline}
-              </p>
 
-              {/* Social icons — brand-specific hover colours */}
-              <div className="mt-7 flex flex-wrap gap-2.5">
+              {/* Social icons */}
+              <h4 className="text-[10px] font-extrabold tracking-[0.2em] text-white/90 uppercase mb-3">
+                FOLLOW US
+              </h4>
+              <div className="flex flex-wrap gap-2.5">
                 {whatsapp && (
                   <SocialIcon
                     href={whatsappLink(whatsapp)}
@@ -130,94 +150,141 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Navigate */}
+            {/* Column 2: Quick Links */}
             <div>
-              <h3 className="text-[10px] font-extrabold tracking-[0.3em] text-accent uppercase mb-6">
-                Navigate
+              <h3 className="text-[11px] font-extrabold tracking-[0.25em] text-white uppercase">
+                QUICK LINKS
               </h3>
-              <ul className="space-y-3">
-                {nav.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group flex items-center text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <span className="h-px w-0 flex-shrink-0 bg-accent group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+              <div className="w-8 h-[2px] bg-accent mt-2 mb-6" />
+              <ul className="space-y-3.5">
                 <li>
-                  <Link
-                    href="/account/orders"
-                    className="group flex items-center text-sm text-white/55 hover:text-white transition-colors duration-200"
-                  >
-                    <span className="h-px w-0 flex-shrink-0 bg-accent group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                    Track Order
+                  <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/products" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/categories" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    Categories
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    Contact
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Contact */}
+            {/* Column 3: Support */}
             <div>
-              <h3 className="text-[10px] font-extrabold tracking-[0.3em] text-accent uppercase mb-6">
-                Get In Touch
+              <h3 className="text-[11px] font-extrabold tracking-[0.25em] text-white uppercase">
+                SUPPORT
               </h3>
+              <div className="w-8 h-[2px] bg-accent mt-2 mb-6" />
+              <ul className="space-y-3.5">
+                <li>
+                  <Link href="/contact#faq" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    FAQs
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                    Blogs
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Contact */}
+            <div>
+              <h3 className="text-[11px] font-extrabold tracking-[0.25em] text-white uppercase">
+                CONTACT
+              </h3>
+              <div className="w-8 h-[2px] bg-accent mt-2 mb-6" />
               <ul className="space-y-4">
                 {phone && (
-                  <li>
-                    <a
-                      href={`tel:${phone}`}
-                      className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <Phone className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
+                  <li className="flex items-center gap-3.5 group">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 border border-zinc-800 text-accent group-hover:text-white transition-colors duration-200 flex-shrink-0">
+                      <Phone className="h-4 w-4" />
+                    </div>
+                    <a href={`tel:${phone}`} className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
                       {phone}
                     </a>
                   </li>
                 )}
                 {email && (
-                  <li>
-                    <a
-                      href={`mailto:${email}`}
-                      className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <Mail className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                      <span className="break-all">{email}</span>
+                  <li className="flex items-center gap-3.5 group">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 border border-zinc-800 text-accent group-hover:text-white transition-colors duration-200 flex-shrink-0">
+                      <Mail className="h-4 w-4" />
+                    </div>
+                    <a href={`mailto:${email}`} className="text-sm text-zinc-400 hover:text-white transition-colors duration-200 break-all">
+                      {email}
+                    </a>
+                  </li>
+                )}
+                {whatsapp && (
+                  <li className="flex items-center gap-3.5 group">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 border border-zinc-800 text-accent group-hover:text-white transition-colors duration-200 flex-shrink-0">
+                      <MessageCircle className="h-4 w-4" />
+                    </div>
+                    <a href={whatsappLink(whatsapp)} target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                      WhatsApp Chat
                     </a>
                   </li>
                 )}
                 {address && (
-                  <li className="flex items-start gap-3 text-sm text-white/55">
-                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                    <span>{address}</span>
+                  <li className="flex items-start gap-3.5 group">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 border border-zinc-800 text-accent group-hover:text-white transition-colors duration-200 flex-shrink-0 mt-0.5">
+                      <MapPin className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm text-zinc-400 leading-relaxed">
+                      {address}
+                    </span>
                   </li>
                 )}
               </ul>
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
 
       {/* ── Legal strip — near-black ──────────────────────────────────────── */}
-      <div className="bg-zinc-950">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30">
+      <div className="bg-[#09090b] border-t border-white/[0.04]">
+        <div className="mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>© {year} {name}. All rights reserved.</p>
-          <div className="flex flex-wrap gap-5 items-center justify-center">
+          <div className="flex flex-wrap gap-3 sm:gap-5 items-center justify-center">
             {gst && (
-              <span className="font-mono">{gst}</span>
+              <span className="font-mono text-[10px] text-zinc-600">{gst}</span>
             )}
-            <Link href="/privacy-policy" className="hover:text-white/60 transition-colors">
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-white/60 transition-colors">
-              Terms
+            <span className="text-zinc-800 select-none">•</span>
+            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+              Terms of Service
+            </Link>
+            <span className="text-zinc-800 select-none">•</span>
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
+              Shipping Policy
+            </Link>
+            <span className="text-zinc-800 select-none">•</span>
+            <Link href="/contact" className="hover:text-zinc-300 transition-colors">
+              Warranty Registration
             </Link>
           </div>
         </div>
       </div>
-
     </footer>
   );
 }
@@ -226,7 +293,7 @@ function SocialIcon({
   href,
   label,
   icon,
-  hoverBg = "hover:bg-white/20",
+  hoverBg = "hover:bg-white/10",
 }: {
   href: string;
   label: string;
@@ -239,7 +306,7 @@ function SocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.08] border border-white/[0.12] text-white/60 hover:text-white hover:border-transparent transition-all duration-300 ${hoverBg}`}
+      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.08] text-zinc-400 hover:text-white transition-all duration-300 ${hoverBg}`}
     >
       {icon}
     </a>

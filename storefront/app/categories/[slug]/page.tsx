@@ -22,28 +22,20 @@ export default function CategoryPage() {
 
   return (
     <div>
-      {/* Category hero */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-accent/5 h-48 sm:h-64">
-        {category?.imageUrl && (
-          <Image
-            src={category.imageUrl}
-            alt={category.name ?? ""}
-            fill
-            className="object-cover opacity-30"
-            sizes="100vw"
-          />
-        )}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+      {/* Category header */}
+      <div className="bg-[#F5F7F7] border-b border-border py-12 sm:py-16 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {catLoading ? (
             <Spinner />
           ) : (
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-accent mb-2">
+                Category Collection
+              </span>
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight">
                 {category?.name ?? "Category"}
               </h1>
-              {category?.description && (
-                <p className="mt-2 text-muted-foreground max-w-lg">{category.description}</p>
-              )}
+              <div className="h-[2px] w-12 bg-accent mt-4" />
             </div>
           )}
         </div>

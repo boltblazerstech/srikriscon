@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, ChevronRight } from "lucide-react";
 import { useBlogs } from "@/src/hooks/useBlogs";
 import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
 import { formatDate } from "@/src/lib/utils";
@@ -53,14 +53,18 @@ export default function BlogSection() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
         >
           {featuredPosts.map((post) => (
-            <motion.article key={post.id} variants={staggerItem} className="group flex flex-col h-full">
-              <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-zinc-100 mb-6">
+            <motion.article 
+              key={post.id} 
+              variants={staggerItem} 
+              className="bg-white rounded-3xl overflow-hidden border border-zinc-100/85 shadow-sm hover:shadow-[0_20px_50px_rgba(11,58,66,0.06)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group"
+            >
+              <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/10] overflow-hidden">
                 {post.imageUrl ? (
                   <Image
                     src={post.imageUrl}
                     alt={post.title}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 ) : (
@@ -68,46 +72,48 @@ export default function BlogSection() {
                     Sri Kriscon Journal
                   </div>
                 )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 {post.category && (
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-[#0B3A42] shadow-sm">
                       {post.category}
                     </span>
                   </div>
                 )}
               </Link>
 
-              <div className="flex items-center gap-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-3 w-3" />
-                  {formatDate(post.createdAt)}
-                </div>
-                {post.readTime && (
+              <div className="p-6 sm:p-7 flex flex-col flex-1">
+                <div className="flex items-center gap-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="h-3 w-3" />
-                    {post.readTime}
+                    <Calendar className="h-3.5 w-3.5" />
+                    {formatDate(post.createdAt)}
                   </div>
-                )}
-              </div>
+                  {post.readTime && (
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5" />
+                      {post.readTime}
+                    </div>
+                  )}
+                </div>
 
-              <Link href={`/blog/${post.slug}`} className="block group-hover:text-accent transition-colors">
-                <h3 className="text-xl font-bold text-primary leading-tight mb-3">
-                  {post.title}
-                </h3>
-              </Link>
-
-              <p className="text-zinc-500 text-sm leading-relaxed mb-6 line-clamp-3">
-                {post.excerpt}
-              </p>
-
-              <div className="mt-auto">
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-primary group-hover:gap-3 transition-all"
-                >
-                  Read Article
-                  <ArrowRight className="h-3 w-3" />
+                <Link href={`/blog/${post.slug}`} className="block">
+                  <h3 className="font-display text-[18px] font-bold text-[#0B3A42] leading-snug mb-3 group-hover:text-accent transition-colors duration-300 line-clamp-2">
+                    {post.title}
+                  </h3>
                 </Link>
+
+                <div className="mt-auto pt-5 border-t border-zinc-100 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                    By {post.author || "Sri Kriscon"}
+                  </span>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-[#0B3A42] group-hover:text-accent group-hover:gap-2.5 transition-all duration-300"
+                  >
+                    Read Article
+                    <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
               </div>
             </motion.article>
           ))}

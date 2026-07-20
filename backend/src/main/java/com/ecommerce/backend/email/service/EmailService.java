@@ -109,13 +109,50 @@ public class EmailService {
     // ─── Auth emails ──────────────────────────────────────────────────────────
 
     @Async
-    public void sendPasswordReset(String to, String resetLink, int expiryMins) {
-        String subject = "Reset Your Password";
+    public void sendPasswordReset(String to, String resetLink, int expiryMins, String userType) {
+        boolean isAdmin = "ADMIN".equalsIgnoreCase(userType);
+        String subject = isAdmin ? "[Sri Kriscon] Admin Portal Password Reset" : "[Sri Kriscon] Customer Account Password Reset";
+        String accountType = isAdmin ? "Administrator (Admin Portal)" : "Customer (Storefront)";
+        String buttonColor = isAdmin ? "#E6007E" : "#0B3A42";
+
         String body = """
-                <p>Click the link below to reset your password. This link is valid for %d minutes.</p>
-                <p><a href="%s">Reset Password</a></p>
-                <p>If you did not request this, please ignore this email.</p>
-                """.formatted(expiryMins, resetLink);
+            <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 12px; background-color: #ffffff;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="display: inline-block; font-size: 24px; font-weight: bold; color: #0B3A42; letter-spacing: 1px;">
+                        Sri Kriscon
+                    </div>
+                </div>
+                <div style="border-top: 3px solid %s; padding-top: 24px;">
+                    <h2 style="color: #333333; font-size: 20px; margin-top: 0; font-weight: 600; text-align: center;">%s Password Reset</h2>
+                    <p style="color: #666666; font-size: 15px; line-height: 1.6; margin-top: 20px;">
+                        Hello,
+                    </p>
+                    <p style="color: #666666; font-size: 15px; line-height: 1.6;">
+                        We received a request to reset the password for the <strong>%s</strong> account associated with this email address.
+                    </p>
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="%s" style="display: inline-block; background-color: %s; color: #ffffff; text-decoration: none; padding: 12px 32px; font-weight: bold; border-radius: 30px; font-size: 15px;">
+                            Reset Password
+                        </a>
+                    </div>
+                    <p style="color: #666666; font-size: 14px; line-height: 1.6; background-color: #f5f7f7; padding: 12px; border-radius: 8px;">
+                        <strong>Important Security Note:</strong> This reset link is valid for <strong>%d minutes</strong>. If you did not make this request, you can safely ignore this email — your account remains secure.
+                    </p>
+                    <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 24px 0;" />
+                    <p style="color: #999999; font-size: 12px; text-align: center; margin-bottom: 0;">
+                        This is an automated email from Sri Kriscon. Please do not reply directly to this message.
+                    </p>
+                </div>
+            </div>
+            """.formatted(
+                buttonColor,
+                isAdmin ? "Admin Portal" : "Customer Account",
+                accountType,
+                resetLink,
+                buttonColor,
+                expiryMins
+            );
+
         sendHtml(to, subject, body);
     }
 }

@@ -153,7 +153,7 @@ public class AuthService {
                 .build();
         passwordResetTokenRepository.save(prt);
 
-        emailService.sendPasswordReset(email, resetLink, appProperties.getResetTokenExpiryMins());
+        emailService.sendPasswordReset(email, resetLink, appProperties.getResetTokenExpiryMins(), userType);
         log.info("Password reset token issued for {} (type={})", email, userType);
     }
 
