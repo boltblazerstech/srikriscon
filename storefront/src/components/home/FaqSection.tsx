@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
 export interface FaqItem {
@@ -32,9 +32,17 @@ const defaultFaqs: FaqItem[] = [
   }
 ];
 
-export default function FaqSection({ items, className }: { items?: FaqItem[]; className?: string }) {
-  const allFaqs = items && items.length > 0 ? [...items, ...defaultFaqs] : defaultFaqs;
-  const [openIndex, setOpenIndex] = useState<number | null>(0); // Default open the first one like the reference image
+export default function FaqSection({
+  items,
+  isProductPage = false,
+  className,
+}: {
+  items?: FaqItem[];
+  isProductPage?: boolean;
+  className?: string;
+}) {
+  const displayFaqs = isProductPage ? (items ?? []) : (items && items.length > 0 ? items : defaultFaqs);
+  const [openIndex, setOpenIndex] = useState<number | null>(displayFaqs.length > 0 ? 0 : null);
 
   function toggle(index: number) {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -50,63 +58,78 @@ export default function FaqSection({ items, className }: { items?: FaqItem[]; cl
           Frequently Asked Questions
         </h2>
         <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
-          Find answers to common questions about our products, customization options, and ordering process.
+          {isProductPage
+            ? "Find answers to questions specific to this product."
+            : "Find answers to common questions about our products, customization options, and ordering process."}
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto space-y-4">
-        {allFaqs.map((faq, index) => {
-          const isOpen = openIndex === index;
-          return (
-            <div
-              key={index}
-              className={cn(
-                "rounded-[20px] overflow-hidden transition-all duration-300 bg-white",
-                isOpen 
-                  ? "border-2 border-[#0B3A42] shadow-md" 
-                  : "border border-zinc-200 shadow-sm bg-zinc-50/50"
-              )}
-            >
-              <button
-                onClick={() => toggle(index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left font-semibold text-foreground focus:outline-none group"
-              >
-                <span className={cn(
-                  "text-sm sm:text-base pr-4 transition-colors",
-                  isOpen ? "text-[#0B3A42] font-bold" : "text-zinc-800 group-hover:text-primary"
-                )}>
-                  {faq.question}
-                </span>
-                
-                <span className="flex-shrink-0">
-                  {isOpen ? (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B3A42] text-white transition-all duration-300">
-                      <ChevronUp className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5F5F5] text-zinc-400 group-hover:bg-zinc-200 group-hover:text-zinc-600 transition-all duration-300">
-                      <ChevronDown className="h-4 w-4" />
-                    </span>
-                  )}
-                </span>
-              </button>
-
+      {displayFaqs.length === 0 ? (
+        /* Placeholder state when no FAQs are defined for a product */
+        <div className="max-w-3xl mx-auto text-center py-12 px-6 rounded-3xl border border-dashed border-zinc-300 bg-zinc-50/70 shadow-xs">
+          <div className="h-12 w-12 rounded-full bg-pink-50 text-[#E6007E] flex items-center justify-center mx-auto mb-3">
+            <HelpCircle className="h-6 w-6" />
+          </div>
+          <h3 className="text-base font-bold text-zinc-800">No FAQs Available</h3>
+          <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto leading-relaxed">
+            No specific questions have been added for this product yet. Have a custom requirement? Feel free to contact our team.
+          </p>
+        </div>
+      ) : (
+        <div className="max-w-3xl mx-auto space-y-4">
+          {displayFaqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
               <div
+                key={index}
                 className={cn(
-                  "transition-all duration-300 ease-in-out overflow-hidden",
-                  isOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+                  "rounded-[20px] overflow-hidden transition-all duration-300 bg-white",
+                  isOpen 
+                    ? "border-2 border-[#0B3A42] shadow-md" 
+                    : "border border-zinc-200 shadow-sm bg-zinc-50/50"
                 )}
               >
-                <div className="px-6 pb-6 pt-2 text-sm text-zinc-500 leading-relaxed border-t border-zinc-100">
-                  <div className="pt-4">
-                    {faq.answer}
+                <button
+                  onClick={() => toggle(index)}
+                  className="w-full px-6 py-5 flex items-center justify-between text-left font-semibold text-foreground focus:outline-none group"
+                >
+                  <span className={cn(
+                    "text-sm sm:text-base pr-4 transition-colors",
+                    isOpen ? "text-[#0B3A42] font-bold" : "text-zinc-800 group-hover:text-primary"
+                  )}>
+                    {faq.question}
+                  </span>
+                  
+                  <span className="flex-shrink-0">
+                    {isOpen ? (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B3A42] text-white transition-all duration-300">
+                        <ChevronUp className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5F5F5] text-zinc-400 group-hover:bg-zinc-200 group-hover:text-zinc-600 transition-all duration-300">
+                        <ChevronDown className="h-4 w-4" />
+                      </span>
+                    )}
+                  </span>
+                </button>
+
+                <div
+                  className={cn(
+                    "transition-all duration-300 ease-in-out overflow-hidden",
+                    isOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+                  )}
+                >
+                  <div className="px-6 pb-6 pt-2 text-sm text-zinc-500 leading-relaxed border-t border-zinc-100">
+                    <div className="pt-4">
+                      {faq.answer}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

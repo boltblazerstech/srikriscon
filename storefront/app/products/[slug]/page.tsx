@@ -261,8 +261,8 @@ export default function ProductDetailPage() {
         </section>
       )}
 
-      {/* Unified FAQ Section */}
-      <FaqSection items={product.faqs} className="mt-20 md:mt-24 px-0 max-w-none border-t border-border pt-16" />
+      {/* Product FAQ Section */}
+      <FaqSection items={product.faqs} isProductPage={true} className="mt-20 md:mt-24 px-0 max-w-none border-t border-border pt-16" />
     </div>
   );
 }
