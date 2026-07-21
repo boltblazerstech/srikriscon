@@ -191,11 +191,16 @@ export default function ProductReviews() {
                 </div>
 
                 {/* Single column: Customer Name -> Rating Stars -> Review Text */}
-                <div className="flex flex-col gap-2 pr-28">
-                  {/* Customer Name */}
-                  <h4 className="font-bold text-foreground text-base leading-snug">
-                    {review.name}
-                  </h4>
+                <div className="flex flex-col gap-2.5 pr-28">
+                  {/* Customer Avatar & Name */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0B3A42] text-white font-black text-sm uppercase flex-shrink-0 shadow-xs border border-white/20">
+                      {review.name ? review.name.charAt(0) : "C"}
+                    </div>
+                    <h4 className="font-bold text-foreground text-base leading-snug">
+                      {review.name}
+                    </h4>
+                  </div>
 
                   {/* Rating Stars */}
                   <div className="flex items-center gap-1 text-amber-400">
