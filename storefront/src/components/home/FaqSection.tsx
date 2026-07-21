@@ -35,10 +35,12 @@ const defaultFaqs: FaqItem[] = [
 export default function FaqSection({
   items,
   isProductPage = false,
+  id = "faq",
   className,
 }: {
   items?: FaqItem[];
   isProductPage?: boolean;
+  id?: string;
   className?: string;
 }) {
   const displayFaqs = isProductPage ? (items ?? []) : (items && items.length > 0 ? items : defaultFaqs);
@@ -49,7 +51,7 @@ export default function FaqSection({
   }
 
   return (
-    <section className={cn("mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 my-16 md:my-24", className)}>
+    <section id={id} className={cn("mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 my-16 md:my-24 scroll-mt-24", className)}>
       <div className="text-center mb-10">
         <span className="text-[#E6007E] text-xs font-extrabold tracking-[0.25em] uppercase block mb-2">
           GOT QUESTIONS?

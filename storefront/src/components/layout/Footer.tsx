@@ -193,7 +193,7 @@ export default function Footer() {
               <div className="w-8 h-[2px] bg-accent mt-2 mb-6" />
               <ul className="space-y-3.5">
                 <li>
-                  <Link href="/contact#faq" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
+                  <Link href="/#faq" className="text-sm text-zinc-400 hover:text-white transition-colors duration-200">
                     FAQs
                   </Link>
                 </li>
