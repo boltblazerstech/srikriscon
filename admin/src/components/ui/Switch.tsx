@@ -22,19 +22,19 @@ export default function Switch({
 }: SwitchProps) {
   const switchId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4 min-w-0">
       {(label || description) && (
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {label && (
             <label
               htmlFor={switchId}
-              className="text-sm font-medium text-foreground cursor-pointer"
+              className="text-sm font-medium text-foreground cursor-pointer block truncate"
             >
               {label}
             </label>
           )}
           {description && (
-            <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 break-words">{description}</p>
           )}
         </div>
       )}

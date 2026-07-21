@@ -18,6 +18,7 @@ interface RichTextEditorProps {
   className?: string;
   editorClassName?: string;
   minHeight?: number;
+  maxHeight?: number;
 }
 
 export default function RichTextEditor({
@@ -28,7 +29,6 @@ export default function RichTextEditor({
   error,
   className,
   editorClassName,
-  minHeight = 200,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -38,11 +38,12 @@ export default function RichTextEditor({
     ],
     content: value,
     immediatelyRender: false,
+    autofocus: false,
     editorProps: {
       attributes: {
         class: "tiptap focus:outline-none",
         "data-placeholder": placeholder,
-        style: `min-height:${minHeight}px`,
+        tabindex: "-1",
       },
     },
     onUpdate({ editor }) {
@@ -51,16 +52,15 @@ export default function RichTextEditor({
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
+    if (editor && !editor.isFocused && value !== editor.getHTML()) {
       editor.commands.setContent(value);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, editor]);
 
   if (!editor) return null;
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full min-w-0", className)}>
       {label && (
         <label className="block text-sm font-medium text-foreground mb-1.5">
           {label}
@@ -69,12 +69,12 @@ export default function RichTextEditor({
 
       <div
         className={cn(
-          "rounded-xl border bg-white overflow-hidden",
+          "rounded-xl border bg-white overflow-hidden min-w-0 flex flex-col",
           error ? "border-destructive" : "border-border"
         )}
       >
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-0.5 border-b border-border px-2 py-1.5 bg-muted/40">
+        <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-muted/40 shrink-0">
           <ToolBtn
             onClick={() => editor.chain().focus().toggleBold().run()}
             active={editor.isActive("bold")}
@@ -183,11 +183,13 @@ export default function RichTextEditor({
           </ToolBtn>
         </div>
 
-        {/* Editor */}
-        <EditorContent
-          editor={editor}
-          className={cn("prose prose-sm max-w-none px-0", editorClassName)}
-        />
+        {/* Editor Wrapper */}
+        <div className="editor-wrapper">
+          <EditorContent
+            editor={editor}
+            className={cn("prose prose-sm max-w-none px-0 break-words my-0", editorClassName)}
+          />
+        </div>
       </div>
 
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}

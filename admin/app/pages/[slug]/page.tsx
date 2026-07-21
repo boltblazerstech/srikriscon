@@ -1,12 +1,12 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Save, Globe, FileText, CheckCircle, Code2, Eye } from "lucide-react";
 import AdminLayout from "@/src/components/layout/AdminLayout";
 import PageHeader from "@/src/components/ui/PageHeader";
 import Button from "@/src/components/ui/Button";
@@ -19,7 +19,7 @@ import { useCmsPage, useUpdateCmsPage } from "@/src/hooks/useCmsPages";
 import { extractApiError } from "@/src/lib/utils";
 
 const schema = z.object({
-  title:           z.string().min(1, "Required"),
+  title:           z.string().min(1, "Title is required"),
   content:         z.string().optional(),
   metaTitle:       z.string().optional(),
   metaDescription: z.string().optional(),
@@ -31,13 +31,21 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
   const { slug } = use(params);
   const { data: page, isLoading } = useCmsPage(slug);
   const update = useUpdateCmsPage();
+  const topRef = useRef<HTMLDivElement>(null);
+  const [editorMode, setEditorMode] = useState<"visual" | "html">("visual");
 
   const {
     register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", content: "", metaTitle: "", metaDescription: "", active: page?.active ?? false },
+    defaultValues: {
+      title: "",
+      content: "",
+      metaTitle: "",
+      metaDescription: "",
+      active: false,
+    },
   });
 
   useEffect(() => {
@@ -47,8 +55,12 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
         content:         page.content ?? "",
         metaTitle:       page.metaTitle ?? "",
         metaDescription: page.metaDescription ?? "",
-        active:          page.active,
+        active:          page.active ?? false,
       });
+
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
     }
   }, [page, reset]);
 
@@ -62,7 +74,7 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
           slug: page.slug,
         },
       });
-      toast.success("Page saved");
+      toast.success("Page updated successfully!");
     } catch (err) {
       toast.error(extractApiError(err));
     }
@@ -71,77 +83,174 @@ export default function EditPagePage({ params }: { params: Promise<{ slug: strin
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="flex justify-center py-20"><LoadingSpinner size="lg" /></div>
+        <div className="flex justify-center items-center py-32">
+          <LoadingSpinner size="lg" />
+        </div>
       </AdminLayout>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="p-6 max-w-4xl mx-auto">
+      <div ref={topRef} className="p-6 max-w-6xl mx-auto space-y-6 min-w-0">
+        {/* Header */}
         <PageHeader
           title={page?.title ?? slug}
-          description={`/${slug}`}
+          description={`Slug: /${slug}`}
           action={
             <Link href="/pages">
-              <Button variant="outline" icon={<ArrowLeft className="h-4 w-4" />}>Back</Button>
+              <Button variant="outline" icon={<ArrowLeft className="h-4 w-4" />}>
+                Back to CMS Pages
+              </Button>
             </Link>
           }
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <Section title="Page Content">
-            <Input label="Page Title" {...register("title")} error={errors.title?.message} />
-            <Controller
-              control={control}
-              name="content"
-              render={({ field }) => (
-                <RichTextEditor
-                  label="Content"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  minHeight={300}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="active"
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} label="Published" />
-              )}
-            />
-          </Section>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start min-w-0">
+          
+          {/* Main Column (8 Cols) — Title & Content */}
+          <div className="lg:col-span-8 space-y-6 min-w-0 h-auto">
+            <div className="bg-surface rounded-xl border border-border p-6 space-y-5 shadow-sm h-auto">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-bold text-foreground uppercase tracking-wide">
+                    Page Content
+                  </h2>
+                </div>
+                
+                {/* Visual / HTML Mode Toggle */}
+                <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setEditorMode("visual")}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                      editorMode === "visual"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Eye className="h-3.5 w-3.5" /> Visual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditorMode("html")}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                      editorMode === "html"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Code2 className="h-3.5 w-3.5" /> HTML Source
+                  </button>
+                </div>
+              </div>
 
-          <Section title="SEO">
-            <Input
-              label="Meta Title"
-              {...register("metaTitle")}
-              hint="Defaults to page title"
-            />
-            <Textarea
-              label="Meta Description"
-              {...register("metaDescription")}
-              rows={2}
-              hint="150–160 characters recommended"
-            />
-          </Section>
+              <Input
+                label="Page Title"
+                {...register("title")}
+                error={errors.title?.message}
+                placeholder="e.g. About Us"
+              />
 
-          <div className="flex gap-3 justify-end pb-6">
-            <Button type="submit" loading={isSubmitting} size="lg">Save Page</Button>
+              <Controller
+                control={control}
+                name="content"
+                render={({ field }) => (
+                  <div>
+                    {editorMode === "visual" ? (
+                      <RichTextEditor
+                        label="Rich Content"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        minHeight={160}
+                        maxHeight={360}
+                      />
+                    ) : (
+                      <Textarea
+                        label="HTML Code Content"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        rows={14}
+                        className="font-mono text-xs leading-relaxed"
+                        placeholder="<h2>About Us</h2>..."
+                      />
+                    )}
+                  </div>
+                )}
+              />
+            </div>
           </div>
+
+          {/* Side Column (4 Cols) — Status & SEO */}
+          <div className="lg:col-span-4 space-y-6 min-w-0 h-auto">
+            
+            {/* Publish & Action Card */}
+            <div className="bg-surface rounded-xl border border-border p-6 space-y-5 shadow-sm h-auto">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-bold text-foreground uppercase tracking-wide">
+                    Status
+                  </h2>
+                </div>
+              </div>
+
+              <Controller
+                control={control}
+                name="active"
+                render={({ field }) => (
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    label="Published"
+                    description="Live on storefront"
+                  />
+                )}
+              />
+
+              <div className="pt-3 border-t border-border">
+                <Button
+                  type="submit"
+                  loading={isSubmitting}
+                  size="lg"
+                  className="w-full justify-center"
+                  icon={<Save className="h-4 w-4" />}
+                >
+                  Save Page
+                </Button>
+              </div>
+            </div>
+
+            {/* SEO Card */}
+            <div className="bg-surface rounded-xl border border-border p-6 space-y-5 shadow-sm h-auto">
+              <div className="flex items-center gap-2 border-b border-border pb-3">
+                <Globe className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-bold text-foreground uppercase tracking-wide">
+                  SEO Metadata
+                </h2>
+              </div>
+
+              <Input
+                label="Meta Title"
+                {...register("metaTitle")}
+                hint="Defaults to page title"
+                placeholder="Meta title..."
+              />
+
+              <Textarea
+                label="Meta Description"
+                {...register("metaDescription")}
+                rows={3}
+                hint="150–160 characters recommended"
+                placeholder="Meta description..."
+              />
+            </div>
+
+          </div>
+
         </form>
       </div>
     </AdminLayout>
   );
 }
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-surface rounded-xl border border-border p-5">
-      <h2 className="text-sm font-semibold text-foreground mb-4">{title}</h2>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
