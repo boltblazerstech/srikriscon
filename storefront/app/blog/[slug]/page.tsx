@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Share2, Bookmark } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2, Check } from "lucide-react";
+import toast from "react-hot-toast";
 import { useBlog } from "@/src/hooks/useBlogs";
 import { formatDate } from "@/src/lib/utils";
 import Spinner from "@/src/components/ui/Spinner";
@@ -13,6 +15,36 @@ export default function BlogPostPage() {
   const params = useParams();
   const slug = params.slug as string;
   const { data: post, isLoading } = useBlog(slug);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+    const shareData = {
+      title: post?.title || "Sri Kriscon Blog",
+      text: post?.excerpt || post?.title || "",
+      url: shareUrl,
+    };
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // User cancelled or web share failed, fallback to copy clipboard
+      }
+    }
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        toast.success("Article link copied to clipboard!");
+        setTimeout(() => setCopied(false), 2500);
+      } catch {
+        toast.error("Failed to copy link");
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -104,13 +136,19 @@ export default function BlogPostPage() {
 
       {/* ── Article Content ───────────────────────────────────────────── */}
       <div className="mx-auto max-w-4xl px-4 py-20 lg:py-28 relative">
-        {/* Floating Actions Sidebar (Desktop) */}
-        <aside className="hidden xl:block absolute left-[-120px] top-28 space-y-4 sticky top-40">
-          <button className="h-12 w-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:text-accent hover:border-accent transition-all">
-            <Share2 className="h-5 w-5" />
-          </button>
-          <button className="h-12 w-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:text-accent hover:border-accent transition-all">
-            <Bookmark className="h-5 w-5" />
+        {/* Floating Share Button Sidebar (Desktop) */}
+        <aside className="hidden xl:block absolute left-[-100px] top-28 sticky top-40">
+          <button
+            onClick={handleShare}
+            title="Share article"
+            aria-label="Share article"
+            className="h-12 w-12 rounded-full border border-zinc-200 bg-white shadow-sm flex items-center justify-center text-zinc-600 hover:text-accent hover:border-accent hover:shadow-md transition-all group"
+          >
+            {copied ? (
+              <Check className="h-5 w-5 text-emerald-600" />
+            ) : (
+              <Share2 className="h-5 w-5 group-hover:scale-110 transition-transform" />
+            )}
           </button>
         </aside>
 
@@ -140,11 +178,19 @@ export default function BlogPostPage() {
             </div>
             
             <div className="flex items-center gap-4">
-              <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-accent transition-colors">
-                <Share2 className="h-4 w-4" /> Share
-              </button>
-              <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-accent transition-colors">
-                <Bookmark className="h-4 w-4" /> Save
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-accent transition-colors"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4 text-emerald-600" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-4 w-4" /> Share Article
+                  </>
+                )}
               </button>
             </div>
           </div>

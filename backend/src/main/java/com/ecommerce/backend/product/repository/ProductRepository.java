@@ -21,6 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findByActiveTrueAndDeletedAtIsNull(Pageable pageable);
     Page<Product> findByCategoryIdAndActiveTrueAndDeletedAtIsNull(Long categoryId, Pageable pageable);
+    Page<Product> findByCategorySlugAndActiveTrueAndDeletedAtIsNull(String categorySlug, Pageable pageable);
     Page<Product> findByFeaturedTrueAndActiveTrueAndDeletedAtIsNull(Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND " +

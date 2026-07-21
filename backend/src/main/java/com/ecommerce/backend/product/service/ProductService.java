@@ -53,6 +53,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public PagedResponse<ProductResponse> findByCategorySlug(String categorySlug, Pageable pageable) {
+        return PagedResponse.of(
+                productRepository.findByCategorySlugAndActiveTrueAndDeletedAtIsNull(categorySlug, pageable),
+                ProductResponse::from);
+    }
+
+    @Transactional(readOnly = true)
     public PagedResponse<ProductResponse> search(String query, Pageable pageable) {
         return PagedResponse.of(productRepository.search(query, pageable), ProductResponse::from);
     }

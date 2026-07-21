@@ -30,9 +30,10 @@ public class ProductController {
     // ─── Public endpoints ─────────────────────────────────────────────────────
 
     @GetMapping
-    @Operation(summary = "List active products (paginated); filter by ?categoryId or ?q")
+    @Operation(summary = "List active products (paginated); filter by ?categoryId, ?category, or ?q")
     public ApiResponse<PagedResponse<ProductResponse>> list(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, name = "category") String categorySlug,
             @RequestParam(required = false) String q,
             @PageableDefault(size = 20) Pageable pageable) {
 
@@ -41,6 +42,9 @@ public class ProductController {
         }
         if (categoryId != null) {
             return ApiResponse.success(productService.findByCategory(categoryId, pageable));
+        }
+        if (categorySlug != null && !categorySlug.isBlank()) {
+            return ApiResponse.success(productService.findByCategorySlug(categorySlug.trim(), pageable));
         }
         return ApiResponse.success(productService.findAll(pageable));
     }
