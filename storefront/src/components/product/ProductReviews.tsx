@@ -183,31 +183,40 @@ export default function ProductReviews() {
             {reviews.map((review) => (
               <div
                 key={review.id}
-                className="border-b border-border pb-6 last:border-b-0 last:pb-0"
+                className="relative border-b border-border pb-6 last:border-b-0 last:pb-0"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h4 className="font-bold text-foreground text-sm sm:text-base">{review.title}</h4>
-                    <div className="flex text-amber-400 mt-1">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star
-                          key={s}
-                          className={cn(
-                            "h-4 w-4",
-                            s <= review.rating ? "fill-current" : "text-zinc-200"
-                          )}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-semibold text-foreground">{review.name}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{review.date}</p>
-                  </div>
+                {/* Date in top-right corner */}
+                <div className="absolute top-0 right-0">
+                  <span className="text-xs text-muted-foreground font-medium">{review.date}</span>
                 </div>
-                <p className="text-sm text-zinc-500 leading-relaxed">{review.comment}</p>
-                <div className="mt-3 flex items-center gap-1 text-[10px] text-[#0B3A42] font-semibold bg-[#0B3A42]/5 w-fit px-2 py-0.5 rounded">
-                  <Check className="h-3 w-3" /> Verified Purchase
+
+                {/* Single column: Customer Name -> Rating Stars -> Review Text */}
+                <div className="flex flex-col gap-2 pr-28">
+                  {/* Customer Name */}
+                  <h4 className="font-bold text-foreground text-base leading-snug">
+                    {review.name}
+                  </h4>
+
+                  {/* Rating Stars */}
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={cn(
+                          "h-4 w-4",
+                          s <= review.rating ? "fill-current text-amber-400" : "text-zinc-200"
+                        )}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Review Text */}
+                  <p className="text-sm text-zinc-600 leading-relaxed">{review.comment}</p>
+
+                  {/* Verified Purchase Badge */}
+                  <div className="mt-1 flex items-center gap-1 text-[10px] text-[#0B3A42] font-semibold bg-[#0B3A42]/5 w-fit px-2 py-0.5 rounded">
+                    <Check className="h-3 w-3" /> Verified Purchase
+                  </div>
                 </div>
               </div>
             ))}
