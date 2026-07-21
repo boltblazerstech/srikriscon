@@ -55,7 +55,7 @@ export default function FaqSection({
           GOT QUESTIONS?
         </span>
         <h2 className="text-[#0B3A42] font-display font-black text-3xl md:text-4xl tracking-tight mb-4">
-          Frequently Asked Questions
+          {isProductPage ? "Product FAQs" : "Frequently Asked Questions"}
         </h2>
         <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
           {isProductPage
