@@ -76,7 +76,7 @@ export default function RootLayout({
         <Providers>
           <Favicon />
           <Navbar />
-          <main className="min-h-screen pt-[127px] md:pt-[182px]">{children}</main>
+          <main className="min-h-screen pt-[108px] md:pt-[158px]">{children}</main>
           <Footer />
           <WhatsAppButton />
         </Providers>

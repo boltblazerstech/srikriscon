@@ -80,12 +80,12 @@ export default function Footer() {
             {/* Column 1: Brand & Logo */}
             <div className="flex flex-col items-start">
               <Link href="/" className="flex items-center gap-3 mb-4 group">
-                <div className="relative h-11 w-11 bg-[#0D4A50] rounded-full flex-shrink-0 transition-transform group-hover:scale-105">
+                <div className="relative h-14 w-14 flex-shrink-0 transition-transform group-hover:scale-105">
                   <Image
                     src={logoUrl || "/sri-kriscon-logo.webp"}
                     alt={name}
                     fill
-                    className="object-contain p-1.5"
+                    className="object-contain"
                   />
                 </div>
                 <div>
