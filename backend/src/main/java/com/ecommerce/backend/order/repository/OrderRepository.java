@@ -19,10 +19,21 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByUserId(Long userId, Pageable pageable);
     boolean existsByUserId(Long userId);
 
-    @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.items i WHERE " +
-           "(o.user.id = :userId OR (:email IS NOT NULL AND LOWER(o.shippingEmail) = LOWER(:email))) AND " +
-           "i.product.id = :productId AND o.status <> 'CANCELLED'")
-    boolean existsPurchasedItem(@Param("userId") Long userId, @Param("email") String email, @Param("productId") Long productId);
+    @Query("SELECT COUNT(o) FROM Order o JOIN o.items i WHERE o.user.id = :userId AND i.productId = :productId AND o.status <> 'CANCELLED'")
+    long countPurchasedByUserId(@Param("userId") Long userId, @Param("productId") Long productId);
+
+    @Query("SELECT COUNT(o) FROM Order o JOIN o.items i WHERE o.user IS NOT NULL AND LOWER(o.user.email) = LOWER(:email) AND i.productId = :productId AND o.status <> 'CANCELLED'")
+    long countPurchasedByEmail(@Param("email") String email, @Param("productId") Long productId);
+
+    default boolean existsPurchasedItem(Long userId, String email, Long productId) {
+        if (userId != null && countPurchasedByUserId(userId, productId) > 0) {
+            return true;
+        }
+        if (email != null && !email.isBlank() && countPurchasedByEmail(email.trim(), productId) > 0) {
+            return true;
+        }
+        return false;
+    }
     
     @org.springframework.data.jpa.repository.Modifying
     @Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")

@@ -20,17 +20,17 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
     @Query("SELECT r FROM ProductReview r WHERE " +
            "(:status IS NULL OR r.status = :status) AND (" +
-           ":search IS NULL OR LOWER(r.reviewerName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(r.comment) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(r.product.name) LIKE LOWER(CONCAT('%', :search, '%'))" +
+           "LOWER(r.reviewerName) LIKE LOWER(:search) OR " +
+           "LOWER(r.comment) LIKE LOWER(:search) OR " +
+           "LOWER(r.product.name) LIKE LOWER(:search)" +
            ")")
     Page<ProductReview> searchAdmin(@Param("status") ReviewStatus status, @Param("search") String search, Pageable pageable);
 
-    @Query("SELECT COALESCE(AVG(r.rating), 0.0) FROM ProductReview r WHERE r.product.id = :productId AND r.status = 'APPROVED'")
-    Double findAverageRatingByProductId(@Param("productId") Long productId);
+    @Query("SELECT AVG(r.rating) FROM ProductReview r WHERE r.product.id = :productId AND r.status = :status")
+    Double findAverageRatingByProductIdAndStatus(@Param("productId") Long productId, @Param("status") ReviewStatus status);
 
     long countByProductIdAndStatus(Long productId, ReviewStatus status);
 
-    @Query("SELECT r.rating, COUNT(r) FROM ProductReview r WHERE r.product.id = :productId AND r.status = 'APPROVED' GROUP BY r.rating")
-    List<Object[]> countRatingBreakdownByProductId(@Param("productId") Long productId);
+    @Query("SELECT r.rating, COUNT(r) FROM ProductReview r WHERE r.product.id = :productId AND r.status = :status GROUP BY r.rating")
+    List<Object[]> countRatingBreakdownByProductIdAndStatus(@Param("productId") Long productId, @Param("status") ReviewStatus status);
 }

@@ -69,10 +69,10 @@ public class ProductReviewService {
 
     @Transactional(readOnly = true)
     public ReviewStatsResponse getProductReviewStats(Long productId) {
-        Double avg = reviewRepository.findAverageRatingByProductId(productId);
+        Double avg = reviewRepository.findAverageRatingByProductIdAndStatus(productId, ReviewStatus.APPROVED);
         long total = reviewRepository.countByProductIdAndStatus(productId, ReviewStatus.APPROVED);
 
-        List<Object[]> breakdownList = reviewRepository.countRatingBreakdownByProductId(productId);
+        List<Object[]> breakdownList = reviewRepository.countRatingBreakdownByProductIdAndStatus(productId, ReviewStatus.APPROVED);
         Map<Integer, Long> breakdown = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             breakdown.put(i, 0L);
@@ -94,8 +94,8 @@ public class ProductReviewService {
 
     @Transactional(readOnly = true)
     public PagedResponse<ReviewResponse> searchAdminReviews(String search, ReviewStatus status, Pageable pageable) {
-        String trimmedSearch = (search != null && !search.isBlank()) ? search.trim() : null;
-        Page<ProductReview> page = reviewRepository.searchAdmin(status, trimmedSearch, pageable);
+        String pattern = "%" + (search != null ? search.trim() : "") + "%";
+        Page<ProductReview> page = reviewRepository.searchAdmin(status, pattern, pageable);
         return PagedResponse.of(page, ReviewResponse::from);
     }
 
