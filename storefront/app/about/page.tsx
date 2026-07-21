@@ -129,7 +129,7 @@ export default function AboutPage() {
           >
             <span className="h-px w-8 bg-white/20" />
             <span className="text-[11px] font-extrabold tracking-[0.35em] text-accent uppercase">
-              Established 2012
+              Established 2017
             </span>
             <span className="h-px w-8 bg-white/20" />
           </motion.div>
@@ -147,7 +147,7 @@ export default function AboutPage() {
             transition={{ delay: 0.2 }}
             className="mt-6 text-base sm:text-xl text-white/60 font-light max-w-2xl mx-auto leading-relaxed"
           >
-            {storeName || theme.business.name} was established in 2012 with a clear vision to serve the packaging industry across various markets, providing innovative and reliable packaging solutions.
+            {storeName || theme.business.name} was established in 2017 with a clear vision to serve the packaging industry across various markets, providing innovative and reliable packaging solutions.
           </motion.p>
         </div>
       </section>
@@ -174,18 +174,7 @@ export default function AboutPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 
-                {/* Floating Establishment Badge */}
-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/50">
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl">
-                      14+
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-accent">Years of Excellence</p>
-                      <p className="text-sm font-semibold text-zinc-800">Established in 2012</p>
-                    </div>
-                  </div>
-                </div>
+               
               </div>
 
               {/* Accent Floating Badge Top Left */}
@@ -230,7 +219,7 @@ export default function AboutPage() {
                 /* Default fallback content if backend is offline or CMS page is unpopulated */
                 <div className="space-y-4 text-base sm:text-lg text-zinc-600 leading-relaxed font-normal">
                   <p>
-                    <strong className="text-zinc-900 font-semibold">Sri Kriscon Industries</strong> was established in 2012 with a clear vision to serve the packaging industry across various markets, providing innovative and reliable packaging solutions.
+                    <strong className="text-zinc-900 font-semibold">Sri Kriscon Industries</strong> was established in 2017 with a clear vision to serve the packaging industry across various markets, providing innovative and reliable packaging solutions.
                   </p>
                   <p>
                     We specialize in catering to diverse packaging demands of our clients, ensuring quality, safety, and a strong brand presence for their products.
@@ -359,7 +348,7 @@ export default function AboutPage() {
 
 
       {/* ── 4. CATEGORIES OVERVIEW SECTION ─────────────────────────────── */}
-      <section className="bg-white text-zinc-900 py-24 sm:py-32">
+      {/* <section className="bg-white text-zinc-900 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-[11px] font-extrabold tracking-[0.35em] text-accent uppercase block mb-3">
@@ -407,7 +396,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
 
       {/* ── 5. CTA SECTION ─────────────────────────────────────────────── */}
