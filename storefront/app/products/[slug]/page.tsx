@@ -253,6 +253,38 @@ export default function ProductDetailPage() {
       {/* Product Reviews */}
       <ProductReviews />
 
+      {/* Product Specific FAQs */}
+      {product.faqs && product.faqs.length > 0 && (
+        <section className="mt-16 border-t border-border pt-12">
+          <div className="mb-6">
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent block mb-1">
+              Got Questions?
+            </span>
+            <h2 className="text-xl font-bold text-foreground">
+              Product FAQs
+            </h2>
+          </div>
+          <div className="space-y-3 max-w-3xl">
+            {product.faqs.map((faq, i) => (
+              <details
+                key={i}
+                className="group rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/40 [&_summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="flex cursor-pointer items-center justify-between font-semibold text-foreground text-sm sm:text-base">
+                  <span>{faq.question}</span>
+                  <span className="ml-4 flex-shrink-0 text-muted-foreground group-open:rotate-180 transition-transform duration-200 text-xs">
+                    ▼
+                  </span>
+                </summary>
+                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border/60 pt-3">
+                  {faq.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Related products */}
       {related.length > 0 && (
         <section className="mt-16">

@@ -356,6 +356,20 @@ public class ProductService {
             }
         }
 
+        // Process FAQs
+        if (req.getFaqs() != null) {
+            p.getFaqs().clear();
+            for (int i = 0; i < req.getFaqs().size(); i++) {
+                com.ecommerce.backend.product.dto.ProductFaqDto faqDto = req.getFaqs().get(i);
+                p.getFaqs().add(com.ecommerce.backend.product.entity.ProductFaq.builder()
+                        .product(p)
+                        .question(faqDto.getQuestion())
+                        .answer(faqDto.getAnswer())
+                        .sortOrder(i)
+                        .build());
+            }
+        }
+
         return p;
     }
 

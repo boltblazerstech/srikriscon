@@ -75,6 +75,11 @@ public class Product {
     @Builder.Default
     private List<ProductVariant> variants = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private List<ProductFaq> faqs = new ArrayList<>();
+
     @Column(name = "is_active", nullable = false)
     @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default

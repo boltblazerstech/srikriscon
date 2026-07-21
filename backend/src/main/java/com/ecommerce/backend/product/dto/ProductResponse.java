@@ -35,6 +35,7 @@ public class ProductResponse {
     private List<ImageDto> images;
     private List<VariantDto> variants;
     private Map<String, List<VariantDto>> variantsByType;
+    private List<ProductFaqDto> faqs;
     private boolean active;
     private boolean featured;
     private int sortOrder;
@@ -56,6 +57,16 @@ public class ProductResponse {
                 .map(VariantDto::getPrice)
                 .min(Comparator.naturalOrder())
                 .orElse(p.getPrice());
+
+        List<ProductFaqDto> faqDtos = p.getFaqs() == null ? List.of() : p.getFaqs().stream()
+                .sorted(Comparator.comparingInt(com.ecommerce.backend.product.entity.ProductFaq::getSortOrder))
+                .map(f -> ProductFaqDto.builder()
+                        .id(f.getId())
+                        .question(f.getQuestion())
+                        .answer(f.getAnswer())
+                        .sortOrder(f.getSortOrder())
+                        .build())
+                .collect(Collectors.toList());
 
         return ProductResponse.builder()
                 .id(p.getId())
@@ -83,6 +94,7 @@ public class ProductResponse {
                         .collect(Collectors.toList()))
                 .variants(variantDtos)
                 .variantsByType(byType)
+                .faqs(faqDtos)
                 .active(p.isActive())
                 .featured(p.isFeatured())
                 .sortOrder(p.getSortOrder())

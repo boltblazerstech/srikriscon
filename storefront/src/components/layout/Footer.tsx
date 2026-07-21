@@ -274,14 +274,6 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-zinc-300 transition-colors">
               Terms of Service
             </Link>
-            <span className="text-zinc-800 select-none">•</span>
-            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
-              Shipping Policy
-            </Link>
-            <span className="text-zinc-800 select-none">•</span>
-            <Link href="/contact" className="hover:text-zinc-300 transition-colors">
-              Warranty Registration
-            </Link>
           </div>
         </div>
       </div>

@@ -49,6 +49,13 @@ export interface ProductImage {
   primary: boolean;
 }
 
+export interface ProductFaq {
+  id?: number;
+  question: string;
+  answer: string;
+  sortOrder?: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -66,6 +73,7 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   variantsByType: Record<VariantType, ProductVariant[]>;
+  faqs?: ProductFaq[];
   startingPrice: number;
   active: boolean;
   featured: boolean;

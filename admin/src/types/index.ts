@@ -85,6 +85,13 @@ export interface ProductVariant {
   sortOrder: number;
 }
 
+export interface ProductFaq {
+  id?: number;
+  question: string;
+  answer: string;
+  sortOrder?: number;
+}
+
 // Matches backend ProductResponse
 export interface Product {
   id: number;
@@ -108,6 +115,7 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   variantsByType?: Record<string, ProductVariant[]>;
+  faqs?: ProductFaq[];
   metaTitle?: string;
   metaDescription?: string;
   createdAt: string;
@@ -136,6 +144,7 @@ export interface ProductRequest {
   featured: boolean;
   images: string[];
   variants: VariantRequest[];
+  faqs?: ProductFaq[];
   metaTitle?: string;
   metaDescription?: string;
 }
