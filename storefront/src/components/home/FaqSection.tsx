@@ -4,12 +4,12 @@ import { useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
-interface FaqItem {
+export interface FaqItem {
   question: string;
   answer: string;
 }
 
-const faqs: FaqItem[] = [
+const defaultFaqs: FaqItem[] = [
   {
     question: "What types of packaging boxes do you manufacture?",
     answer: "We manufacture a wide range of premium packaging solutions, including heavy-duty corrugated boxes, corrugated rolls, customized luxury boxes, retail cartons, and custom shipping boxes suited for industrial and retail needs."
@@ -32,7 +32,8 @@ const faqs: FaqItem[] = [
   }
 ];
 
-export default function FaqSection({ className }: { className?: string }) {
+export default function FaqSection({ items, className }: { items?: FaqItem[]; className?: string }) {
+  const allFaqs = items && items.length > 0 ? [...items, ...defaultFaqs] : defaultFaqs;
   const [openIndex, setOpenIndex] = useState<number | null>(0); // Default open the first one like the reference image
 
   function toggle(index: number) {
@@ -54,7 +55,7 @@ export default function FaqSection({ className }: { className?: string }) {
       </div>
 
       <div className="max-w-3xl mx-auto space-y-4">
-        {faqs.map((faq, index) => {
+        {allFaqs.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
             <div
