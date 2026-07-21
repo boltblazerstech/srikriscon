@@ -251,7 +251,7 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Product Reviews */}
-      <ProductReviews />
+      <ProductReviews productId={product.id} />
 
       {/* Related products */}
       {related.length > 0 && (

@@ -18,6 +18,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderNumber(String orderNumber);
     Page<Order> findByUserId(Long userId, Pageable pageable);
     boolean existsByUserId(Long userId);
+
+    @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.items i WHERE " +
+           "(o.user.id = :userId OR (:email IS NOT NULL AND LOWER(o.shippingEmail) = LOWER(:email))) AND " +
+           "i.product.id = :productId AND o.status <> 'CANCELLED'")
+    boolean existsPurchasedItem(@Param("userId") Long userId, @Param("email") String email, @Param("productId") Long productId);
     
     @org.springframework.data.jpa.repository.Modifying
     @Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")

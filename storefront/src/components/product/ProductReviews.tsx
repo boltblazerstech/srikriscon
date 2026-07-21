@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Star, Check } from "lucide-react";
+import toast from "react-hot-toast";
 import { cn } from "@/src/lib/utils";
 import Button from "@/src/components/ui/Button";
+import { useAuth } from "@/src/context/AuthContext";
+import { useMyOrders } from "@/src/hooks/useOrders";
+import { useProductReviews, useProductReviewStats, useCreateReview } from "@/src/hooks/useReviews";
 
 interface Review {
   id: string;
@@ -12,6 +16,7 @@ interface Review {
   title: string;
   comment: string;
   date: string;
+  isVerifiedPurchase?: boolean;
 }
 
 const initialReviews: Review[] = [
@@ -21,7 +26,8 @@ const initialReviews: Review[] = [
     rating: 5,
     title: "Exceptional Board Quality!",
     comment: "The double-wall corrugated boxes are incredibly strong. We use them for shipping heavy auto components from Dewas, and we've had zero damage reports since switching to Sri Kriscon. Highly recommended!",
-    date: "July 10, 2026"
+    date: "July 10, 2026",
+    isVerifiedPurchase: true
   },
   {
     id: "2",
@@ -29,7 +35,8 @@ const initialReviews: Review[] = [
     rating: 4,
     title: "Great Custom Printing",
     comment: "The print registration of our brand logo is sharp and clear. Sizing is exactly what we requested. MOQ was reasonable. Docked 1 star because shipping took a day longer than estimated, but quality is outstanding.",
-    date: "June 28, 2026"
+    date: "June 28, 2026",
+    isVerifiedPurchase: true
   },
   {
     id: "3",
@@ -37,47 +44,113 @@ const initialReviews: Review[] = [
     rating: 5,
     title: "Perfect Packaging Rolls",
     comment: "Excellent strength and flexibility in their corrugated rolls. Easy to wrap irregular products. Will definitely buy in bulk again.",
-    date: "May 15, 2026"
+    date: "May 15, 2026",
+    isVerifiedPurchase: false
   }
 ];
 
-export default function ProductReviews() {
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+export default function ProductReviews({ productId }: { productId?: number }) {
+  const { user, isAuthenticated } = useAuth();
+  const { data: myOrdersPage } = useMyOrders(0, 50);
+
+  const { data: apiReviewsPage } = useProductReviews(productId);
+  const { data: apiStats } = useProductReviewStats(productId);
+  const createReview = useCreateReview(productId);
+
+  const hasPurchased = useMemo(() => {
+    if (!productId || !myOrdersPage?.content) return false;
+    return myOrdersPage.content.some((order) =>
+      order.items?.some((item) => item.productId === productId)
+    );
+  }, [productId, myOrdersPage]);
+
+  const [localReviews, setLocalReviews] = useState<Review[]>(initialReviews);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
+  const reviews = useMemo(() => {
+    if (apiReviewsPage?.content && apiReviewsPage.content.length > 0) {
+      return apiReviewsPage.content.map((r) => ({
+        id: String(r.id),
+        name: r.reviewerName,
+        rating: r.rating,
+        title: r.title || `${r.rating} Star Rating`,
+        comment: r.comment,
+        date: new Date(r.createdAt).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }),
+        isVerifiedPurchase: r.verifiedPurchase
+      }));
+    }
+    return localReviews;
+  }, [apiReviewsPage, localReviews]);
+
   // Calculate stats
   const averageRating = (
-    reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
-  ).toFixed(1);
+    apiStats?.averageRating != null && apiStats.totalReviews > 0
+      ? apiStats.averageRating.toFixed(1)
+      : (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+  );
 
   const starBreakdown = [5, 4, 3, 2, 1].map((stars) => {
+    if (apiStats?.ratingBreakdown && apiStats.totalReviews > 0) {
+      const count = apiStats.ratingBreakdown[stars] ?? 0;
+      const percentage = ((count / apiStats.totalReviews) * 100).toFixed(0);
+      return { stars, percentage, count };
+    }
     const count = reviews.filter((r) => r.rating === stars).length;
     const percentage = ((count / reviews.length) * 100).toFixed(0);
     return { stars, percentage, count };
   });
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!isAuthenticated) {
+      toast.error("Please login to submit a review");
+      return;
+    }
+
     if (!comment.trim()) return;
 
-    const newReview: Review = {
-      id: Date.now().toString(),
-      name: "Customer",
-      rating: rating,
-      title: `${rating} Star Rating`,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      })
-    };
+    const reviewerName = user?.firstName
+      ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+      : user?.email ? user.email.split("@")[0] : "Customer";
 
-    setReviews((prev) => [newReview, ...prev]);
-    setComment("");
-    setRating(5);
+    try {
+      if (productId) {
+        await createReview.mutateAsync({
+          rating,
+          comment: comment.trim(),
+          reviewerName,
+          reviewerEmail: user?.email,
+        });
+      }
+
+      const newReview: Review = {
+        id: Date.now().toString(),
+        name: reviewerName,
+        rating: rating,
+        title: `${rating} Star Rating`,
+        comment: comment.trim(),
+        date: new Date().toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }),
+        isVerifiedPurchase: hasPurchased
+      };
+
+      setLocalReviews((prev) => [newReview, ...prev]);
+      toast.success("Review submitted successfully!");
+      setComment("");
+      setRating(5);
+    } catch (err) {
+      toast.error("Failed to submit review");
+    }
   }
 
   return (
@@ -169,10 +242,24 @@ export default function ProductReviews() {
                 required
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
+                onFocus={() => {
+                  if (!isAuthenticated) {
+                    toast.error("Please login to submit a review");
+                  }
+                }}
                 className="flex-1 px-4 py-3 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3A42]/20 focus:border-[#0B3A42] transition-colors"
-                placeholder="Write your review"
+                placeholder={isAuthenticated ? "Write your review..." : "Please login to write a review"}
               />
-              <Button type="submit" className="sm:h-[46px] px-6 whitespace-nowrap">
+              <Button
+                type="submit"
+                onClick={(e) => {
+                  if (!isAuthenticated) {
+                    e.preventDefault();
+                    toast.error("Please login to submit a review");
+                  }
+                }}
+                className="sm:h-[46px] px-6 whitespace-nowrap"
+              >
                 Submit
               </Button>
             </div>
@@ -219,9 +306,11 @@ export default function ProductReviews() {
                   <p className="text-sm text-zinc-600 leading-relaxed">{review.comment}</p>
 
                   {/* Verified Purchase Badge */}
-                  <div className="mt-1 flex items-center gap-1 text-[10px] text-[#0B3A42] font-semibold bg-[#0B3A42]/5 w-fit px-2 py-0.5 rounded">
-                    <Check className="h-3 w-3" /> Verified Purchase
-                  </div>
+                  {review.isVerifiedPurchase && (
+                    <div className="mt-1 flex items-center gap-1 text-[10px] text-[#0B3A42] font-semibold bg-[#0B3A42]/5 w-fit px-2 py-0.5 rounded">
+                      <Check className="h-3 w-3" /> Verified Purchase
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
