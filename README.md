@@ -123,6 +123,8 @@ Flyway seed data (`V2__seed_initial_data.sql`) creates a default super admin:
 ```bash
 cp .env.example .env
 # Fill in all values — especially DB_ROOT_PASSWORD and JWT_SECRET
+# JWT_SECRET must be standard Base64 (>= 256 bits / 32 bytes, no '-' or '_').
+# Generate via: openssl rand -base64 32
 
 docker compose up --build
 ```

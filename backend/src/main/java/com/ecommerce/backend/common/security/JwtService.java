@@ -4,7 +4,6 @@ import com.ecommerce.backend.common.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,10 +18,11 @@ import java.util.Date;
 public class JwtService {
 
     private final SecretKey secretKey;
-    private final long      accessTokenExpiryMs;
+    private final long accessTokenExpiryMs;
 
     public JwtService(JwtProperties props) {
-        this.secretKey           = Keys.hmacShaKeyFor(Decoders.BASE64.decode(props.getSecret()));
+        byte[] keyBytes = props.validateAndGetDecodedSecret();
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpiryMs = props.getAccessTokenExpiryMs();
     }
 

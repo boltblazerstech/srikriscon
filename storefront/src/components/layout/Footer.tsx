@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
+import { useSetting } from "@/src/hooks/useSettings";
 
-const { business, nav } = theme;
+const { business } = theme;
 
-// ─── Inline brand SVGs (lucide-react doesn't include brand icons) ─────────────
+// ─── Inline Brand SVGs ───────────────────────────────────────────────────────
 const icons = {
   Instagram: () => (
     <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
@@ -32,58 +35,65 @@ const icons = {
 export default function Footer() {
   const year = new Date().getFullYear();
 
+  const { value: storeName } = useSetting("storeName");
+  const { value: storeTagline } = useSetting("storeTagline");
+  const { value: storePhone } = useSetting("storePhone");
+  const { value: storeEmail } = useSetting("storeEmail");
+  const { value: storeAddress } = useSetting("storeAddress");
+  const { value: whatsappNumber } = useSetting("whatsappNumber");
+  const { value: facebookUrl } = useSetting("facebookUrl");
+  const { value: instagramUrl } = useSetting("instagramUrl");
+  const { value: youtubeUrl } = useSetting("youtubeUrl");
+
+  const name = (storeName || business.name).toUpperCase();
+  const tagline = storeTagline || "Premium agricultural machinery for modern farming. Built for performance, designed for durability.";
+  const phone = storePhone || business.phone;
+  const email = storeEmail || business.email;
+  const address = storeAddress || "E-6, Industrial Area, Dewas, Madhya Pradesh 455001";
+  const whatsapp = whatsappNumber || business.whatsapp;
+  const facebook = facebookUrl || business.facebook;
+  const instagram = instagramUrl || business.instagram;
+  const youtube = youtubeUrl || business.youtube;
+
   return (
-    <footer>
+    <footer className="bg-[#081420] text-zinc-400 border-t border-white/10 relative overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {/* ── Main 4-Column Grid ────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 py-16">
+          
+          {/* Column 1: Brand & Socials (Width: 4 cols) */}
+          <div className="lg:col-span-4 space-y-5">
+            <div>
+              <Link href="/" className="inline-block group">
+                <h2 className="text-xl sm:text-2xl font-black tracking-wider text-[#38bdf8] uppercase font-sans transition-colors group-hover:text-cyan-300">
+                  {name}
+                </h2>
+              </Link>
+              <div className="w-9 h-[2px] bg-[#38bdf8] mt-2" />
+            </div>
 
-      {/* ── Body — primary teal ───────────────────────────────────────────── */}
-      <div className="relative bg-primary overflow-hidden">
+            <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
+              {tagline}
+            </p>
 
-        {/* Large watermark — decorative background text */}
-        <span
-          aria-hidden
-          className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex justify-center text-[13vw] font-black text-white/[0.04] leading-none whitespace-nowrap overflow-hidden"
-        >
-          {business.name}
-        </span>
-
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-14">
-
-          {/* ── Main grid ─────────────────────────────────────────────────── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-14 border-b border-white/[0.08]">
-
-            {/* Brand column */}
-            <div className="lg:col-span-2">
-              <p className="font-display text-2xl font-bold text-white tracking-tight leading-tight">
-                {business.name}
+            <div className="pt-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-3.5">
+                FOLLOW US
               </p>
-              <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
-                {business.tagline}
-              </p>
-
-              {/* Social icons — brand-specific hover colours */}
-              <div className="mt-7 flex flex-wrap gap-2.5">
-                {business.whatsapp && (
+              <div className="flex items-center gap-2.5">
+                {facebook && (
                   <SocialIcon
-                    href={whatsappLink(business.whatsapp)}
-                    label="WhatsApp"
-                    icon={<MessageCircle className="h-4 w-4" />}
-                    hoverBg="hover:bg-[#25D366]"
-                  />
-                )}
-                {business.instagram && (
-                  <SocialIcon
-                    href={business.instagram}
-                    label="Instagram"
-                    icon={<icons.Instagram />}
-                    hoverBg="hover:bg-[#E1306C]"
-                  />
-                )}
-                {business.facebook && (
-                  <SocialIcon
-                    href={business.facebook}
+                    href={facebook}
                     label="Facebook"
                     icon={<icons.Facebook />}
-                    hoverBg="hover:bg-[#1877F2]"
+                  />
+                )}
+                {instagram && (
+                  <SocialIcon
+                    href={instagram}
+                    label="Instagram"
+                    icon={<icons.Instagram />}
                   />
                 )}
                 {business.twitter && (
@@ -91,108 +101,200 @@ export default function Footer() {
                     href={business.twitter}
                     label="Twitter / X"
                     icon={<icons.Twitter />}
-                    hoverBg="hover:bg-white/20"
                   />
                 )}
-                {business.youtube && (
+                {youtube && (
                   <SocialIcon
-                    href={business.youtube}
+                    href={youtube}
                     label="YouTube"
                     icon={<icons.Youtube />}
-                    hoverBg="hover:bg-[#FF0000]"
+                  />
+                )}
+                {whatsapp && (
+                  <SocialIcon
+                    href={whatsappLink(whatsapp)}
+                    label="WhatsApp"
+                    icon={<MessageCircle className="h-4 w-4" />}
                   />
                 )}
               </div>
             </div>
+          </div>
 
-            {/* Navigate */}
+          {/* Column 2: Quick Links (Width: 2 cols) */}
+          <div className="lg:col-span-2">
             <div>
-              <h3 className="text-[10px] font-extrabold tracking-[0.3em] text-accent uppercase mb-6">
-                Navigate
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
+                QUICK LINKS
               </h3>
-              <ul className="space-y-3">
-                {nav.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group flex items-center text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <span className="h-px w-0 flex-shrink-0 bg-accent group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+            </div>
+            <ul className="space-y-3.5 text-sm">
+              <li>
+                <Link href="/" className="hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/products" className="hover:text-white transition-colors">
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link href="/categories" className="hover:text-white transition-colors">
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Support (Width: 3 cols) */}
+          <div className="lg:col-span-3">
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
+                SUPPORT
+              </h3>
+              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+            </div>
+            <ul className="space-y-3.5 text-sm">
+              <li>
+                <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/track" className="hover:text-white transition-colors">
+                  Track Order
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faq" className="hover:text-white transition-colors">
+                  Warranty & FAQs
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Contact (Width: 3 cols) */}
+          <div className="lg:col-span-3">
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
+                CONTACT
+              </h3>
+              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+            </div>
+            <ul className="space-y-4 text-sm">
+              {phone && (
                 <li>
-                  <Link
-                    href="/account/orders"
-                    className="group flex items-center text-sm text-white/55 hover:text-white transition-colors duration-200"
+                  <a
+                    href={`tel:${phone}`}
+                    className="flex items-center gap-3.5 group hover:text-white transition-colors"
                   >
-                    <span className="h-px w-0 flex-shrink-0 bg-accent group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                    Track Order
-                  </Link>
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
+                      <Phone className="h-4 w-4" />
+                    </span>
+                    <span>{phone}</span>
+                  </a>
                 </li>
-              </ul>
-            </div>
+              )}
 
-            {/* Contact */}
-            <div>
-              <h3 className="text-[10px] font-extrabold tracking-[0.3em] text-accent uppercase mb-6">
-                Get In Touch
-              </h3>
-              <ul className="space-y-4">
-                {business.phone && (
-                  <li>
-                    <a
-                      href={`tel:${business.phone}`}
-                      className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <Phone className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                      {business.phone}
-                    </a>
-                  </li>
-                )}
-                {business.email && (
-                  <li>
-                    <a
-                      href={`mailto:${business.email}`}
-                      className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors duration-200"
-                    >
-                      <Mail className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                      <span className="break-all">{business.email}</span>
-                    </a>
-                  </li>
-                )}
-                {business.address && (
-                  <li className="flex items-start gap-3 text-sm text-white/55">
-                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" />
-                    <span>{business.address}</span>
-                  </li>
-                )}
-              </ul>
-            </div>
+              {email && (
+                <li>
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-center gap-3.5 group hover:text-white transition-colors"
+                  >
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
+                      <Mail className="h-4 w-4" />
+                    </span>
+                    <span className="break-all">{email}</span>
+                  </a>
+                </li>
+              )}
+
+              {whatsapp && (
+                <li>
+                  <a
+                    href={whatsappLink(whatsapp)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3.5 group hover:text-white transition-colors"
+                  >
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
+                      <MessageCircle className="h-4 w-4" />
+                    </span>
+                    <span>WhatsApp Chat</span>
+                  </a>
+                </li>
+              )}
+
+              {address && (
+                <li>
+                  <div className="flex items-start gap-3.5">
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 mt-0.5">
+                      <MapPin className="h-4 w-4" />
+                    </span>
+                    <span className="leading-relaxed text-zinc-400">
+                      {address}
+                    </span>
+                  </div>
+                </li>
+              )}
+            </ul>
           </div>
 
         </div>
+
       </div>
 
-      {/* ── Legal strip — near-black ──────────────────────────────────────── */}
-      <div className="bg-zinc-950">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30">
-          <p>© {year} {business.name}. All rights reserved.</p>
-          <div className="flex flex-wrap gap-5 items-center justify-center">
-            {business.gst && (
-              <span className="font-mono">{business.gst}</span>
-            )}
-            <Link href="/privacy-policy" className="hover:text-white/60 transition-colors">
+      {/* ── Bottom Legal Strip ────────────────────────────────────────── */}
+      <div className="border-t border-white/10 bg-[#040c14]/80 py-5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>© {year} {name} Pvt Ltd. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 text-zinc-500">
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-white/60 transition-colors">
-              Terms
+            <span>•</span>
+            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+              Terms & Conditions
+            </Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+              Shipping Policy
+            </Link>
+            <span>•</span>
+            <Link href="/track" className="hover:text-zinc-300 transition-colors">
+              Track Order
             </Link>
           </div>
         </div>
       </div>
-
     </footer>
   );
 }
@@ -201,12 +303,10 @@ function SocialIcon({
   href,
   label,
   icon,
-  hoverBg = "hover:bg-white/20",
 }: {
   href: string;
   label: string;
   icon: React.ReactNode;
-  hoverBg?: string;
 }) {
   return (
     <a
@@ -214,7 +314,7 @@ function SocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.08] border border-white/[0.12] text-white/60 hover:text-white hover:border-transparent transition-all duration-300 ${hoverBg}`}
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#38bdf8]/50 hover:bg-[#38bdf8]/10 transition-all duration-300"
     >
       {icon}
     </a>

@@ -67,7 +67,7 @@ Work through each section in order:
 | Section        | What to get                                                    |
 | -------------- | -------------------------------------------------------------- |
 | **Database**   | Create MySQL DB (local or Aiven); copy credentials             |
-| **JWT**        | Run `openssl rand -base64 64`; paste as `JWT_SECRET`           |
+| **JWT**        | Run `openssl rand -base64 32` (standard Base64, >= 256 bits); paste as `JWT_SECRET` |
 | **R2**         | Cloudflare dashboard → R2 → create bucket → API tokens         |
 | **Razorpay**   | Razorpay dashboard → Settings → API Keys                       |
 | **Shiprocket** | Shiprocket account email + password                            |

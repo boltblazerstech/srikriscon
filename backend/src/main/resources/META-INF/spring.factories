@@ -1,0 +1,4 @@
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.ecommerce.backend.common.security.JwtFailureAnalyzer
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.ecommerce.backend.common.config.DotenvEnvironmentPostProcessor
