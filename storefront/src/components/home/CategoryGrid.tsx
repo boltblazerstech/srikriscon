@@ -77,35 +77,35 @@ export default function CategoryGrid() {
   return (
     <section className="py-14 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Header — matching FeaturedProducts & other sections */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="flex items-end justify-between mb-8"
+          className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4"
         >
           <div>
-            <h2 className="text-3xl font-extrabold text-primary tracking-tight">
+            <span className="text-sm font-bold tracking-widest text-accent uppercase mb-1 block">
+              Curated Collections
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight">
               Shop by Category
             </h2>
-            <p className="mt-1 text-sm text-zinc-400 font-medium">
-              Browse our curated product collections
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Arrow buttons */}
             <button
               onClick={() => scrollBy("left")}
-              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all"
+              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all shadow-xs"
               aria-label="Scroll left"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={() => scrollBy("right")}
-              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all"
+              className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all shadow-xs"
               aria-label="Scroll right"
             >
               <ChevronRight className="h-4 w-4" />
@@ -113,25 +113,28 @@ export default function CategoryGrid() {
 
             <Link
               href="/categories"
-              className="ml-1 text-sm font-bold text-accent hover:text-[#C2006A] transition-colors uppercase tracking-wider"
+              className="group flex items-center gap-2 text-sm font-semibold text-accent hover:text-[#C2006A] transition-colors ml-1"
             >
-              View All →
+              <span className="border-b border-transparent group-hover:border-current pb-0.5 transition-all">
+                Discover All
+              </span>
+              <span className="text-sm transform group-hover:translate-x-1 transition-transform inline-block">→</span>
             </Link>
           </div>
         </motion.div>
       </div>
 
-      {/* Scrollable Row — full-bleed so items peek at edges */}
-      <div className="relative">
+      {/* Scrollable Row — centered when items fit, scrollable on smaller screens */}
+      <div className="relative mx-auto max-w-7xl">
         {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" />
         {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" />
 
         <div
           ref={scrollRef}
           onMouseDown={onMouseDown}
-          className="flex gap-6 overflow-x-auto scroll-smooth select-none cursor-grab px-8 sm:px-16 pb-4"
+          className="flex gap-6 overflow-x-auto scroll-smooth select-none cursor-grab px-6 sm:px-8 pb-4 justify-start lg:justify-center items-center"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {active.map((cat, idx) => (

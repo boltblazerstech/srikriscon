@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { motion } from "framer-motion";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
@@ -30,7 +30,7 @@ export default function WhatsAppButton() {
       whileTap={{ scale: 0.95 }}
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg shadow-black/20"
     >
-      <MessageCircle className="h-7 w-7" fill="currentColor" strokeWidth={0} />
+      <WhatsAppIcon className="h-7 w-7 text-white" />
 
       {/* Pulse ring */}
       <span className="absolute inset-0 rounded-full animate-ping bg-[#25d366] opacity-30" />

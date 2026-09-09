@@ -33,7 +33,8 @@ const schema = z.object({
   name:            z.string().min(1, "Required"),
   slug:            z.string().min(1, "Required"),
   description:     z.string().optional(),
-  price:           z.number().min(0),
+  price:           z.number().min(0, "Price must be >= 0"),
+  comparePrice:    z.number().min(0).optional(),
   stockQuantity:   z.number().int().min(0),
   categoryId:      z.string().optional(),
   active:          z.boolean(),
@@ -57,7 +58,7 @@ export default function NewProductPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "", slug: "", description: "", price: 0, stockQuantity: 0,
+      name: "", slug: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
       active: true, featured: false, images: [], variants: [],
       metaTitle: "", metaDescription: "",
     },
@@ -65,6 +66,23 @@ export default function NewProductPage() {
 
   const { fields, append, remove } = useFieldArray({ control, name: "variants" });
   const nameVal = watch("name");
+  const watchPrice = watch("price");
+  const watchComparePrice = watch("comparePrice");
+
+  const discountPercent =
+    watchComparePrice != null &&
+    watchPrice != null &&
+    Number(watchComparePrice) > Number(watchPrice) &&
+    Number(watchComparePrice) > 0
+      ? Math.round(((Number(watchComparePrice) - Number(watchPrice)) / Number(watchComparePrice)) * 100)
+      : null;
+
+  const savingsAmount =
+    watchComparePrice != null &&
+    watchPrice != null &&
+    Number(watchComparePrice) > Number(watchPrice)
+      ? Number(watchComparePrice) - Number(watchPrice)
+      : null;
 
   useEffect(() => {
     setValue("slug", slugify(nameVal ?? ""));
@@ -79,6 +97,11 @@ export default function NewProductPage() {
     try {
       await create.mutateAsync({
         ...data,
+        price: Number(data.price),
+        comparePrice:
+          data.comparePrice != null && !isNaN(Number(data.comparePrice)) && Number(data.comparePrice) > 0
+            ? Number(data.comparePrice)
+            : undefined,
         categoryId: data.categoryId ? Number(data.categoryId) : undefined,
         variants: data.variants.map((v) => ({ ...v, id: undefined })),
       });
@@ -128,33 +151,61 @@ export default function NewProductPage() {
               )}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Input
-                label="Price (₹)"
-                type="number"
-                step="0.01"
-                {...register("price", { valueAsNumber: true })}
-                error={errors.price?.message}
-              />
-              <Input
-                label="Stock Quantity"
-                type="number"
-                {...register("stockQuantity", { valueAsNumber: true })}
-                error={errors.stockQuantity?.message}
-              />
-              <Controller
-                control={control}
-                name="categoryId"
-                render={({ field }) => (
-                  <Select
-                    label="Category"
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                    options={categoryOptions}
-                  />
-                )}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <Input
+                  label="Our Price / Selling Price (₹)"
+                  type="number"
+                  step="0.01"
+                  {...register("price", { valueAsNumber: true })}
+                  error={errors.price?.message}
+                  hint="Final price customer pays"
+                />
+              </div>
+              <div>
+                <Input
+                  label="Sales Price / MRP (₹)"
+                  type="number"
+                  step="0.01"
+                  {...register("comparePrice", { valueAsNumber: true })}
+                  error={errors.comparePrice?.message}
+                  hint="Original / Strikethrough price"
+                />
+              </div>
+              <div>
+                <Input
+                  label="Stock Quantity"
+                  type="number"
+                  {...register("stockQuantity", { valueAsNumber: true })}
+                  error={errors.stockQuantity?.message}
+                />
+              </div>
+              <div>
+                <Controller
+                  control={control}
+                  name="categoryId"
+                  render={({ field }) => (
+                    <Select
+                      label="Category"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      options={categoryOptions}
+                    />
+                  )}
+                />
+              </div>
             </div>
+
+            {discountPercent !== null && savingsAmount !== null && (
+              <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-semibold">
+                <span className="bg-emerald-600 text-white font-black px-2 py-0.5 rounded text-[10px] tracking-wide">
+                  {discountPercent}% OFF
+                </span>
+                <span>
+                  Customer saves ₹{savingsAmount.toFixed(2)} (Selling at ₹{Number(watchPrice).toFixed(2)} vs MRP ₹{Number(watchComparePrice).toFixed(2)})
+                </span>
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-6">
               <Controller

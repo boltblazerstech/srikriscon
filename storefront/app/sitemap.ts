@@ -3,7 +3,7 @@ import { theme } from "@/src/config/theme";
 
 export const dynamic = "force-static";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mystore.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://srikriscon.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -16,6 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/about`,           lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/contact`,         lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/privacy-policy`,  lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE_URL}/terms-conditions`,lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE_URL}/shipping-policy`, lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE_URL}/terms`,           lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
   ];
 

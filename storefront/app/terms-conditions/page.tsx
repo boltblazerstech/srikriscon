@@ -2,12 +2,12 @@
 
 import Spinner from "@/src/components/ui/Spinner";
 import { useCmsPage } from "@/src/hooks/useCmsPage";
-import { Shield, Lock, FileText, Mail, Phone, MapPin, CheckCircle, ChevronRight } from "lucide-react";
+import { FileCheck, Shield, FileText, Mail, Phone, MapPin, CheckCircle, ChevronRight, Scale, Clock } from "lucide-react";
 import Link from "next/link";
 import { theme } from "@/src/config/theme";
 
-export default function PrivacyPolicyPage() {
-  const { data: page, isLoading } = useCmsPage("privacy-policy");
+export default function TermsConditionsPage() {
+  const { data: page, isLoading } = useCmsPage("terms-conditions");
 
   if (isLoading)
     return (
@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
           <nav className="flex items-center gap-2 text-xs text-zinc-500">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <ChevronRight className="h-3 w-3 text-zinc-400" />
-            <span className="text-zinc-900 font-semibold">Privacy Policy</span>
+            <span className="text-zinc-900 font-semibold">Terms & Conditions</span>
           </nav>
         </div>
       </div>
@@ -50,21 +50,21 @@ export default function PrivacyPolicyPage() {
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#B5A57A]/20 text-[#B5A57A] text-xs font-bold tracking-wider uppercase mb-4 border border-[#B5A57A]/30">
-            <Shield className="h-3.5 w-3.5" />
-            Security & Transparency
+            <Scale className="h-3.5 w-3.5" />
+            Terms of Service
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Privacy Policy
+            Terms & Conditions
           </h1>
           <p className="text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">
-            How Sri Kriscon Industries protects, processes, and respects your personal and business information.
+            Legal terms governing product ordering, custom manufacturing, and use of Sri Kriscon services.
           </p>
           <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/10 text-xs text-zinc-300">
             <span>Effective Date: <strong>September 2026</strong></span>
             <span>•</span>
             <span>GSTIN: <strong className="font-mono text-[#B5A57A]">23DZAPS6347N1ZU</strong></span>
             <span>•</span>
-            <span>Official Contact: <a href="mailto:info@srikriscon.com" className="text-white underline">info@srikriscon.com</a></span>
+            <span>Official Email: <a href="mailto:info@srikriscon.com" className="text-white underline">info@srikriscon.com</a></span>
           </div>
         </div>
       </header>
@@ -73,30 +73,30 @@ export default function PrivacyPolicyPage() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-md flex items-center gap-3.5">
-            <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <Lock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500 font-semibold">256-Bit SSL</p>
-              <p className="text-sm font-bold text-zinc-900">Encrypted Transactions</p>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-md flex items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <Shield className="h-5 w-5" />
+              <FileCheck className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-zinc-500 font-semibold">Zero Data Selling</p>
-              <p className="text-sm font-bold text-zinc-900">100% Privacy Respected</p>
+              <p className="text-xs text-zinc-500 font-semibold">Clear Pricing</p>
+              <p className="text-sm font-bold text-zinc-900">Direct Factory Rates</p>
             </div>
           </div>
           <div className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-md flex items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-              <FileText className="h-5 w-5" />
+              <Shield className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-zinc-500 font-semibold">Full Tax Compliance</p>
-              <p className="text-sm font-bold text-zinc-900">Valid GST Invoicing</p>
+              <p className="text-xs text-zinc-500 font-semibold">Verified GSTIN</p>
+              <p className="text-sm font-bold text-zinc-900">Valid B2B Invoices</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-md flex items-center gap-3.5">
+            <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500 font-semibold">Rapid Dispatch</p>
+              <p className="text-sm font-bold text-zinc-900">On-Time Schedules</p>
             </div>
           </div>
         </div>
@@ -111,10 +111,10 @@ export default function PrivacyPolicyPage() {
             <span className="h-7 w-7 rounded-lg bg-primary text-white text-xs font-bold flex items-center justify-center font-mono">
               01
             </span>
-            <h2 className="text-xl font-bold text-zinc-900">Introduction & Scope</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Agreement to Terms</h2>
           </div>
           <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
-            Sri Kriscon Industries (&ldquo;Sri Kriscon&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) respects your privacy and is dedicated to securing the personal details of all users, businesses, and procurement officers who interact with our digital platform, request product quotations, or purchase our packaging goods.
+            These Terms & Conditions constitute a legally binding contract between you and <strong>Sri Kriscon Industries</strong>, governing your purchases, catalog orders, and manufacturing inquiries. By accessing our platform or confirming an order, you accept these terms in full.
           </p>
         </div>
 
@@ -124,21 +124,13 @@ export default function PrivacyPolicyPage() {
             <span className="h-7 w-7 rounded-lg bg-[#B5A57A] text-white text-xs font-bold flex items-center justify-center font-mono">
               02
             </span>
-            <h2 className="text-xl font-bold text-zinc-900">Information We Collect</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Products, Samples & Custom Printing</h2>
           </div>
-          <div className="pl-10 space-y-3 text-sm text-zinc-600">
-            <p>We collect only information required to fulfill orders and provide packaging engineering services:</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80">
-                <p className="font-bold text-xs text-zinc-900 mb-1">Contact & Shipping Details</p>
-                <p className="text-xs text-zinc-600">Name, delivery address, phone number, and official correspondence email (<code className="bg-white px-1 py-0.5 rounded border text-[11px]">info@srikriscon.com</code>).</p>
-              </div>
-              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80">
-                <p className="font-bold text-xs text-zinc-900 mb-1">Business & GSTIN Information</p>
-                <p className="text-xs text-zinc-600">Enterprise name, billing addresses, and registered GST number for input tax credit invoices.</p>
-              </div>
-            </div>
-          </div>
+          <ul className="pl-10 space-y-2 text-sm text-zinc-600 list-disc">
+            <li>Sri Kriscon manufactures rigid boxes, mono cartons, sweet boxes, and heavy-duty corrugated cartons.</li>
+            <li>Custom printed orders enter production strictly after customer digital proof or sample approval.</li>
+            <li>Due to printing substrate variations and display color profiles, slight color shifts within accepted industrial tolerances may occur.</li>
+          </ul>
         </div>
 
         {/* Section 3 */}
@@ -147,14 +139,11 @@ export default function PrivacyPolicyPage() {
             <span className="h-7 w-7 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center font-mono">
               03
             </span>
-            <h2 className="text-xl font-bold text-zinc-900">How We Use Your Data</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Pricing, Tax Invoices & GST</h2>
           </div>
-          <ul className="pl-10 space-y-2 text-sm text-zinc-600 list-disc">
-            <li>Processing, die-cutting, printing, and shipping your product packaging orders.</li>
-            <li>Issuing legitimate GST tax invoices and complying with Indian taxation statutes.</li>
-            <li>Transmitting shipment tracking updates via SMS, email, and WhatsApp notifications.</li>
-            <li>Providing direct customer support for custom box dimensions and quotes.</li>
-          </ul>
+          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
+            All prices are stated in Indian Rupees (₹). Official GST tax invoices are generated for all orders under <strong>GSTIN: 23DZAPS6347N1ZU</strong>. Corporate customers must provide a valid GST number during order placement to receive input tax credit.
+          </p>
         </div>
 
         {/* Section 4 */}
@@ -163,18 +152,19 @@ export default function PrivacyPolicyPage() {
             <span className="h-7 w-7 rounded-lg bg-[#E6007E] text-white text-xs font-bold flex items-center justify-center font-mono">
               04
             </span>
-            <h2 className="text-xl font-bold text-zinc-900">Security & Third-Party Disclosure</h2>
+            <h2 className="text-xl font-bold text-zinc-900">Payment Terms & Cancellations</h2>
           </div>
-          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
-            We never sell or distribute your data to marketing aggregators. Information is shared exclusively with certified PCI-DSS payment gateways (Razorpay) and trusted freight carriers (Shiprocket, Bluedart, Delhivery) strictly for delivery completion.
-          </p>
+          <div className="pl-10 space-y-2.5 text-sm text-zinc-600">
+            <p>We accept Razorpay UPI, Net Banking, Credit/Debit cards, and direct Bank RTGS/NEFT transfers.</p>
+            <p>Standard in-stock catalog orders can be cancelled within 12 hours of order placement prior to carrier dispatch. Custom manufactured orders cannot be cancelled once board slitting or printing has commenced.</p>
+          </div>
         </div>
 
         {/* Section 5: Contact Card */}
         <div className="bg-gradient-to-br from-primary/5 via-white to-[#B5A57A]/10 rounded-2xl border-2 border-primary/20 p-6 sm:p-8 shadow-sm">
-          <h3 className="text-lg font-bold text-zinc-900 mb-2">Have Questions About Your Privacy?</h3>
+          <h3 className="text-lg font-bold text-zinc-900 mb-2">Need Contract or Custom Wholesale Terms?</h3>
           <p className="text-xs sm:text-sm text-zinc-600 mb-4">
-            Contact our compliance desk directly for data updates, account inquiries, or invoice queries:
+            For long-term annual supply agreements, bulk rate contracts, and distributor inquiries, get in touch:
           </p>
           <div className="flex flex-wrap gap-4 text-xs font-semibold text-zinc-700">
             <div className="flex items-center gap-2">
@@ -187,7 +177,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-primary" />
-              <span>Dewas, Madhya Pradesh (GSTIN: 23DZAPS6347N1ZU)</span>
+              <span>Industrial Area, Dewas, MP (GSTIN: 23DZAPS6347N1ZU)</span>
             </div>
           </div>
         </div>

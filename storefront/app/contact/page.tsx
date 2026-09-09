@@ -3,9 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Phone, Mail, MapPin, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Send, ShieldCheck, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 import Button from "@/src/components/ui/Button";
+import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
 
@@ -29,7 +30,6 @@ export default function ContactPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(data: FormData) {
-    // Forward to WhatsApp if configured, otherwise show success (backend contact form can be wired later)
     const msg = `*Contact Form Enquiry*\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone ?? "-"}\n\nMessage:\n${data.message}`;
     if (business.whatsapp) {
       window.open(whatsappLink(business.whatsapp, msg), "_blank");
@@ -38,11 +38,14 @@ export default function ContactPage() {
     reset();
   }
 
+  const email = business.email || "info@srikriscon.com";
+  const gst = business.gst || "23DZAPS6347N1ZU";
+
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-2">Contact Us</h1>
-      <p className="text-muted-foreground mb-10">
-        Have a question? We&apos;d love to hear from you.
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground mb-2">Contact Us</h1>
+      <p className="text-muted-foreground mb-10 text-sm sm:text-base">
+        Have questions about custom sizes, bulk pricing, or delivery schedules? We&apos;re here to help.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -55,7 +58,7 @@ export default function ContactPage() {
             <input {...register("name")} className={inp()} placeholder="John Doe" />
           </Field>
           <Field label="Email" error={errors.email?.message}>
-            <input {...register("email")} type="email" className={inp()} placeholder="john@example.com" />
+            <input {...register("email")} type="email" className={inp()} placeholder="name@example.com" />
           </Field>
           <Field label="Phone (optional)" error={errors.phone?.message}>
             <input {...register("phone")} type="tel" className={inp()} placeholder="+91 98765 43210" />
@@ -65,7 +68,7 @@ export default function ContactPage() {
               {...register("message")}
               rows={5}
               className={`${inp()} resize-none`}
-              placeholder="Tell us how we can help…"
+              placeholder="Tell us about your packaging requirements (box dimensions, order volume, artwork)..."
             />
           </Field>
           <Button type="submit" loading={isSubmitting} icon={<Send className="h-4 w-4" />} size="lg" fullWidth>
@@ -75,46 +78,56 @@ export default function ContactPage() {
 
         {/* Info */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-white p-6 space-y-5">
+          <div className="rounded-2xl border border-border bg-white p-6 space-y-5 shadow-xs">
             {business.phone && (
               <InfoRow icon={Phone} label="Phone">
-                <a href={`tel:${business.phone}`} className="text-sm text-foreground hover:text-primary transition-colors">
+                <a href={`tel:${business.phone}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
                   {business.phone}
                 </a>
               </InfoRow>
             )}
-            {business.email && (
-              <InfoRow icon={Mail} label="Email">
-                <a href={`mailto:${business.email}`} className="text-sm text-foreground hover:text-primary transition-colors break-all">
-                  {business.email}
-                </a>
-              </InfoRow>
-            )}
+            
+            <InfoRow icon={Mail} label="Official Email">
+              <a href={`mailto:${email}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors break-all">
+                {email}
+              </a>
+            </InfoRow>
+
+            <InfoRow icon={ShieldCheck} label="GSTIN">
+              <p className="text-sm font-mono font-bold text-foreground">
+                {gst}
+              </p>
+            </InfoRow>
+
             {business.address && (
-              <InfoRow icon={MapPin} label="Address">
-                <p className="text-sm text-muted-foreground">{business.address}</p>
+              <InfoRow icon={MapPin} label="Plant & Office Address">
+                <p className="text-sm text-muted-foreground leading-relaxed">{business.address}</p>
               </InfoRow>
             )}
+
             {business.whatsapp && (
-              <InfoRow icon={MessageCircle} label="WhatsApp">
+              <InfoRow icon={WhatsAppIcon} label="Instant WhatsApp Support">
                 <a
-                  href={whatsappLink(business.whatsapp)}
+                  href={whatsappLink(business.whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-success hover:underline"
+                  className="text-sm font-semibold text-emerald-600 hover:underline"
                 >
-                  Chat with us on WhatsApp
+                  Chat with us on WhatsApp (+{business.whatsapp})
                 </a>
               </InfoRow>
             )}
           </div>
 
-          {/* Business hours placeholder */}
+          {/* Working hours */}
           <div className="rounded-2xl border border-border bg-muted/30 p-5">
-            <h3 className="font-semibold mb-3 text-sm">Business Hours</h3>
+            <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-foreground">
+              <Clock className="h-4 w-4 text-primary" />
+              Business Hours
+            </h3>
             <div className="space-y-1.5 text-sm text-muted-foreground">
-              <div className="flex justify-between"><span>Mon – Sat</span><span>9:00 AM – 6:00 PM</span></div>
-              <div className="flex justify-between"><span>Sunday</span><span>Closed</span></div>
+              <div className="flex justify-between"><span>Monday – Saturday</span><span className="font-medium text-foreground">9:00 AM – 6:00 PM</span></div>
+              <div className="flex justify-between"><span>Sunday</span><span className="font-medium text-destructive">Closed</span></div>
             </div>
           </div>
         </div>

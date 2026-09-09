@@ -69,6 +69,13 @@ export default function ProductCard({ product, hero = false }: Props) {
       ? product.variants[selIdx].price
       : (product.startingPrice ?? product.price);
 
+  const comparePrice = product.comparePrice ?? null;
+  const hasDiscount = comparePrice != null && comparePrice > currentPrice;
+  const discountPercent = hasDiscount
+    ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100)
+    : 0;
+  const savings = hasDiscount ? comparePrice - currentPrice : 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -165,15 +172,28 @@ export default function ProductCard({ product, hero = false }: Props) {
               </h3>
             </Link>
 
-            {/* Price */}
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span className={cn("font-extrabold text-zinc-800", hero ? "text-xl" : "text-sm")}>
-                ₹{currentPrice.toFixed(0)}
-              </span>
-              {isOnSale && (
-                <span className="text-xs text-zinc-400 line-through">
-                  ₹{product.comparePrice!.toFixed(0)}
+            {/* Pricing block matching reference design with green discount and savings */}
+            <div className="flex flex-col items-center justify-center gap-1 w-full py-0.5">
+              <div className="flex items-baseline justify-center gap-2 flex-wrap">
+                <span className={cn("font-black text-zinc-900 tracking-tight", hero ? "text-2xl" : "text-base sm:text-lg")}>
+                  ₹{currentPrice.toFixed(0)}
                 </span>
+                {hasDiscount && (
+                  <span className="text-xs sm:text-sm text-zinc-400 line-through">
+                    ₹{comparePrice.toFixed(0)}
+                  </span>
+                )}
+              </div>
+
+              {hasDiscount && (
+                <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                  <span className="bg-[#DCFCE7] text-[#15803D] font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wide">
+                    {discountPercent}% OFF
+                  </span>
+                  <span className="text-[#16A34A] font-bold text-[11px]">
+                    You Save ₹{savings.toFixed(0)}
+                  </span>
+                </div>
               )}
             </div>
 

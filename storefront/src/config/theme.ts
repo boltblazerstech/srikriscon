@@ -46,8 +46,8 @@ export const theme = {
     /** Digits only, with country code — used for wa.me link */
     whatsapp:       "917999921111",
     email:          "info@srikriscon.com",
-    address:        "123, Main Street, Mumbai, Maharashtra 400001",
-    gst:            "GSTIN: 27XXXXX1234X1Z5",
+    address:        "E-6, Industrial Area, Dewas, Madhya Pradesh 455001",
+    gst:            "23DZAPS6347N1ZU",
     currency:       "INR",
     currencySymbol: "₹",
     /** Social handles — set to "" to hide */
@@ -62,6 +62,7 @@ export const theme = {
     { label: "Home",       href: "/" },
     { label: "Products",   href: "/products" },
     { label: "Categories", href: "/categories" },
+    { label: "Blogs",      href: "/blog" },
     { label: "About",      href: "/about" },
     { label: "Contact",    href: "/contact" },
   ],

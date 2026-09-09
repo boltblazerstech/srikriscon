@@ -1,338 +1,343 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
 import {
-  Package, Layers, ShieldCheck, Gift, Palette,
-  Award, PenTool, Factory, Clock, Users,
-  ArrowRight, CheckCircle,
+  ShieldCheck, ArrowRight, CheckCircle, Target, Eye, Sparkles, Mail, Shield, MapPin, Phone
 } from "lucide-react";
-import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
-
-import GrainOverlay from "@/src/components/ui/GrainOverlay";
-
-
 import { theme } from "@/src/config/theme";
 
-
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const EXPERTISE = [
-  {
-    title: "Luxury Rigid Boxes",
-    desc: "For premium product presentation",
-    image: "/product_images/SKI_SWEET-BOXES (5).webp",
-    icon: Package,
-  },
-  {
-    title: "Premium Mono Cartons",
-    desc: "With high-end printing finishes",
-    image: "/categories_images/cake_boxes.webp",
-    icon: Layers,
-  },
-  {
-    title: "Corrugated Cartons",
-    desc: "Durable and highly efficient",
-    image: "/categories_images/pizza_boxes.webp",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Sweet Shop Packaging",
-    desc: "Specialized confectionery solutions",
-    image: "/categories_images/sweet_boxes.webp",
-    icon: Gift,
-  },
-  {
-    title: "Customized Designs",
-    desc: "Fully aligned with your brand identity",
-    image: "/categories_images/paper_bags.webp",
-    icon: Palette,
-  },
-];
-
-const WHY = [
-  {
-    icon: Award,
-    title: "High-Quality",
-    desc: "Premium mono & corrugated cartons crafted with the finest materials for lasting durability and visual appeal.",
-  },
-  {
-    icon: PenTool,
-    title: "Custom Design",
-    desc: "Precise printing solutions tailored exactly to your brand guidelines and unique packaging requirements.",
-  },
-  {
-    icon: Factory,
-    title: "Advanced Manufacturing",
-    desc: "State-of-the-art machinery and production processes to ensure consistent quality at every run.",
-  },
-  {
-    icon: Clock,
-    title: "Timely Delivery",
-    desc: "Reliable delivery schedules with competitive pricing — no compromises on your deadlines.",
-  },
-  {
-    icon: Users,
-    title: "Customer-Centric",
-    desc: "Your needs always come first. We build lasting partnerships through trust, quality, and dedicated support.",
-  },
-];
+const { business } = theme;
 
 const INDUSTRIES = [
   "FMCG", "Food & Beverages", "Pharmaceuticals",
-  "Confectionery", "Electronics", "Apparel & Lifestyle",
+  "Confectionery & Sweets", "Electronics", "Luxury Lifestyle", "E-Commerce",
 ];
-
-// ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white font-sans text-zinc-800">
 
       {/* ── 1. HERO ─────────────────────────────────────────────────────── */}
-      <section className="relative bg-zinc-950 pt-32 pb-24 sm:pt-40 sm:pb-32 overflow-hidden">
-        {/* Animated blobs */}
-        <motion.div
-          aria-hidden
-          className="absolute -top-40 -left-20 w-[480px] h-[480px] rounded-full bg-primary/30 blur-[120px] pointer-events-none"
-          animate={{ x: [0, 60, -30, 0], y: [0, -40, 60, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          aria-hidden
-          className="absolute -bottom-40 -right-20 w-[540px] h-[540px] rounded-full bg-accent/15 blur-[140px] pointer-events-none"
-          animate={{ x: [0, -80, 40, 0], y: [0, 70, -50, 0] }}
-          transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-        />
-        <GrainOverlay />
+      <section className="relative bg-[#072429] pt-20 pb-20 sm:pt-28 sm:pb-28 overflow-hidden text-white">
+        {/* Subtle decorative background gradients */}
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#B5A57A]/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-[#E6007E]/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          {/* Label */}
-          <motion.div
-            variants={fadeUp} initial="hidden" animate="visible"
-            className="flex items-center justify-center gap-3 mb-8"
-          >
-            <span className="h-px w-8 bg-white/15" />
-            <span className="text-[10px] font-extrabold tracking-[0.32em] text-white/40 uppercase">
-              About Us
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span className="h-px w-8 bg-[#B5A57A]/40" />
+            <span className="text-xs font-bold tracking-[0.25em] text-[#B5A57A] uppercase">
+              About Sri Kriscon Industries
             </span>
-            <span className="h-px w-8 bg-white/15" />
-          </motion.div>
+            <span className="h-px w-8 bg-[#B5A57A]/40" />
+          </div>
 
-          <motion.h1
-            variants={fadeUp} initial="hidden" animate="visible"
-            transition={{ delay: 0.1 }}
-            className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight"
-          >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
             Packaging That Tells<br />
-            <em className="not-italic text-accent">Your Brand&apos;s</em> Story
-          </motion.h1>
+            <span className="text-[#B5A57A]">Your Brand&apos;s</span> Story
+          </h1>
 
-          <motion.p
-            variants={fadeUp} initial="hidden" animate="visible"
-            transition={{ delay: 0.2 }}
-            className="mt-8 text-base sm:text-lg text-white/45 font-light max-w-xl mx-auto leading-relaxed"
-          >
-            {theme.business.name} — a trusted name in premium packaging, combining structural strength with visual excellence.
-          </motion.p>
+          <p className="mt-6 text-base sm:text-lg text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+            Sri Kriscon Industries — a premier name in high-durability packaging, luxury rigid boxes, and modern carton engineering.
+          </p>
         </div>
       </section>
 
-      {/* ── 2. MISSION / STORY ─────────────────────────────────────────── */}
-      <section className="bg-white py-20 sm:py-28">
+      {/* ── 2. STORY ────────────────────────────────────────────────────── */}
+      <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left — image stack */}
-            <motion.div
-              variants={fadeUp} initial="hidden" whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              className="relative"
-            >
-              {/* Main image */}
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_20px_60px_-12px_rgba(11,58,66,0.25)]">
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-lg border border-zinc-200">
                 <Image
                   src="/product_images/SKI_SWEET-BOXES (8).webp"
                   alt="Sri Kriscon packaging showcase"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
               </div>
-              {/* Floating accent card */}
-              <div className="absolute -bottom-5 -right-5 bg-primary rounded-2xl p-5 shadow-xl hidden sm:block">
-                <p className="text-3xl font-bold text-white leading-none">500<span className="text-accent">+</span></p>
-                <p className="text-xs text-white/60 mt-1 font-medium tracking-wide uppercase">Products</p>
+              
+              <div className="absolute -bottom-4 -right-4 bg-primary rounded-2xl p-4 shadow-xl hidden sm:block border border-white/10 text-white">
+                <p className="text-2xl sm:text-3xl font-bold leading-none">500<span className="text-[#B5A57A]">+</span></p>
+                <p className="text-xs text-white/80 mt-1 font-medium tracking-wide uppercase">Packaging Designs</p>
               </div>
-              {/* Decorative badge */}
-              <div className="absolute -top-4 -left-4 bg-accent rounded-full p-3 shadow-lg hidden sm:flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-white" />
+
+              <div className="absolute -top-3 -left-3 bg-[#E6007E] rounded-full p-2.5 shadow-lg hidden sm:flex items-center justify-center text-white">
+                <CheckCircle className="h-5 w-5" />
               </div>
-            </motion.div>
+            </div>
 
             {/* Right — text */}
-            <motion.div
-              variants={fadeUp} initial="hidden" whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: 0.15 }}
-            >
-              <span className="text-sm font-bold tracking-widest text-accent uppercase mb-4 block">
-                Our Story
+            <div>
+              <span className="text-xs font-bold tracking-widest text-[#E6007E] uppercase mb-2 block">
+                WHO WE ARE
               </span>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-primary leading-tight tracking-tight">
-                Built on Trust,<br />Driven by Excellence
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-primary leading-tight tracking-tight">
+                Built on Trust,<br />Driven by Precision & Innovation
               </h2>
-              <div className="mt-6 space-y-4 text-base text-muted-foreground leading-relaxed">
+              <div className="mt-5 space-y-4 text-base text-zinc-600 leading-relaxed">
                 <p>
-                  At <strong className="text-foreground font-semibold">Sri Kriscon Industries</strong>, we take pride in being a trusted name in packaging — specializing in Rigid Boxes, Mono Cartons, and Corrugated Cartons. With a strong commitment to excellence, innovation, and customer satisfaction, we deliver solutions that protect products while enhancing their market appeal.
+                  At <strong className="text-zinc-900 font-semibold">Sri Kriscon Industries</strong>, we take pride in being a premier manufacturer and supplier of specialized packaging solutions — including Luxury Rigid Boxes, Mono Cartons, Sweet Boxes, and Heavy-Duty Corrugated Cartons.
                 </p>
                 <p>
-                  Driven by precision and backed by modern manufacturing, we serve FMCG, pharmaceuticals, food & beverages, confectionery, and more. Our team understands each client&apos;s unique requirements and crafts packaging that aligns perfectly with their brand identity.
+                  Equipped with high-precision die-cutting machinery and modern finishing technologies, we partner with enterprises across FMCG, confectioneries, food and beverage, pharmaceuticals, and lifestyle sectors.
                 </p>
               </div>
 
-              {/* Quote */}
-              <blockquote className="mt-8 border-l-[3px] border-accent pl-5 py-1">
-                <p className="font-display italic text-foreground/80 text-base leading-relaxed">
-                  &ldquo;We believe packaging is a statement of prestige. Our mission is to empower brands with packaging that captivates, differentiates, and leaves a lasting impression.&rdquo;
+              <blockquote className="mt-6 border-l-4 border-primary pl-4 py-1">
+                <p className="italic text-zinc-800 text-sm sm:text-base leading-relaxed">
+                  &ldquo;Packaging is your brand&apos;s first physical impression. We craft every box to captivate, protect, and leave an unforgettable mark.&rdquo;
                 </p>
               </blockquote>
 
-              {/* Industries served */}
-              <div className="mt-8">
-                <p className="text-xs font-extrabold tracking-widest text-muted-foreground uppercase mb-3">Industries We Serve</p>
+              <div className="mt-6">
+                <p className="text-xs font-extrabold tracking-widest text-zinc-500 uppercase mb-2.5">Industries We Serve</p>
                 <div className="flex flex-wrap gap-2">
                   {INDUSTRIES.map((ind) => (
-                    <span key={ind} className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
+                    <span key={ind} className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-700">
                       {ind}
                     </span>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      
-
-      {/* ── 4. WHY CHOOSE US ───────────────────────────────────────────── */}
-    
-
-      {/* ── 5. CTA ─────────────────────────────────────────────────────── */}
-      <section className="relative bg-primary py-20 sm:py-24 overflow-hidden">
-        <GrainOverlay />
-
-        {/* Blobs */}
-        <motion.div
-          aria-hidden
-          className="absolute -top-32 -left-16 w-[400px] h-[400px] rounded-full bg-white/[0.06] blur-[100px] pointer-events-none"
-          animate={{ x: [0, 50, -30, 0], y: [0, -40, 50, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          aria-hidden
-          className="absolute -bottom-32 -right-16 w-[440px] h-[440px] rounded-full bg-accent/20 blur-[110px] pointer-events-none"
-          animate={{ x: [0, -60, 30, 0], y: [0, 60, -40, 0] }}
-          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
-
-        <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 text-center">
-          <motion.div
-            variants={fadeUp} initial="hidden" whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-          >
-            <span className="text-[10px] font-extrabold tracking-[0.32em] text-white/35 uppercase block mb-8">
-              Ready to Elevate Your Brand?
+      {/* ── 3. MISSION & VISION (Image | Mission/Vision side-by-side) ───── */}
+      <section className="bg-zinc-50 py-16 sm:py-20 border-y border-zinc-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold tracking-widest text-primary uppercase mb-1.5 block">
+              OUR PURPOSE & DIRECTION
             </span>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-white leading-tight tracking-tight">
-              Let&apos;s Create Packaging<br />
-              <em className="not-italic text-accent">Worth Remembering</em>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+              Mission & Vision
             </h2>
-            <p className="mt-6 text-white/45 text-base max-w-md mx-auto leading-relaxed">
-              Talk to our packaging experts and discover what&apos;s possible for your brand.
+            <p className="mt-2 text-zinc-600 text-sm sm:text-base">
+              Driving sustainable progress and superior craftsmanship across India&apos;s packaging landscape.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/products"
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-9 py-4 text-sm font-bold text-white hover:bg-[#C2006A] hover:scale-105 hover:shadow-[0_0_36px_rgba(230,0,126,0.45)] transition-all duration-300"
-              >
-                Shop Collection
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-9 py-4 text-sm font-bold text-white hover:bg-white/[0.08] hover:border-white/40 transition-all duration-300"
-              >
-                Contact Us
-              </Link>
+          </div>
+
+          {/* Structure: (Image | Mission/Vision) side-by-side */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            {/* Left Column: Premium Visual Showcase (5 Cols) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-xl border-4 border-white bg-zinc-200">
+                <Image
+                  src="/product_images/SKI_SWEET-BOXES (12).webp"
+                  alt="Sri Kriscon Manufacturing Excellence"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                
+                <div className="absolute bottom-6 inset-x-6 text-white space-y-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-white border border-white/20">
+                    <Sparkles className="h-3 w-3 text-[#B5A57A]" />
+                    Precision Manufacturing
+                  </span>
+                  <p className="text-lg font-bold">
+                    Sri Kriscon Packaging Standards
+                  </p>
+                  <p className="text-xs text-white/80 leading-relaxed">
+                    Dewas, Madhya Pradesh • Serving nationwide businesses with unmatched reliability.
+                  </p>
+                </div>
+              </div>
+
+              {/* Decorative floating badge */}
+              <div className="absolute -top-3 -right-3 sm:-right-5 bg-white p-3.5 rounded-2xl shadow-lg border border-zinc-100 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-zinc-900">Certified Quality</p>
+                  <p className="text-[10px] text-zinc-500 font-mono">GSTIN: 23DZAPS6347N1ZU</p>
+                </div>
+              </div>
             </div>
-          </motion.div>
+
+            {/* Right Column: Mission & Vision Cards (7 Cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Mission Card */}
+              <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-7 shadow-xs">
+                <div className="flex items-start gap-4">
+                  <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Target className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-2.5 flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg sm:text-xl font-bold text-zinc-900">Our Mission</h3>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-0.5 rounded">
+                        Purpose
+                      </span>
+                    </div>
+                    <p className="text-zinc-600 text-sm leading-relaxed">
+                      To engineer exceptional, structurally superior packaging solutions that protect products, captivate consumers, and empower businesses to scale with confidence, while relentlessly upholding environmental responsibility and operational integrity.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs text-zinc-700 font-medium">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Flawless die-cutting & finish</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Eco-conscious recyclable stock</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Consistent delivery timelines</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Competitive industrial pricing</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vision Card */}
+              <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-7 shadow-xs">
+                <div className="flex items-start gap-4">
+                  <div className="h-11 w-11 rounded-xl bg-[#E6007E]/10 text-[#E6007E] flex items-center justify-center shrink-0">
+                    <Eye className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-2.5 flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg sm:text-xl font-bold text-zinc-900">Our Vision</h3>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#E6007E] bg-[#E6007E]/10 px-2.5 py-0.5 rounded">
+                        Aspiration
+                      </span>
+                    </div>
+                    <p className="text-zinc-600 text-sm leading-relaxed">
+                      To be acknowledged as India&apos;s premier benchmark in rigid packaging and bespoke box manufacturing — leading the transition toward intelligent, zero-defect, and sustainable packaging infrastructure that enriches brand equity globally.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs text-zinc-700 font-medium">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Next-gen automated production</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Nationwide distribution network</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Continuous aesthetic innovation</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Long-term customer partnerships</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
       </section>
 
-    </div>
-  );
-}
+      {/* ── 4. COMPANY CREDENTIALS STRIP ────────────────────────────────── */}
+      <section className="bg-white py-12 border-b border-zinc-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            
+            <div className="flex items-center gap-3.5 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Shield className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-zinc-500 font-medium">GST Registered</p>
+                <p className="text-xs sm:text-sm font-bold text-zinc-900 font-mono">23DZAPS6347N1ZU</p>
+              </div>
+            </div>
 
-// ─── Expertise card ────────────────────────────────────────────────────────────
+            <div className="flex items-center gap-3.5 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Mail className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-zinc-500 font-medium">Official Inquiries</p>
+                <a href="mailto:info@srikriscon.com" className="text-xs sm:text-sm font-bold text-primary hover:underline">
+                  info@srikriscon.com
+                </a>
+              </div>
+            </div>
 
-function ExpertiseCard({
-  title,
-  desc,
-  image,
-  icon: Icon,
-  hero = false,
-}: {
-  title: string;
-  desc: string;
-  image: string;
-  icon: LucideIcon;
-  hero?: boolean;
-}) {
-  return (
-    <div
-      className={`group relative overflow-hidden rounded-2xl ${
-        hero ? "aspect-[3/4]" : "aspect-[4/3]"
-      } cursor-default`}
-    >
-      {/* Background image */}
-      <Image
-        src={image}
-        alt={title}
-        fill
-        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      />
+            <div className="flex items-center gap-3.5 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Phone className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-zinc-500 font-medium">Direct Line</p>
+                <a href="tel:917999921111" className="text-xs sm:text-sm font-bold text-zinc-900 hover:text-primary">
+                  +91 79999 21111
+                </a>
+              </div>
+            </div>
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+            <div className="flex items-center gap-3.5 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-zinc-500 font-medium">Plant Location</p>
+                <p className="text-xs sm:text-sm font-bold text-zinc-900">Dewas, Madhya Pradesh</p>
+              </div>
+            </div>
 
-      {/* Icon badge — top left */}
-      <div className="absolute top-4 left-4 h-10 w-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white transition-all duration-300 group-hover:bg-accent group-hover:border-accent">
-        <Icon className="h-[18px] w-[18px]" strokeWidth={1.5} />
-      </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Bottom text */}
-      <div className="absolute bottom-0 inset-x-0 p-5">
-        <h3 className={`font-bold text-white leading-tight ${hero ? "text-2xl" : "text-base"}`}>
-          {title}
-        </h3>
-        <p className={`text-white/65 mt-1 leading-snug ${hero ? "text-sm" : "text-xs"}`}>
-          {desc}
-        </p>
-      </div>
+      {/* ── 5. CTA ─────────────────────────────────────────────────────── */}
+      <section className="bg-[#072429] py-16 sm:py-20 text-white text-center">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <span className="text-xs font-bold tracking-widest text-[#B5A57A] uppercase block mb-3">
+            Partner With Us
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight tracking-tight">
+            Let&apos;s Create Packaging<br />
+            <span className="text-[#B5A57A]">Worth Remembering</span>
+          </h2>
+          <p className="mt-4 text-zinc-300 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+            Connect with our packaging engineers to discuss custom box sizes, finishes, and sample prototypes.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors shadow-md"
+            >
+              Explore Products
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-3 text-sm font-bold text-white hover:bg-white/10 transition-colors"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      {/* Shine sweep on hover */}
-      <span
-        aria-hidden
-        className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-in-out pointer-events-none"
-      />
     </div>
   );
 }

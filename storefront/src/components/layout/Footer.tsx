@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Phone, Mail, MapPin, ShieldCheck, Clock } from "lucide-react";
+import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
 import { useSetting } from "@/src/hooks/useSettings";
@@ -40,25 +41,32 @@ export default function Footer() {
   const { value: storePhone } = useSetting("storePhone");
   const { value: storeEmail } = useSetting("storeEmail");
   const { value: storeAddress } = useSetting("storeAddress");
+  const { value: storeGst } = useSetting("gstNumber");
   const { value: whatsappNumber } = useSetting("whatsappNumber");
   const { value: facebookUrl } = useSetting("facebookUrl");
   const { value: instagramUrl } = useSetting("instagramUrl");
   const { value: youtubeUrl } = useSetting("youtubeUrl");
 
   const name = (storeName || business.name).toUpperCase();
-  const tagline = storeTagline || "Premium agricultural machinery for modern farming. Built for performance, designed for durability.";
+  const tagline =
+    storeTagline ||
+    "Leading manufacturer and supplier of premium rigid boxes, mono cartons, and industrial packaging solutions engineered for performance and prestige.";
   const phone = storePhone || business.phone;
-  const email = storeEmail || business.email;
-  const address = storeAddress || "E-6, Industrial Area, Dewas, Madhya Pradesh 455001";
+  // Official Authoritative Business Credentials (cannot be overwritten by dummy API/DB data)
+  const email = "info@srikriscon.com";
+  const address = storeAddress || business.address || "E-6, Industrial Area, Dewas, Madhya Pradesh 455001";
+  const gst = "23DZAPS6347N1ZU";
   const whatsapp = whatsappNumber || business.whatsapp;
   const facebook = facebookUrl || business.facebook;
   const instagram = instagramUrl || business.instagram;
   const youtube = youtubeUrl || business.youtube;
 
   return (
-    <footer className="bg-[#081420] text-zinc-400 border-t border-white/10 relative overflow-hidden">
+    <footer className="bg-[#072429] text-zinc-300 border-t border-white/10 relative overflow-hidden font-sans">
+      {/* Top subtle brand divider with gold accent */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#B5A57A] to-transparent" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
         {/* ── Main 4-Column Grid ────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 py-16">
           
@@ -66,20 +74,28 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-5">
             <div>
               <Link href="/" className="inline-block group">
-                <h2 className="text-xl sm:text-2xl font-black tracking-wider text-[#38bdf8] uppercase font-sans transition-colors group-hover:text-cyan-300">
+                <h2 className="text-xl sm:text-2xl font-black tracking-wider text-[#B5A57A] uppercase font-sans transition-colors group-hover:text-[#d3c292]">
                   {name}
                 </h2>
               </Link>
-              <div className="w-9 h-[2px] bg-[#38bdf8] mt-2" />
+              <div className="w-10 h-[2px] bg-[#B5A57A] mt-2" />
             </div>
 
-            <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
+            <p className="text-sm text-zinc-300/80 leading-relaxed max-w-sm">
               {tagline}
             </p>
 
+            {/* GSTIN Badge */}
+            <div className="inline-flex items-center gap-2 rounded-lg bg-white/5 border border-white/15 px-3.5 py-1.5 text-xs text-zinc-200">
+              <ShieldCheck className="h-4 w-4 text-[#B5A57A] shrink-0" />
+              <span>
+                GSTIN: <strong className="text-white font-mono tracking-wider">{gst}</strong>
+              </span>
+            </div>
+
             <div className="pt-2">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-3.5">
-                FOLLOW US
+                CONNECT WITH US
               </p>
               <div className="flex items-center gap-2.5">
                 {facebook && (
@@ -112,9 +128,9 @@ export default function Footer() {
                 )}
                 {whatsapp && (
                   <SocialIcon
-                    href={whatsappLink(whatsapp)}
+                    href={whatsappLink(whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
                     label="WhatsApp"
-                    icon={<MessageCircle className="h-4 w-4" />}
+                    icon={<WhatsAppIcon className="h-4 w-4" />}
                   />
                 )}
               </div>
@@ -127,86 +143,68 @@ export default function Footer() {
               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
                 QUICK LINKS
               </h3>
-              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+              <div className="w-6 h-[2px] bg-[#B5A57A] mt-2 mb-6" />
             </div>
-            <ul className="space-y-3.5 text-sm">
-              <li>
-                <Link href="/" className="hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/products" className="hover:text-white transition-colors">
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/categories" className="hover:text-white transition-colors">
-                  Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="hover:text-white transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
+            <ul className="space-y-3 text-sm">
+              {[
+                { label: "Home", href: "/" },
+                { label: "About Us", href: "/about" },
+                { label: "Products", href: "/products" },
+                { label: "Categories", href: "/categories" },
+                { label: "Blog & Insights", href: "/blog" },
+                { label: "Contact Us", href: "/contact" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="group inline-flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors duration-200"
+                  >
+                    <span className="relative pb-0.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-0 after:bg-[#B5A57A] after:transition-all after:duration-300 group-hover:after:w-full">
+                      {item.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 3: Support (Width: 3 cols) */}
+          {/* Column 3: Support & Policies (Width: 3 cols) */}
           <div className="lg:col-span-3">
             <div>
               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
-                SUPPORT
+                SUPPORT & POLICIES
               </h3>
-              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+              <div className="w-6 h-[2px] bg-[#B5A57A] mt-2 mb-6" />
             </div>
-            <ul className="space-y-3.5 text-sm">
-              <li>
-                <Link href="/privacy-policy" className="hover:text-white transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  Shipping Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/track" className="hover:text-white transition-colors">
-                  Track Order
-                </Link>
-              </li>
-              <li>
-                <Link href="/#faq" className="hover:text-white transition-colors">
-                  Warranty & FAQs
-                </Link>
-              </li>
+            <ul className="space-y-3 text-sm">
+              {[
+                { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Terms & Conditions", href: "/terms-conditions" },
+                { label: "Shipping Policy", href: "/shipping-policy" },
+                { label: "Track Your Order", href: "/track" },
+                { label: "Warranty & FAQs", href: "/#faq" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="group inline-flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors duration-200"
+                  >
+                    <span className="relative pb-0.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-0 after:bg-[#B5A57A] after:transition-all after:duration-300 group-hover:after:w-full">
+                      {item.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 4: Contact (Width: 3 cols) */}
+          {/* Column 4: Contact Us (Width: 3 cols) */}
           <div className="lg:col-span-3">
             <div>
               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">
-                CONTACT
+                CONTACT US
               </h3>
-              <div className="w-6 h-[2px] bg-[#38bdf8] mt-2 mb-6" />
+              <div className="w-6 h-[2px] bg-[#B5A57A] mt-2 mb-6" />
             </div>
             <ul className="space-y-4 text-sm">
               {phone && (
@@ -215,10 +213,10 @@ export default function Footer() {
                     href={`tel:${phone}`}
                     className="flex items-center gap-3.5 group hover:text-white transition-colors"
                   >
-                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#B5A57A] shrink-0 group-hover:bg-[#B5A57A]/15 group-hover:border-[#B5A57A]/50 transition-all">
                       <Phone className="h-4 w-4" />
                     </span>
-                    <span>{phone}</span>
+                    <span className="group-hover:text-white transition-colors">{phone}</span>
                   </a>
                 </li>
               )}
@@ -229,10 +227,12 @@ export default function Footer() {
                     href={`mailto:${email}`}
                     className="flex items-center gap-3.5 group hover:text-white transition-colors"
                   >
-                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#B5A57A] shrink-0 group-hover:bg-[#B5A57A]/15 group-hover:border-[#B5A57A]/50 transition-all">
                       <Mail className="h-4 w-4" />
                     </span>
-                    <span className="break-all">{email}</span>
+                    <span className="break-all text-zinc-200 group-hover:text-white transition-colors font-medium">
+                      {email}
+                    </span>
                   </a>
                 </li>
               )}
@@ -240,15 +240,15 @@ export default function Footer() {
               {whatsapp && (
                 <li>
                   <a
-                    href={whatsappLink(whatsapp)}
+                    href={whatsappLink(whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3.5 group hover:text-white transition-colors"
                   >
-                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 group-hover:bg-[#38bdf8]/10 group-hover:border-[#38bdf8]/40 transition-all">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#B5A57A] shrink-0 group-hover:bg-[#B5A57A]/15 group-hover:border-[#B5A57A]/50 transition-all">
+                      <WhatsAppIcon className="h-4 w-4" />
                     </span>
-                    <span>WhatsApp Chat</span>
+                    <span className="group-hover:text-white transition-colors">WhatsApp: +{whatsapp}</span>
                   </a>
                 </li>
               )}
@@ -256,15 +256,24 @@ export default function Footer() {
               {address && (
                 <li>
                   <div className="flex items-start gap-3.5">
-                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#38bdf8] shrink-0 mt-0.5">
+                    <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#B5A57A] shrink-0 mt-0.5">
                       <MapPin className="h-4 w-4" />
                     </span>
-                    <span className="leading-relaxed text-zinc-400">
+                    <span className="leading-relaxed text-zinc-300/80">
                       {address}
                     </span>
                   </div>
                 </li>
               )}
+
+              <li>
+                <div className="flex items-center gap-3.5 text-xs text-zinc-300/70">
+                  <span className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#B5A57A] shrink-0">
+                    <Clock className="h-4 w-4" />
+                  </span>
+                  <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+                </div>
+              </li>
             </ul>
           </div>
 
@@ -272,24 +281,24 @@ export default function Footer() {
 
       </div>
 
-      {/* ── Bottom Legal Strip ────────────────────────────────────────── */}
-      <div className="border-t border-white/10 bg-[#040c14]/80 py-5">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>© {year} {name} Pvt Ltd. All rights reserved.</p>
-          <div className="flex flex-wrap items-center justify-center gap-2.5 text-zinc-500">
-            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
+      {/* ── Bottom Legal Strip with Separator Dots ────────────────── */}
+      <div className="border-t border-white/10 bg-[#041a1d] py-5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+          <p>© {year} {name} Industries. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-300">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+            <span className="text-zinc-600">•</span>
+            <Link href="/terms-conditions" className="hover:text-white transition-colors">
               Terms & Conditions
             </Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+            <span className="text-zinc-600">•</span>
+            <Link href="/shipping-policy" className="hover:text-white transition-colors">
               Shipping Policy
             </Link>
-            <span>•</span>
-            <Link href="/track" className="hover:text-zinc-300 transition-colors">
+            <span className="text-zinc-600">•</span>
+            <Link href="/track" className="hover:text-white transition-colors">
               Track Order
             </Link>
           </div>
@@ -314,7 +323,7 @@ function SocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#38bdf8]/50 hover:bg-[#38bdf8]/10 transition-all duration-300"
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-300 hover:text-white hover:border-[#B5A57A]/60 hover:bg-[#B5A57A]/15 hover:scale-105 transition-all duration-300 shadow-sm"
     >
       {icon}
     </a>

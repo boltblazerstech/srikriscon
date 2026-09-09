@@ -94,12 +94,32 @@ export default function ProductsPage() {
     },
     {
       key: "price",
-      header: "Price",
-      cell: (p) => (
-        <span className="font-semibold text-sm">
-          {formatPrice(p.startingPrice ?? p.price)}
-        </span>
-      ),
+      header: "Price (₹)",
+      cell: (p) => {
+        const sellPrice = p.startingPrice ?? p.price;
+        const hasDiscount = p.comparePrice != null && p.comparePrice > sellPrice;
+        const discountPercent = hasDiscount
+          ? Math.round(((p.comparePrice! - sellPrice) / p.comparePrice!) * 100)
+          : 0;
+
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="font-bold text-sm text-foreground">
+              {formatPrice(sellPrice)}
+            </span>
+            {hasDiscount && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs text-muted-foreground line-through">
+                  {formatPrice(p.comparePrice!)}
+                </span>
+                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">
+                  {discountPercent}% OFF
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "stock",
