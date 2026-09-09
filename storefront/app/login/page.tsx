@@ -8,6 +8,7 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/src/context/AuthContext";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 import toast from "react-hot-toast";
 
 interface LoginFormValues {
@@ -18,6 +19,7 @@ interface LoginFormValues {
 function LoginContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
+  const { value: storeName } = useSetting("storeName");
   const { login, isAuthenticated, loading } = useAuth();
   const [showPw, setShowPw] = useState(false);
 
@@ -70,7 +72,7 @@ function LoginContent() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="font-display text-3xl font-bold text-primary">Welcome back</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Sign in to your {theme.business.name} account</p>
+            <p className="mt-2 text-sm text-muted-foreground">Sign in to your {storeName || theme.business.name} account</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>

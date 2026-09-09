@@ -26,7 +26,7 @@ public class Order {
     private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -60,6 +60,10 @@ public class Order {
     @Column(nullable = false, length = 3)
     @Builder.Default
     private String currency = "INR";
+
+    @Column(name = "payment_method", nullable = false, length = 50)
+    @Builder.Default
+    private String paymentMethod = "RAZORPAY";
 
     // Shipping snapshot (denormalized — never changes even if address is edited later)
     @Column(name = "shipping_name")         private String shippingName;

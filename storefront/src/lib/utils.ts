@@ -20,9 +20,18 @@ export function formatPrice(
   }).format(amount);
 }
 
+export function parseSafeDate(dateVal: any): Date {
+  if (!dateVal) return new Date();
+  if (Array.isArray(dateVal)) {
+    const [y = 1970, m = 1, d = 1, hr = 0, min = 0, sec = 0] = dateVal;
+    return new Date(y, m - 1, d, hr, min, sec);
+  }
+  return new Date(dateVal);
+}
+
 /** Format an ISO date string to a human-readable short date. */
 export function formatDate(
-  dateString: string,
+  dateString: any,
   options: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "short",
@@ -30,7 +39,11 @@ export function formatDate(
   },
   locale = "en-IN"
 ) {
-  return new Intl.DateTimeFormat(locale, options).format(new Date(dateString));
+  try {
+    return new Intl.DateTimeFormat(locale, options).format(parseSafeDate(dateString));
+  } catch {
+    return "";
+  }
 }
 
 /** Slugify a string (client-side, for display only). */

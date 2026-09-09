@@ -13,13 +13,13 @@ export function useCmsPages() {
   });
 }
 
-// Backend: GET /api/cms/{slug}  (public — fetches by slug)
+// Backend: GET /api/cms/admin/{slug}  (admin-only — fetches by slug, including drafts)
 export function useCmsPage(slug: string | null) {
   return useQuery({
     queryKey: ["admin", "cms-pages", slug],
     queryFn: async () => {
       const { data } = await api.get<ApiResponse<CmsPage>>(
-        `/api/cms/${slug}`
+        `/api/cms/admin/${slug}`
       );
       return data.data;
     },

@@ -25,7 +25,7 @@ public class AdminUserResponse {
                 .email(u.getEmail())
                 .firstName(u.getFirstName())
                 .lastName(u.getLastName())
-                .role(u.getRole().name())
+                .role(u.getRole() != null ? u.getRole().name() : null)
                 .active(u.isActive())
                 .createdAt(u.getCreatedAt())
                 .updatedAt(u.getUpdatedAt())

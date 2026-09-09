@@ -9,6 +9,7 @@ import Button from "@/src/components/ui/Button";
 import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
+import { useSetting } from "@/src/hooks/useSettings";
 
 const schema = z.object({
   name:    z.string().min(1, "Required"),
@@ -21,7 +22,23 @@ type FormData = z.infer<typeof schema>;
 
 const { business } = theme;
 
+// Hard-coded authoritative values (override any stale DB values)
+const OFFICIAL_EMAIL = "info@srikriscon.com";
+const OFFICIAL_GST   = "23DZAPS6347N1ZU";
+
 export default function ContactPage() {
+  const { value: storePhone }     = useSetting("storePhone");
+  const { value: storeEmail }     = useSetting("storeEmail");
+  const { value: storeAddress }   = useSetting("storeAddress");
+  const { value: whatsappNumber } = useSetting("whatsappNumber");
+
+  // Use settings from backend but fall back to authoritative hard-coded values
+  const phone    = storePhone   || business.phone;
+  const email    = OFFICIAL_EMAIL;                          // always authoritative
+  const address  = storeAddress || business.address;
+  const whatsapp = whatsappNumber || business.whatsapp;
+  const gst      = OFFICIAL_GST;                           // always authoritative
+
   const {
     register,
     handleSubmit,
@@ -31,15 +48,12 @@ export default function ContactPage() {
 
   async function onSubmit(data: FormData) {
     const msg = `*Contact Form Enquiry*\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone ?? "-"}\n\nMessage:\n${data.message}`;
-    if (business.whatsapp) {
-      window.open(whatsappLink(business.whatsapp, msg), "_blank");
+    if (whatsapp) {
+      window.open(whatsappLink(whatsapp, msg), "_blank");
     }
     toast.success("Message sent! We'll get back to you shortly.");
     reset();
   }
-
-  const email = business.email || "info@srikriscon.com";
-  const gst = business.gst || "23DZAPS6347N1ZU";
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
@@ -79,14 +93,14 @@ export default function ContactPage() {
         {/* Info */}
         <div className="space-y-6">
           <div className="rounded-2xl border border-border bg-white p-6 space-y-5 shadow-xs">
-            {business.phone && (
+            {phone && (
               <InfoRow icon={Phone} label="Phone">
-                <a href={`tel:${business.phone}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                  {business.phone}
+                <a href={`tel:${phone}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
+                  {phone}
                 </a>
               </InfoRow>
             )}
-            
+
             <InfoRow icon={Mail} label="Official Email">
               <a href={`mailto:${email}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors break-all">
                 {email}
@@ -99,21 +113,21 @@ export default function ContactPage() {
               </p>
             </InfoRow>
 
-            {business.address && (
+            {address && (
               <InfoRow icon={MapPin} label="Plant & Office Address">
-                <p className="text-sm text-muted-foreground leading-relaxed">{business.address}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{address}</p>
               </InfoRow>
             )}
 
-            {business.whatsapp && (
+            {whatsapp && (
               <InfoRow icon={WhatsAppIcon} label="Instant WhatsApp Support">
                 <a
-                  href={whatsappLink(business.whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
+                  href={whatsappLink(whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm font-semibold text-emerald-600 hover:underline"
                 >
-                  Chat with us on WhatsApp (+{business.whatsapp})
+                  Chat with us on WhatsApp (+{whatsapp})
                 </a>
               </InfoRow>
             )}

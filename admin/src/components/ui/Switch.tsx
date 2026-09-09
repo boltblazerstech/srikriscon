@@ -22,19 +22,19 @@ export default function Switch({
 }: SwitchProps) {
   const switchId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4 min-w-0">
       {(label || description) && (
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {label && (
             <label
               htmlFor={switchId}
-              className="text-sm font-medium text-foreground cursor-pointer"
+              className="text-sm font-medium text-foreground cursor-pointer block truncate"
             >
               {label}
             </label>
           )}
           {description && (
-            <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 break-words">{description}</p>
           )}
         </div>
       )}
@@ -45,7 +45,7 @@ export default function Switch({
         disabled={disabled}
         className={cn(
           "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-          checked ? "bg-primary" : "bg-muted-foreground/30"
+          checked ? "bg-primary" : "bg-gray-200"
         )}
       >
         <RadixSwitch.Thumb

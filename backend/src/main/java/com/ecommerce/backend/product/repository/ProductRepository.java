@@ -21,6 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findByActiveTrueAndDeletedAtIsNull(Pageable pageable);
     Page<Product> findByCategoryIdAndActiveTrueAndDeletedAtIsNull(Long categoryId, Pageable pageable);
+    Page<Product> findByCategorySlugAndActiveTrueAndDeletedAtIsNull(String categorySlug, Pageable pageable);
     Page<Product> findByFeaturedTrueAndActiveTrueAndDeletedAtIsNull(Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND " +
@@ -30,6 +31,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Admin view: all non-deleted (active and inactive)
     Page<Product> findByDeletedAtIsNull(Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND " +
+           "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +
+           "(:q IS NULL OR :q = '' OR " +
+           " LOWER(p.name) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+           " LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%')))")
+    Page<Product> searchAdmin(
+            @Param("categoryId") Long categoryId,
+            @Param("q") String query,
+            Pageable pageable);
 
     long countByDeletedAtIsNull();
     long countByStockQuantityAndDeletedAtIsNull(int stockQuantity);

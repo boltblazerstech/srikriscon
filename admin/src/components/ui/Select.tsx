@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import * as RadixSelect from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/src/lib/utils";
@@ -25,8 +26,8 @@ interface SelectProps {
 // We transparently remap "" ↔ this sentinel so callers never need to change.
 const EMPTY = "__empty__";
 
-function toInternal(v: string | undefined) {
-  return v === "" ? EMPTY : v;
+function toInternal(v: string | undefined | null) {
+  return (v === "" || v === undefined || v === null) ? EMPTY : v;
 }
 
 function toExternal(v: string) {
@@ -43,6 +44,11 @@ export default function Select({
   disabled,
   className,
 }: SelectProps) {
+  const latestValueRef = useRef(value);
+  latestValueRef.current = value;
+
+  const [open, setOpen] = useState(false);
+
   return (
     <div className={cn("w-full", className)}>
       {label && (
@@ -52,7 +58,27 @@ export default function Select({
       )}
       <RadixSelect.Root
         value={toInternal(value)}
-        onValueChange={(v) => onChange?.(toExternal(v))}
+        onValueChange={(v) => {
+          const externalValue = toExternal(v);
+          const latestValue = latestValueRef.current;
+          
+          // Ignore automatic clearing by Radix or stale closure resets
+          if (externalValue === "" && latestValue !== "" && latestValue !== undefined && latestValue !== null) {
+            // 1. If the dropdown is closed, the user didn't click anything, so ignore this clear event.
+            if (!open) {
+              return;
+            }
+            // 2. If open, only ignore if the selected item is not in the options list (meaning options list is loading/updating)
+            const currentValueExists = options.some(opt => opt.value === String(latestValue));
+            if (!currentValueExists) {
+              return;
+            }
+          }
+          
+          onChange?.(externalValue);
+        }}
+        open={open}
+        onOpenChange={setOpen}
         disabled={disabled}
       >
         <RadixSelect.Trigger

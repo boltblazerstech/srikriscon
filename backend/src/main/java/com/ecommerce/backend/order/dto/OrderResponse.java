@@ -36,6 +36,7 @@ public class OrderResponse {
     private String awbCode;
     private String shiprocketShipmentId;
     private List<ItemDto> items;
+    private String paymentMethod;
     private LocalDateTime createdAt;
 
     public static OrderResponse from(Order o) {
@@ -62,6 +63,7 @@ public class OrderResponse {
                 .awbCode(o.getAwbCode())
                 .shiprocketShipmentId(o.getShiprocketShipmentId())
                 .items(o.getItems().stream().map(ItemDto::from).collect(Collectors.toList()))
+                .paymentMethod(o.getPaymentMethod())
                 .createdAt(o.getCreatedAt())
                 .build();
     }

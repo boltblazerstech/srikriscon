@@ -34,6 +34,7 @@ public class PasswordResetToken {
     private LocalDateTime expiresAt;
 
     @Column(nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean used = false;
 

@@ -27,9 +27,15 @@ public class CmsController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<List<CmsPageResponse>> listAll() {
         return ApiResponse.success(cmsService.findAll());
+    }
+
+    @GetMapping("/admin/{slug}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
+    public ApiResponse<CmsPageResponse> getAdminBySlug(@PathVariable String slug) {
+        return ApiResponse.success(cmsService.findBySlug(slug));
     }
 
     @GetMapping("/{slug}")
@@ -39,19 +45,19 @@ public class CmsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<CmsPageResponse> create(@Valid @RequestBody CmsPageRequest req) {
         return ApiResponse.success("Page created", cmsService.create(req));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<CmsPageResponse> update(@PathVariable Long id, @Valid @RequestBody CmsPageRequest req) {
         return ApiResponse.success("Page updated", cmsService.update(id, req));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         cmsService.delete(id);
         return ApiResponse.success("Page deleted");

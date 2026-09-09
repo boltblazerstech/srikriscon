@@ -24,7 +24,7 @@ public class CmsPage {
     @Column(nullable = false, unique = true)
     private String slug;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(columnDefinition = "TEXT")

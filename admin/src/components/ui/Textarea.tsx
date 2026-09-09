@@ -11,7 +11,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, hint, id, ...props }, ref) => {
     const textareaId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
     return (
-      <div className="w-full">
+      <div className="w-full min-w-0">
         {label && (
           <label
             htmlFor={textareaId}
@@ -24,7 +24,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           className={cn(
-            "w-full px-3 py-2 rounded-lg border bg-white text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground resize-y",
+            "w-full px-3 py-2 rounded-lg border bg-white text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground resize-y min-w-0 max-w-full",
             error ? "border-destructive focus:ring-destructive/30" : "border-border",
             className
           )}
@@ -32,9 +32,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {hint && !error && (
-          <p className="text-xs text-muted-foreground mt-1">{hint}</p>
+          <p className="text-xs text-muted-foreground mt-1 break-words">{hint}</p>
         )}
-        {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+        {error && <p className="text-xs text-destructive mt-1 break-words">{error}</p>}
       </div>
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, ShieldCheck, Clock } from "lucide-react";
 import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { theme } from "@/src/config/theme";
@@ -42,6 +43,7 @@ export default function Footer() {
   const { value: storeEmail } = useSetting("storeEmail");
   const { value: storeAddress } = useSetting("storeAddress");
   const { value: storeGst } = useSetting("gstNumber");
+  const { value: logoUrlSetting } = useSetting("logoUrl");
   const { value: whatsappNumber } = useSetting("whatsappNumber");
   const { value: facebookUrl } = useSetting("facebookUrl");
   const { value: instagramUrl } = useSetting("instagramUrl");
@@ -52,10 +54,11 @@ export default function Footer() {
     storeTagline ||
     "Leading manufacturer and supplier of premium rigid boxes, mono cartons, and industrial packaging solutions engineered for performance and prestige.";
   const phone = storePhone || business.phone;
-  // Official Authoritative Business Credentials (cannot be overwritten by dummy API/DB data)
-  const email = "info@srikriscon.com";
+  // Official Authoritative Business Credentials
+  const email = storeEmail || "info@srikriscon.com";
   const address = storeAddress || business.address || "E-6, Industrial Area, Dewas, Madhya Pradesh 455001";
-  const gst = "23DZAPS6347N1ZU";
+  const gst = storeGst || "23DZAPS6347N1ZU";
+  const logoUrl = logoUrlSetting || "/sri-kriscon-logo.webp";
   const whatsapp = whatsappNumber || business.whatsapp;
   const facebook = facebookUrl || business.facebook;
   const instagram = instagramUrl || business.instagram;
@@ -66,17 +69,35 @@ export default function Footer() {
       {/* Top subtle brand divider with gold accent */}
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#B5A57A] to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Subtle background text */}
+      <span
+        aria-hidden
+        className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex justify-center text-[13vw] font-black text-white/[0.015] leading-none whitespace-nowrap overflow-hidden"
+      >
+        {name}
+      </span>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Main 4-Column Grid ────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 py-16">
           
           {/* Column 1: Brand & Socials (Width: 4 cols) */}
           <div className="lg:col-span-4 space-y-5">
             <div>
-              <Link href="/" className="inline-block group">
-                <h2 className="text-xl sm:text-2xl font-black tracking-wider text-[#B5A57A] uppercase font-sans transition-colors group-hover:text-[#d3c292]">
-                  {name}
-                </h2>
+              <Link href="/" className="inline-flex items-center gap-3 group">
+                <div className="relative h-12 w-12 flex-shrink-0 transition-transform group-hover:scale-105">
+                  <Image
+                    src={logoUrl}
+                    alt={name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-black tracking-wider text-[#B5A57A] uppercase font-sans transition-colors group-hover:text-[#d3c292]">
+                    {name}
+                  </h2>
+                </div>
               </Link>
               <div className="w-10 h-[2px] bg-[#B5A57A] mt-2" />
             </div>
@@ -98,6 +119,13 @@ export default function Footer() {
                 CONNECT WITH US
               </p>
               <div className="flex items-center gap-2.5">
+                {whatsapp && (
+                  <SocialIcon
+                    href={whatsappLink(whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
+                    label="WhatsApp"
+                    icon={<WhatsAppIcon className="h-4 w-4" />}
+                  />
+                )}
                 {facebook && (
                   <SocialIcon
                     href={facebook}
@@ -124,13 +152,6 @@ export default function Footer() {
                     href={youtube}
                     label="YouTube"
                     icon={<icons.Youtube />}
-                  />
-                )}
-                {whatsapp && (
-                  <SocialIcon
-                    href={whatsappLink(whatsapp, "Hi Sri Kriscon, I have an inquiry.")}
-                    label="WhatsApp"
-                    icon={<WhatsAppIcon className="h-4 w-4" />}
                   />
                 )}
               </div>
@@ -278,7 +299,6 @@ export default function Footer() {
           </div>
 
         </div>
-
       </div>
 
       {/* ── Bottom Legal Strip with Separator Dots ────────────────── */}
@@ -286,6 +306,10 @@ export default function Footer() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
           <p>© {year} {name} Industries. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-300">
+            {gst && (
+              <span className="font-mono text-[11px] text-zinc-400">GST: {gst}</span>
+            )}
+            <span className="text-zinc-600">•</span>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>

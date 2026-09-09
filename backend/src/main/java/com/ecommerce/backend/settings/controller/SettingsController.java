@@ -27,31 +27,31 @@ public class SettingsController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Map<String, String>> all() {
         return ApiResponse.success(settingsService.findAll());
     }
 
     @GetMapping("/group/{group}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Map<String, String>> byGroup(@PathVariable String group) {
         return ApiResponse.success(settingsService.findByGroup(group));
     }
 
     @PutMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Setting> upsert(@Valid @RequestBody SettingRequest req) {
         return ApiResponse.success(settingsService.upsert(req));
     }
 
     @PutMapping("/batch")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<List<Setting>> upsertBatch(@RequestBody List<@Valid SettingRequest> requests) {
         return ApiResponse.success(settingsService.upsertBatch(requests));
     }
 
     @DeleteMapping("/{key}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ApiResponse<Void> delete(@PathVariable String key) {
         settingsService.delete(key);
         return ApiResponse.success("Setting deleted");

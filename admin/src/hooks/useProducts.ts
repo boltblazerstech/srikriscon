@@ -85,15 +85,15 @@ export function useDeleteProduct() {
   });
 }
 
-// Backend: PUT /api/products/{id}  — sends full update with active field
-// NOTE: No PATCH endpoint exists in backend; we use PUT with the active flag embedded in the body.
+// Backend: PATCH /api/products/{id}/active  — toggles active status
 export function useToggleProductActive() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, active }: { id: number; active: boolean }) => {
-      const { data } = await api.put<ApiResponse<Product>>(
-        `/api/products/${id}`,
-        { active }
+      const { data } = await api.patch<ApiResponse<Product>>(
+        `/api/products/${id}/active`,
+        null,
+        { params: { active } }
       );
       return data.data;
     },

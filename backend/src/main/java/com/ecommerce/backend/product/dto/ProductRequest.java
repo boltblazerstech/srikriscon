@@ -1,11 +1,14 @@
 package com.ecommerce.backend.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductRequest {
 
     @NotBlank(message = "Name is required")
@@ -41,4 +44,8 @@ public class ProductRequest {
     private int sortOrder = 0;
     private String metaTitle;
     private String metaDescription;
+
+    private List<String> images;
+    private List<ProductVariantRequest> variants;
+    private List<ProductFaqDto> faqs;
 }

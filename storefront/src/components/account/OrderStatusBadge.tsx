@@ -12,13 +12,13 @@ const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
 };
 
 const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
-  PLACED:     "Placed",
-  CONFIRMED:  "Confirmed",
-  PROCESSING: "Processing",
-  SHIPPED:    "Shipped",
-  DELIVERED:  "Delivered",
-  CANCELLED:  "Cancelled",
-  REFUNDED:   "Refunded",
+  PLACED:     "Order: Placed",
+  CONFIRMED:  "Order: Confirmed",
+  PROCESSING: "Order: Processing",
+  SHIPPED:    "Order: Shipped",
+  DELIVERED:  "Order: Delivered",
+  CANCELLED:  "Order: Cancelled",
+  REFUNDED:   "Order: Refunded",
 };
 
 const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
@@ -40,12 +40,13 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
 }
 
 export function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
+  const label = status.charAt(0) + status.slice(1).toLowerCase();
   return (
     <span className={cn(
       "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
       PAYMENT_STATUS_STYLES[status]
     )}>
-      {status.charAt(0) + status.slice(1).toLowerCase()}
+      Payment: {label}
     </span>
   );
 }

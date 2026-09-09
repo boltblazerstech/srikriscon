@@ -37,7 +37,7 @@ public class TestimonialService {
                 .designation(req.getDesignation())
                 .company(req.getCompany())
                 .content(req.getContent())
-                .rating(req.getRating())
+                .rating((byte) req.getRating())
                 .imageUrl(req.getImageUrl())
                 .sortOrder(req.getSortOrder())
                 .active(req.isActive())
@@ -53,7 +53,7 @@ public class TestimonialService {
         t.setDesignation(req.getDesignation());
         t.setCompany(req.getCompany());
         t.setContent(req.getContent());
-        t.setRating(req.getRating());
+        t.setRating((byte) req.getRating());
         t.setImageUrl(req.getImageUrl());
         t.setSortOrder(req.getSortOrder());
         t.setActive(req.isActive());

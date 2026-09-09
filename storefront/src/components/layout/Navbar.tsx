@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   ShoppingCart,
   User,
@@ -14,13 +15,14 @@ import {
   Package,
   Settings,
   ChevronDown,
-  Heart,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { theme } from "@/src/config/theme";
+import Button from "@/src/components/ui/Button";
 import { useCart } from "@/src/hooks/useCart";
 import { useAuth } from "@/src/context/AuthContext";
 import { useCategories } from "@/src/hooks/useCategories";
+import { useSetting } from "@/src/hooks/useSettings";
 import { cn } from "@/src/lib/utils";
 import TopBanner from "./TopBanner";
 
@@ -28,16 +30,38 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { count, hydrated } = useCart();
+  const { value: logoUrl } = useSetting("logoUrl");
+  const { value: storeName } = useSetting("storeName");
+  const { value: storeTagline } = useSetting("storeTagline");
   const { user, isAuthenticated, logout } = useAuth();
 
+  const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const categoriesMenuRef = useRef<HTMLDivElement>(null);
+
+  // ── Mount Check for React Portal ──────────────────────────────────────────
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ── Lock Body Scroll when Mobile Menu is Open ──────────────────────────────
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   // ── Scroll Effect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -50,6 +74,7 @@ export default function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setUserMenuOpen(false);
+    setMobileSearchOpen(false);
   }, [pathname]);
 
   // ── Close user menu on outside click ─────────────────────────────────────
@@ -75,270 +100,393 @@ export default function Navbar() {
     : user?.email?.[0]?.toUpperCase() ?? "U";
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 flex flex-col pointer-events-none">
-      <div className="pointer-events-auto shadow-sm">
-        <TopBanner />
-
-        {/* ── Main Header Row ───────────────────────────────────────────────── */}
+    <>
+      <header className="fixed top-0 inset-x-0 z-50 flex flex-col pointer-events-none">
         <div className={cn(
-          "bg-white transition-all duration-300 border-b border-zinc-100",
-          scrolled ? "py-2" : "py-4"
+          "pointer-events-auto transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.2)] border-b border-white/10",
+          scrolled ? "bg-[#0B3A42]/95 backdrop-blur-[16px]" : "bg-[#0B3A42]"
         )}>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-8">
-              
-              {/* Logo */}
-              <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
-                <div className="relative h-10 w-10 sm:h-12 sm:w-12 transition-transform group-hover:scale-105">
-                  <Image
-                    src="/sri-kriscon-logo.webp"
-                    alt={theme.business.name}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <div className="hidden lg:block">
-                  <h1 className="text-primary font-black text-xl leading-none tracking-tighter">
-                    {theme.business.name.toUpperCase()}
-                  </h1>
-                  <p className="text-[10px] text-zinc-400 font-bold tracking-[0.2em] mt-0.5">
-                    INDUSTRIES
-                  </p>
-                </div>
-              </Link>
+          <TopBanner />
 
-              {/* Centered Search Bar */}
-              <form 
-                onSubmit={handleSearch}
-                className="hidden md:flex flex-1 max-w-xl relative group"
-              >
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products, categories..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-2.5 pl-11 pr-4 text-sm outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary/20"
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-primary transition-colors" />
-                <button type="submit" className="hidden">Search</button>
-              </form>
-
-              {/* Right Actions */}
-              <div className="flex items-center gap-2 sm:gap-4">
+          {/* ── Main Header Row ───────────────────────────────────────────────── */}
+          <div className={cn(
+            "transition-all duration-300 flex items-center w-full",
+            scrolled ? "h-[60px]" : "h-[68px]"
+          )}>
+            <div className="mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 w-full">
+              <div className="flex items-center justify-between gap-6 sm:gap-16">
                 
-                {/* Mobile Search Icon */}
-                <Link href="/search" className="md:hidden p-2 text-zinc-600">
-                  <Search className="h-5 w-5" />
+                {/* Logo */}
+                <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 sm:gap-3.5 group mr-2 sm:mr-6 lg:mr-12">
+                  <div className="relative h-[48px] w-[48px] sm:h-[60px] sm:w-[60px] transition-transform group-hover:scale-105 flex-shrink-0">
+                    <Image
+                      src={logoUrl || "/sri-kriscon-logo.webp"}
+                      alt={theme.business.name}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <h1 className="text-white font-semibold sm:font-bold text-sm sm:text-xl lg:text-[22px] leading-tight tracking-tight drop-shadow-sm">
+                      {(storeName || theme.business.name).toUpperCase()}
+                    </h1>
+                    <p className="text-[7.5px] sm:text-[9px] lg:text-[10px] text-teal-200/80 font-medium tracking-[0.22em] sm:tracking-[0.38em] mt-0.5">
+                      {(storeTagline || "INDUSTRIES").toUpperCase()}
+                    </p>
+                  </div>
                 </Link>
 
-                {/* Account */}
-                <div className="relative" ref={userMenuRef}>
+                {/* Centered Search Bar */}
+                <form 
+                  onSubmit={handleSearch}
+                  className="hidden md:flex flex-1 max-w-[50rem] relative group h-[48px] items-center"
+                >
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search boxes, bags & packaging..."
+                    className="w-full bg-white/10 border border-white/20 rounded-[28px] h-full pl-12 pr-4 text-sm text-white placeholder:text-teal-100/60 outline-none transition-all focus:bg-white focus:text-zinc-900 focus:placeholder-zinc-400 focus:border-accent shadow-inner"
+                  />
+                  <Search className="absolute left-[18px] top-1/2 -translate-y-1/2 h-5 w-5 text-teal-200 transition-colors group-focus-within:text-accent" />
+                  <button type="submit" className="hidden">Search</button>
+                </form>
+
+                {/* Right Actions */}
+                <div className="flex items-center gap-2.5 sm:gap-4 ml-auto lg:ml-12">
+                  
+                  {/* Mobile Search Icon */}
                   <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-50 transition-colors text-zinc-600"
+                    type="button"
+                    onClick={() => setMobileSearchOpen((prev) => !prev)}
+                    className="md:hidden p-2.5 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all border border-white/15 backdrop-blur-sm"
+                    aria-label="Toggle Mobile Search"
                   >
-                    {isAuthenticated ? (
-                      <span className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white">
-                        {initials}
-                      </span>
-                    ) : (
-                      <User className="h-6 w-6" />
-                    )}
+                    <Search className="h-5 w-5" />
                   </button>
 
-                  <AnimatePresence>
-                    {userMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute right-0 mt-2 w-56 bg-white border border-zinc-100 rounded-2xl shadow-2xl p-2 z-50"
-                      >
-                        {isAuthenticated ? (
-                          <>
-                            <div className="px-3 py-2 mb-2">
-                              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Account</p>
-                              <p className="text-sm font-bold text-primary truncate">{user?.email}</p>
+                  {/* Account */}
+                  <div className="relative flex items-center" ref={userMenuRef}>
+                    <button
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all duration-200 backdrop-blur-sm"
+                    >
+                      {isAuthenticated ? (
+                        <span className="h-7 w-7 rounded-full bg-accent flex items-center justify-center text-[10px] font-bold text-white">
+                          {initials}
+                        </span>
+                      ) : (
+                        <User className="h-5 w-5" />
+                      )}
+                    </button>
+
+                    <AnimatePresence>
+                      {userMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute right-0 mt-2 w-56 bg-[#0B3A42] border border-white/20 rounded-2xl shadow-2xl p-2 z-50 pointer-events-auto text-white"
+                        >
+                          {isAuthenticated ? (
+                            <>
+                              <div className="px-3 py-2 mb-2 border-b border-white/10">
+                                <p className="text-xs font-bold text-teal-200/60 uppercase tracking-widest">Account</p>
+                                <p className="text-sm font-bold text-white truncate">{user?.email}</p>
+                              </div>
+                              <Link href="/account/overview" className="flex items-center gap-2.5 px-3 py-2 text-sm text-teal-100 hover:bg-white/10 rounded-xl transition-colors">
+                                <User className="h-4 w-4" /> Profile
+                              </Link>
+                              <Link href="/account/orders" className="flex items-center gap-2.5 px-3 py-2 text-sm text-teal-100 hover:bg-white/10 rounded-xl transition-colors">
+                                <Package className="h-4 w-4" /> Orders
+                              </Link>
+                              <button onClick={() => { setShowConfirmLogout(true); setUserMenuOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-pink-300 hover:bg-white/10 rounded-xl transition-colors mt-1">
+                                <LogOut className="h-4 w-4" /> Sign Out
+                              </button>
+                            </>
+                          ) : (
+                            <div className="p-2 space-y-2">
+                              <Link href="/login" className="block w-full text-center py-2 bg-accent text-white text-sm font-bold rounded-xl shadow-md">Sign In</Link>
+                              <Link href="/register" className="block w-full text-center py-2 text-sm text-teal-100 font-bold hover:text-white">Create Account</Link>
                             </div>
-                            <Link href="/account/overview" className="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 rounded-xl transition-colors">
-                              <User className="h-4 w-4" /> Profile
-                            </Link>
-                            <Link href="/account/orders" className="flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 rounded-xl transition-colors">
-                              <Package className="h-4 w-4" /> Orders
-                            </Link>
-                            <button onClick={() => logout()} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-colors mt-1">
-                              <LogOut className="h-4 w-4" /> Sign Out
-                            </button>
-                          </>
-                        ) : (
-                          <div className="p-2 space-y-2">
-                            <Link href="/login" className="block w-full text-center py-2 bg-primary text-white text-sm font-bold rounded-xl">Sign In</Link>
-                            <Link href="/register" className="block w-full text-center py-2 text-sm text-primary font-bold">Create Account</Link>
-                          </div>
-                        )}
-                      </motion.div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Cart */}
+                  <Link 
+                    href="/cart" 
+                    className="relative hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all duration-200 group backdrop-blur-sm"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    {hydrated && count > 0 && (
+                      <span className="absolute -top-1 -right-1 h-5 w-5 bg-accent text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-[#0B3A42]">
+                        {count > 99 ? "9+" : count}
+                      </span>
                     )}
-                  </AnimatePresence>
+                  </Link>
+
+                  {/* Mobile Menu Trigger */}
+                  <button
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className="md:hidden p-2.5 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all border border-white/15 backdrop-blur-sm"
+                    aria-label="Toggle Navigation Menu"
+                  >
+                    {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                  </button>
                 </div>
-
-                {/* Cart */}
-                <Link href="/cart" className="relative p-2 group">
-                  <ShoppingCart className="h-6 w-6 text-zinc-600 group-hover:text-primary transition-colors" />
-                  {hydrated && count > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-5 w-5 bg-accent text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white">
-                      {count > 99 ? "9+" : count}
-                    </span>
-                  )}
-                </Link>
-
-                {/* Mobile Menu */}
-                <button
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  className="md:hidden p-2 text-zinc-600"
-                >
-                  {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                </button>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Navigation Row ────────────────────────────────────────────────── */}
-        <div className="hidden md:block bg-white/80 backdrop-blur-md border-b border-zinc-100">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="flex items-center justify-center gap-1 py-1">
-              {theme.nav.map((link) => {
-                const isCategories = link.label === "Categories";
-                return (
-                  <div 
-                    key={link.href}
-                    className="relative group"
-                    onMouseEnter={() => isCategories && setCategoriesOpen(true)}
-                    onMouseLeave={() => isCategories && setCategoriesOpen(false)}
-                  >
-                    <Link
-                      href={link.href}
-                      className={cn(
-                        "px-4 py-3 text-[13px] font-bold uppercase tracking-widest transition-all relative block",
-                        pathname === link.href || (isCategories && categoriesOpen) ? "text-primary" : "text-zinc-500 hover:text-primary"
-                      )}
+          {/* ── Expandable Mobile Search Bar ───────────────────────────────── */}
+          <AnimatePresence>
+            {mobileSearchOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="md:hidden px-4 pb-3 border-t border-white/10 bg-[#083238] overflow-hidden"
+              >
+                <form onSubmit={(e) => { handleSearch(e); setMobileSearchOpen(false); }} className="relative flex items-center mt-2">
+                  <input
+                    type="text"
+                    autoFocus
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search boxes, bags & packaging..."
+                    className="w-full bg-white/10 border border-white/20 rounded-full h-11 pl-10 pr-10 text-sm outline-none text-white placeholder:text-teal-100/60 focus:bg-white focus:text-zinc-900 focus:placeholder-zinc-400 focus:border-accent"
+                  />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-teal-200" />
+                  {searchQuery ? (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-teal-200 hover:text-white"
                     >
-                      <div className="flex items-center gap-1">
-                        {link.label}
-                        {isCategories && <ChevronDown className={cn("h-3 w-3 transition-transform duration-300", categoriesOpen && "rotate-180")} />}
-                      </div>
-                      <span className={cn(
-                        "absolute bottom-2 left-4 right-4 h-0.5 bg-primary transition-all duration-300",
-                        pathname === link.href || (isCategories && categoriesOpen) ? "opacity-100" : "opacity-0 group-hover:opacity-40"
-                      )} />
-                    </Link>
+                      <X className="h-4 w-4" />
+                    </button>
+                  ) : null}
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-                    {/* Categories Dropdown */}
-                    {isCategories && (
-                      <AnimatePresence>
-                        {categoriesOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="absolute left-1/2 -translate-x-1/2 top-full w-[280px] bg-white border border-zinc-100 rounded-2xl shadow-2xl p-3 z-50 overflow-hidden"
-                          >
-                            <CategoriesGrid onClose={() => setCategoriesOpen(false)} />
-                          </motion.div>
+          {/* ── Navigation Row ────────────────────────────────────────────────── */}
+          <div className="hidden md:block border-t border-white/10 bg-[#083238]/60 h-[50px]">
+            <div className="mx-auto max-w-[83rem] px-4 sm:px-6 lg:px-8 h-full">
+              <nav className="flex items-center justify-center gap-2 h-full">
+                {theme.nav.map((link) => {
+                  const isCategories = link.label === "Categories";
+                  return (
+                    <div 
+                      key={link.href}
+                      className="relative group h-full flex items-center"
+                      onMouseEnter={() => isCategories && setCategoriesOpen(true)}
+                      onMouseLeave={() => isCategories && setCategoriesOpen(false)}
+                    >
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "px-5 py-2 text-xs font-medium uppercase tracking-[0.18em] transition-colors relative flex items-center h-full",
+                          pathname === link.href || (isCategories && categoriesOpen) ? "text-white font-bold" : "text-teal-100/90 hover:text-white"
                         )}
-                      </AnimatePresence>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
+                      >
+                        <div className="flex items-center gap-1.5">
+                          {link.label}
+                          {isCategories && <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300 text-teal-200", categoriesOpen && "rotate-180")} />}
+                        </div>
+                        <span className={cn(
+                          "absolute bottom-2 left-5 right-5 h-0.5 bg-accent transition-transform duration-300 origin-center ease-out",
+                          pathname === link.href || (isCategories && categoriesOpen) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                        )} />
+                      </Link>
+
+                      {/* Categories Dropdown */}
+                      {isCategories && (
+                        <AnimatePresence>
+                          {categoriesOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              className="absolute left-1/2 -translate-x-1/2 top-full w-[280px] bg-[#0B3A42] border border-white/20 rounded-2xl shadow-2xl p-3 z-50 overflow-hidden text-white"
+                            >
+                              <CategoriesGrid onClose={() => setCategoriesOpen(false)} />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      )}
+                    </div>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* ── Mobile Menu Sidebar ───────────────────────────────────────────── */}
+      {/* ── Mobile Menu Sidebar (React Portal directly to document.body) ───── */}
+      {mounted && createPortal(
         <AnimatePresence>
           {menuOpen && (
-            <>
+            <div className="fixed inset-0 z-[999999] md:hidden pointer-events-auto">
+              {/* Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setMenuOpen(false)}
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999998]"
               />
+              {/* Drawer Panel */}
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-white z-50 md:hidden p-6 overflow-y-auto"
+                className="fixed top-0 left-0 bottom-0 w-[85%] max-w-xs sm:max-w-sm bg-white z-[999999] p-6 overflow-y-auto shadow-2xl flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between mb-8">
-                  <span className="font-black text-xl text-primary">{theme.business.name}</span>
-                  <button onClick={() => setMenuOpen(false)}><X className="h-6 w-6" /></button>
-                </div>
-                
-                <div className="space-y-1 mb-8">
-                  {theme.nav.map((link) => {
-                    const isCategories = link.label === "Categories";
-                    if (isCategories) {
+                <div>
+                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-100">
+                    <div className="flex items-center gap-3">
+                      <div className="h-11 w-11 relative flex-shrink-0">
+                        <Image
+                          src={logoUrl || "/sri-kriscon-logo.webp"}
+                          alt={theme.business.name}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <div>
+                        <h2 className="font-bold text-sm text-[#0B3A42] leading-tight">
+                          {(storeName || theme.business.name).toUpperCase()}
+                        </h2>
+                        <p className="text-[8px] text-zinc-400 font-medium tracking-[0.25em] mt-0.5">
+                          {(storeTagline || "INDUSTRIES").toUpperCase()}
+                        </p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => setMenuOpen(false)}
+                      className="p-2 -mr-2 text-zinc-500 hover:text-zinc-900 rounded-full hover:bg-zinc-100 transition-colors"
+                      aria-label="Close menu"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-1 mb-8">
+                    {theme.nav.map((link) => {
+                      const isCategories = link.label === "Categories";
+                      if (isCategories) {
+                        return (
+                          <div key={link.href} className="border-b border-zinc-100">
+                            <button 
+                              onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                              className="flex items-center justify-between w-full py-3.5 text-base font-semibold text-zinc-800 text-left"
+                            >
+                              {link.label}
+                              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300 text-zinc-400", mobileCategoriesOpen && "rotate-180")} />
+                            </button>
+                            <AnimatePresence>
+                              {mobileCategoriesOpen && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden bg-zinc-50 rounded-xl mb-3"
+                                >
+                                  <div className="p-3 space-y-2">
+                                    <Link 
+                                      href="/categories" 
+                                      onClick={() => setMenuOpen(false)} 
+                                      className="block text-xs font-bold uppercase tracking-wider text-primary"
+                                    >
+                                      All Categories
+                                    </Link>
+                                    <MobileCategoriesList onClick={() => setMenuOpen(false)} />
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      }
                       return (
-                        <div key={link.href} className="border-b border-zinc-50">
-                          <button 
-                            onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                            className="flex items-center justify-between w-full py-4 text-lg font-bold text-left"
-                          >
-                            {link.label}
-                            <ChevronDown className={cn("h-5 w-5 transition-transform", mobileCategoriesOpen && "rotate-180")} />
-                          </button>
-                          <AnimatePresence>
-                            {mobileCategoriesOpen && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden bg-zinc-50 rounded-xl mb-4"
-                              >
-                                <div className="p-4 space-y-3">
-                                  <Link href="/categories" className="block text-sm font-bold text-primary">All Categories</Link>
-                                  <MobileCategoriesList onClick={() => setMenuOpen(false)} />
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setMenuOpen(false)}
+                          className="block py-3.5 text-base font-semibold text-zinc-800 border-b border-zinc-100 hover:text-primary transition-colors"
+                        >
+                          {link.label}
+                        </Link>
                       );
-                    }
-                    return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="block py-4 text-lg font-bold border-b border-zinc-50"
-                      >
-                        {link.label}
-                      </Link>
-                    );
-                  })}
+                    })}
+                  </div>
                 </div>
 
-                <div className="bg-zinc-50 rounded-2xl p-4">
-                  <p className="text-xs font-bold text-zinc-400 uppercase mb-4">Support</p>
-                  <p className="text-sm font-medium mb-2">{theme.business.phone}</p>
-                  <p className="text-sm font-medium">{theme.business.email}</p>
+                <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100 mt-auto">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Support Contact</p>
+                  <p className="text-xs font-bold text-zinc-700 mb-1">{theme.business.phone}</p>
+                  <p className="text-xs text-zinc-500 truncate">{theme.business.email}</p>
                 </div>
               </motion.div>
-            </>
+            </div>
           )}
-        </AnimatePresence>
-      </div>
-    </header>
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ── Confirm Logout Modal (React Portal directly to document.body) ── */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {showConfirmLogout && (
+            <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 pointer-events-auto">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowConfirmLogout(false)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999998]"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 16 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="relative bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-border z-[999999]"
+              >
+                <h3 className="font-display text-xl font-bold text-foreground">Sign Out</h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                  Are you sure you want to sign out of your account?
+                </p>
+                <div className="mt-6 flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setShowConfirmLogout(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={() => { logout(); setShowConfirmLogout(false); }}>
+                    Sign Out
+                  </Button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
   );
 }
 
 function CategoriesGrid({ onClose }: { onClose: () => void }) {
   const { data: categories, isLoading } = useCategories();
 
-  if (isLoading) return <div className="h-40 flex items-center justify-center"><div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  if (isLoading) return <div className="h-40 flex items-center justify-center"><div className="h-6 w-6 border-2 border-accent border-t-transparent rounded-full animate-spin" /></div>;
 
   const parentCategories = categories?.filter(c => !c.parent) || [];
 
@@ -350,20 +498,20 @@ function CategoriesGrid({ onClose }: { onClose: () => void }) {
             key={cat.id}
             href={`/categories/${cat.slug}`}
             onClick={onClose}
-            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 transition-all"
+            className="group flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-all"
           >
-            <p className="text-sm font-bold text-zinc-900 group-hover:text-primary transition-colors">{cat.name}</p>
-            <ChevronDown className="h-3.5 w-3.5 text-zinc-300 -rotate-90 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+            <p className="text-sm font-medium text-teal-100 group-hover:text-white transition-colors">{cat.name}</p>
+            <ChevronDown className="h-3.5 w-3.5 text-teal-300/60 -rotate-90 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
           </Link>
         ))}
       </div>
       
-      <div className="h-px bg-zinc-50 my-2" />
+      <div className="h-px bg-white/10 my-2" />
       
       <Link 
         href="/categories" 
         onClick={onClose}
-        className="flex items-center justify-center py-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary transition-all"
+        className="flex items-center justify-center py-2 text-[10px] font-black uppercase tracking-widest text-teal-200/70 hover:text-white transition-all"
       >
         View All Categories
       </Link>

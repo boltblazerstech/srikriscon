@@ -42,7 +42,7 @@ public class OrderController {
     @Operation(summary = "List current customer's orders")
     public ApiResponse<PagedResponse<OrderResponse>> myOrders(
             @AuthenticationPrincipal User user,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @PageableDefault(size = 10, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
         return ApiResponse.success(orderService.findByUser(user.getId(), pageable));
     }
 
@@ -68,14 +68,12 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
-    @Operation(summary = "Admin: list all orders; filter by ?status=PLACED")
+    @Operation(summary = "Admin: list all orders; filter by ?status=PLACED and ?search=query")
     public ApiResponse<PagedResponse<OrderResponse>> all(
             @RequestParam(required = false) String status,
-            @PageableDefault(size = 20) Pageable pageable) {
-        if (status != null && !status.isBlank()) {
-            return ApiResponse.success(orderService.findByStatus(status, pageable));
-        }
-        return ApiResponse.success(orderService.findAll(pageable));
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
+        return ApiResponse.success(orderService.findAllAdmin(status, search, pageable));
     }
 
     @GetMapping("/{id}")
@@ -99,5 +97,12 @@ public class OrderController {
     @Operation(summary = "Admin: cancel any non-delivered order")
     public ApiResponse<OrderResponse> adminCancel(@PathVariable Long id) {
         return ApiResponse.success("Order cancelled", orderService.cancelByAdmin(id));
+    }
+
+    @PatchMapping("/{id}/mark-paid")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
+    @Operation(summary = "Admin: mark order as paid manually")
+    public ApiResponse<OrderResponse> markPaid(@PathVariable Long id) {
+        return ApiResponse.success("Order marked as paid", orderService.markPaidManually(id));
     }
 }

@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import api from "@/src/lib/api";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 import type {
   PaymentInitResponse,
   PaymentVerifyRequest,
@@ -43,6 +44,7 @@ interface PayOptions {
 export function useRazorpay() {
   const [loading, setLoading] = useState(false);
   const scriptLoaded = useRef(false);
+  const { value: storeName } = useSetting("storeName");
 
   const pay = useCallback(async (opts: PayOptions) => {
     setLoading(true);
@@ -65,7 +67,7 @@ export function useRazorpay() {
           key: init.keyId,
           amount: init.amount,
           currency: init.currency,
-          name: theme.business.name,
+          name: storeName || theme.business.name,
           description: opts.description ?? "Order payment",
           order_id: init.razorpayOrderId,
           prefill: {

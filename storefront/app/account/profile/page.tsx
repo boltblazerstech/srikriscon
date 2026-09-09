@@ -111,9 +111,9 @@ export default function ProfilePage() {
             </label>
             <input
               id="phone"
-              type="tel"
+              type="number"
               autoComplete="tel"
-              placeholder="+91 98765 43210"
+              placeholder="98765 43210"
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/10 ${errors.phone ? "border-destructive" : "border-border"}`}
               {...register("phone", {
                 pattern: { value: /^[+]?[0-9]{7,15}$/, message: "Enter a valid phone number" },

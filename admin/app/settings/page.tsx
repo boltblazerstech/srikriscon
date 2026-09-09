@@ -43,44 +43,31 @@ export default function SettingsPage() {
   const update = useUpdateSettings();
 
   const {
-    register, handleSubmit, control, reset,
-    formState: { errors, isSubmitting },
+    register, handleSubmit, control,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      storeName: "", storeTagline: "", logoUrl: "", faviconUrl: "",
-      storeEmail: "", storePhone: "", whatsappNumber: "", storeAddress: "", gstNumber: "",
-      currency: "INR", currencySymbol: "₹",
-      freeShippingThreshold: 0, shippingFee: 0,
-      razorpayKeyId: "", googleAnalyticsId: "",
-      facebookUrl: "", instagramUrl: "", youtubeUrl: "",
-    },
+    values: settings ? {
+      storeName:             settings.storeName,
+      storeTagline:          settings.storeTagline ?? "",
+      logoUrl:               settings.logoUrl ?? "",
+      faviconUrl:            settings.faviconUrl ?? "",
+      storeEmail:            settings.storeEmail,
+      storePhone:            settings.storePhone,
+      whatsappNumber:        settings.whatsappNumber ?? "",
+      storeAddress:          settings.storeAddress,
+      gstNumber:             settings.gstNumber ?? "",
+      currency:              settings.currency,
+      currencySymbol:        settings.currencySymbol,
+      freeShippingThreshold: Number(settings.freeShippingThreshold ?? 0),
+      shippingFee:           Number(settings.shippingFee ?? 0),
+      razorpayKeyId:         settings.razorpayKeyId ?? "",
+      googleAnalyticsId:     settings.googleAnalyticsId ?? "",
+      facebookUrl:           settings.facebookUrl ?? "",
+      instagramUrl:          settings.instagramUrl ?? "",
+      youtubeUrl:            settings.youtubeUrl ?? "",
+    } : undefined,
   });
-
-  useEffect(() => {
-    if (settings) {
-      reset({
-        storeName:             settings.storeName,
-        storeTagline:          settings.storeTagline ?? "",
-        logoUrl:               settings.logoUrl ?? "",
-        faviconUrl:            settings.faviconUrl ?? "",
-        storeEmail:            settings.storeEmail,
-        storePhone:            settings.storePhone,
-        whatsappNumber:        settings.whatsappNumber ?? "",
-        storeAddress:          settings.storeAddress,
-        gstNumber:             settings.gstNumber ?? "",
-        currency:              settings.currency,
-        currencySymbol:        settings.currencySymbol,
-        freeShippingThreshold: settings.freeShippingThreshold,
-        shippingFee:           settings.shippingFee,
-        razorpayKeyId:         settings.razorpayKeyId ?? "",
-        googleAnalyticsId:     settings.googleAnalyticsId ?? "",
-        facebookUrl:           settings.facebookUrl ?? "",
-        instagramUrl:          settings.instagramUrl ?? "",
-        youtubeUrl:            settings.youtubeUrl ?? "",
-      });
-    }
-  }, [settings, reset]);
 
   async function onSubmit(data: FormData) {
     try {
@@ -104,7 +91,11 @@ export default function SettingsPage() {
       <div className="p-6 max-w-3xl mx-auto">
         <PageHeader title="Settings" description="Configure your store" />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, (errs) => {
+          console.error("Form validation errors:", errs);
+          const firstError = Object.values(errs)[0]?.message;
+          toast.error(firstError ? String(firstError) : "Please check required fields");
+        })}>
           <Tabs.Root defaultValue="general">
             <Tabs.List className="flex gap-1 border-b border-border mb-6">
               {["general", "contact", "social", "integrations"].map((tab) => (
@@ -175,6 +166,9 @@ export default function SettingsPage() {
                   />
                 </div>
               </Card>
+              <div className="flex justify-end pt-2">
+                <Button type="submit" loading={isSubmitting} disabled={!isDirty}>Save General Settings</Button>
+              </div>
             </Tabs.Content>
 
             {/* Contact */}
@@ -193,6 +187,9 @@ export default function SettingsPage() {
                 />
                 <Input label="GST Number" {...register("gstNumber")} placeholder="22AAAAA0000A1Z5" />
               </Card>
+              <div className="flex justify-end pt-2">
+                <Button type="submit" loading={isSubmitting} disabled={!isDirty}>Save Contact Settings</Button>
+              </div>
             </Tabs.Content>
 
             {/* Social */}
@@ -202,6 +199,9 @@ export default function SettingsPage() {
                 <Input label="Instagram URL" {...register("instagramUrl")} placeholder="https://instagram.com/yourhandle" />
                 <Input label="YouTube URL" {...register("youtubeUrl")} placeholder="https://youtube.com/@yourchannel" />
               </Card>
+              <div className="flex justify-end pt-2">
+                <Button type="submit" loading={isSubmitting} disabled={!isDirty}>Save Social Links</Button>
+              </div>
             </Tabs.Content>
 
             {/* Integrations */}
@@ -221,12 +221,11 @@ export default function SettingsPage() {
                   placeholder="G-XXXXXXXXXX"
                 />
               </Card>
+              <div className="flex justify-end pt-2">
+                <Button type="submit" loading={isSubmitting} disabled={!isDirty}>Save Integrations</Button>
+              </div>
             </Tabs.Content>
           </Tabs.Root>
-
-          <div className="flex justify-end pt-4 pb-6">
-            <Button type="submit" loading={isSubmitting} size="lg">Save Settings</Button>
-          </div>
         </form>
       </div>
     </AdminLayout>

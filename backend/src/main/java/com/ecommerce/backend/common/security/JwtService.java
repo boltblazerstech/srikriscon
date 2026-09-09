@@ -4,6 +4,7 @@ import com.ecommerce.backend.common.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +19,13 @@ import java.util.Date;
 public class JwtService {
 
     private final SecretKey secretKey;
-    private final long accessTokenExpiryMs;
+    private final long      accessTokenExpiryMs;
+    private final long      adminAccessTokenExpiryMs;
 
     public JwtService(JwtProperties props) {
-        byte[] keyBytes = props.validateAndGetDecodedSecret();
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenExpiryMs = props.getAccessTokenExpiryMs();
+        this.secretKey                = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(props.getSecret()));
+        this.accessTokenExpiryMs      = props.getAccessTokenExpiryMs();
+        this.adminAccessTokenExpiryMs = props.getAdminAccessTokenExpiryMs();
     }
 
     /**
@@ -37,11 +39,17 @@ public class JwtService {
                 .map(a -> a.startsWith("ROLE_") ? a.substring(5) : a)
                 .orElse("UNKNOWN");
 
+        boolean isAdmin = principal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> a.equals("ROLE_ADMIN") || a.equals("ROLE_SUPER_ADMIN"));
+
+        long expiry = isAdmin ? adminAccessTokenExpiryMs : accessTokenExpiryMs;
+
         return Jwts.builder()
                 .subject(principal.getUsername())
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiryMs))
+                .expiration(new Date(System.currentTimeMillis() + expiry))
                 .signWith(secretKey)
                 .compact();
     }

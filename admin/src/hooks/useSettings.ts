@@ -3,7 +3,7 @@ import api from "@/src/config/api";
 import type { ApiResponse, StoreSettings } from "@/src/types";
 
 // Backend: GET /api/settings  (returns Map<String,String> of all settings, admin-only)
-export function useStoreSettings() {
+export function useStoreSettings(enabled: boolean = true) {
   return useQuery({
     queryKey: ["admin", "settings"],
     queryFn: async () => {
@@ -13,6 +13,7 @@ export function useStoreSettings() {
       return data.data;
     },
     staleTime: 300_000,
+    enabled,
   });
 }
 
@@ -26,6 +27,7 @@ export function useUpdateSettings() {
       const requests = Object.entries(body).map(([key, value]) => ({
         key,
         value: String(value ?? ""),
+        "public": true,
       }));
       const { data } = await api.put<ApiResponse<StoreSettings>>(
         "/api/settings/batch",
@@ -33,8 +35,18 @@ export function useUpdateSettings() {
       );
       return data.data;
     },
-    onSuccess: (updated) => {
-      qc.setQueryData(["admin", "settings"], updated);
+    onSuccess: (updatedList) => {
+      qc.setQueryData(["admin", "settings"], (old: any) => {
+        const next = { ...old };
+        if (Array.isArray(updatedList)) {
+          updatedList.forEach((s: any) => {
+            if (s && s.key) {
+              next[s.key] = s.value ?? "";
+            }
+          });
+        }
+        return next;
+      });
     },
   });
 }

@@ -33,6 +33,7 @@ public class ProductImage {
     private int sortOrder = 0;
 
     @Column(name = "is_primary", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean primary = false;
 

@@ -29,7 +29,7 @@ export interface Category {
 }
 
 // ─── Product ─────────────────────────────────────────────────────────────────
-export type VariantType = "SIZE" | "DESIGN" | "MATERIAL";
+export type VariantType = "SIZE" | "DESIGN" | "MATERIAL" | "COLOR";
 
 export interface ProductVariant {
   id: number;
@@ -49,6 +49,13 @@ export interface ProductImage {
   primary: boolean;
 }
 
+export interface ProductFaq {
+  id?: number;
+  question: string;
+  answer: string;
+  sortOrder?: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -66,6 +73,7 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   variantsByType: Record<VariantType, ProductVariant[]>;
+  faqs?: ProductFaq[];
   startingPrice: number;
   active: boolean;
   featured: boolean;
@@ -153,6 +161,7 @@ export interface OrderRequest {
   shippingPostalCode: string;
   shippingCountry: string;
   notes?: string;
+  paymentMethod?: string;
   items: {
     productId: number;
     variantId?: number;

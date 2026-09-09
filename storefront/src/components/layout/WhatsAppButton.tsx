@@ -1,20 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import { motion } from "framer-motion";
 import { theme } from "@/src/config/theme";
 import { whatsappLink } from "@/src/lib/utils";
+import { useSetting } from "@/src/hooks/useSettings";
 
 export default function WhatsAppButton() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const { value: storeName } = useSetting("storeName");
+  const { value: whatsappNumber } = useSetting("whatsappNumber");
 
-  if (!mounted || !theme.business.whatsapp) return null;
+  const whatsapp = whatsappNumber || theme.business.whatsapp;
+  const name = storeName || theme.business.name;
+
+  if (!mounted || !whatsapp) return null;
 
   const href = whatsappLink(
-    theme.business.whatsapp,
-    `Hi! I have a question about ${theme.business.name}.`
+    whatsapp,
+    `Hi! I have a question about ${name}.`
   );
 
   return (

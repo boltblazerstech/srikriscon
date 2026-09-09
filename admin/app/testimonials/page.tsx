@@ -25,11 +25,13 @@ import { extractApiError } from "@/src/lib/utils";
 import type { Testimonial } from "@/src/types";
 
 const schema = z.object({
-  name:      z.string().min(1, "Required"),
-  content:   z.string().min(1, "Required"),
-  rating:    z.number().int().min(1).max(5),
-  imageUrl:  z.string().optional(),
-  active:    z.boolean(),
+  name:        z.string().min(1, "Required"),
+  designation: z.string().optional(),
+  company:     z.string().optional(),
+  content:     z.string().min(1, "Required"),
+  rating:      z.number().int().min(1).max(5),
+  imageUrl:    z.string().optional(),
+  active:      z.boolean(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -48,22 +50,33 @@ export default function TestimonialsPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", content: "", rating: 5, imageUrl: "", active: true },
+    defaultValues: {
+      name: "", designation: "", company: "",
+      content: "", rating: 5, imageUrl: "", active: true
+    },
   });
 
   const rating = watch("rating");
 
   function openAdd() {
     setEditTarget(null);
-    reset({ name: "", content: "", rating: 5, imageUrl: "", active: true });
+    reset({
+      name: "", designation: "", company: "",
+      content: "", rating: 5, imageUrl: "", active: true
+    });
     setModalOpen(true);
   }
 
   function openEdit(t: Testimonial) {
     setEditTarget(t);
     reset({
-      name: t.name, content: t.content, rating: t.rating,
-      imageUrl: t.imageUrl ?? "", active: t.active,
+      name: t.name,
+      designation: t.designation ?? "",
+      company: t.company ?? "",
+      content: t.content,
+      rating: t.rating,
+      imageUrl: t.imageUrl ?? "",
+      active: t.active,
     });
     setModalOpen(true);
   }
@@ -116,7 +129,12 @@ export default function TestimonialsPage() {
       cell: (t) => (
         <div>
           <p className="font-medium text-sm">{t.name}</p>
-          <div className="flex gap-0.5 mt-0.5">
+          {(t.designation || t.company) && (
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {[t.designation, t.company].filter(Boolean).join(", ")}
+            </p>
+          )}
+          <div className="flex gap-0.5 mt-1">
             {[1, 2, 3, 4, 5].map((s) => (
               <Star
                 key={s}
@@ -197,6 +215,21 @@ export default function TestimonialsPage() {
             {...register("name")}
             error={errors.name?.message}
           />
+
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Designation / Role (optional)"
+              {...register("designation")}
+              error={errors.designation?.message}
+              placeholder="e.g. Founder, CEO"
+            />
+            <Input
+              label="Company (optional)"
+              {...register("company")}
+              error={errors.company?.message}
+              placeholder="e.g. Google"
+            />
+          </div>
 
           {/* Star rating */}
           <div>

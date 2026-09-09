@@ -17,6 +17,7 @@ import com.ecommerce.backend.product.repository.ProductRepository;
 import com.ecommerce.backend.product.repository.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,7 @@ public class OrderService {
                 if (!variant.isActive()) {
                     throw new BadRequestException("Variant is not available: " + variant.getValue());
                 }
-                unitPrice = variant.getPrice();
+                unitPrice = variant.getPrice() != null ? variant.getPrice() : product.getPrice();
                 variantId = variant.getId();
                 variantType = variant.getType().name();
                 variantValue = variant.getValue();
@@ -112,6 +113,7 @@ public class OrderService {
                 .shippingPostalCode(req.getShippingPostalCode())
                 .shippingCountry(req.getShippingCountry())
                 .notes(req.getNotes())
+                .paymentMethod(req.getPaymentMethod() != null ? req.getPaymentMethod() : "RAZORPAY")
                 .build();
 
         items.forEach(item -> { item.setOrder(order); order.getItems().add(item); });
@@ -156,6 +158,22 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public PagedResponse<OrderResponse> findAllAdmin(String status, String search, Pageable pageable) {
+        Order.Status s = (status != null && !status.isBlank()) ? parseStatus(status) : null;
+
+        Page<Order> page;
+        if (search != null && !search.isBlank()) {
+            page = orderRepository.searchOrders(s, search.trim(), pageable);
+        } else if (s != null) {
+            page = orderRepository.findByStatus(s, pageable);
+        } else {
+            page = orderRepository.findAll(pageable);
+        }
+
+        return PagedResponse.of(page, OrderResponse::from);
+    }
+
+    @Transactional(readOnly = true)
     public OrderResponse findById(Long id) {
         return OrderResponse.from(getOrThrow(id));
     }
@@ -173,6 +191,27 @@ public class OrderService {
         emailService.sendOrderStatusChanged(
                 user.getEmail(), user.getFirstName(),
                 saved.getOrderNumber(), newStatus.name());
+
+        return OrderResponse.from(saved);
+    }
+
+    @Transactional
+    public OrderResponse markPaidManually(Long id) {
+        Order order = getOrThrow(id);
+        order.setPaymentStatus(Order.PaymentStatus.PAID);
+        if (order.getStatus() == Order.Status.PLACED) {
+            order.setStatus(Order.Status.CONFIRMED);
+        }
+        Order saved = orderRepository.save(order);
+
+        try {
+            User user = saved.getUser();
+            emailService.sendPaymentConfirmed(
+                    user.getEmail(), user.getFirstName(),
+                    saved.getOrderNumber(), saved.getTotalAmount().toPlainString());
+        } catch (Exception e) {
+            // Ignore email errors to not block transaction
+        }
 
         return OrderResponse.from(saved);
     }

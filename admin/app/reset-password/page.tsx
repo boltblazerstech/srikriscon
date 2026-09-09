@@ -45,9 +45,10 @@ function ResetPasswordContent() {
   async function onSubmit(data: FormData) {
     setError("");
     try {
-      await api.post("/api/admin/auth/reset-password", {
+      await api.post("/api/auth/reset-password", {
         token,
         newPassword: data.password,
+        confirmPassword: data.confirm,
       });
       setDone(true);
     } catch (err) {

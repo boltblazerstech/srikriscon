@@ -35,6 +35,7 @@ public class Banner {
     private int sortOrder = 0;
 
     @Column(name = "is_active", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
     @Builder.Default
     private boolean active = true;
 

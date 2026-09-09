@@ -8,6 +8,7 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/src/context/AuthContext";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 import toast from "react-hot-toast";
 
 interface RegisterFormValues {
@@ -21,6 +22,7 @@ interface RegisterFormValues {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { value: storeName } = useSetting("storeName");
   const { register: registerUser, login, isAuthenticated } = useAuth();
   const [showPw, setShowPw] = useState(false);
 
@@ -66,7 +68,7 @@ export default function RegisterPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="font-display text-3xl font-bold text-primary">Create account</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Join {theme.business.name} for exclusive packaging solutions</p>
+            <p className="mt-2 text-sm text-muted-foreground">Join {storeName || theme.business.name} for exclusive packaging solutions</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>

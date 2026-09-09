@@ -37,8 +37,7 @@ export default function LoginPage() {
   }, [isLoading, user, router]);
 
   const fillSuperAdmin = () => {
-    setValue("username", "superadmin@example.com", { shouldValidate: true });
-    setValue("password", "SuperAdmin@123", { shouldValidate: true });
+   
   };
 
   async function onSubmit(data: FormData) {
@@ -48,6 +47,7 @@ export default function LoginPage() {
       // login() calls router.push("/dashboard") internally
     } catch (err) {
       setError(extractApiError(err));
+      console.error("Login error:", err);
     }
   }
 
@@ -134,13 +134,13 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button
+            {/* <button
               type="button"
               onClick={fillSuperAdmin}
               className="w-full h-10 rounded-lg border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors mb-2"
             >
               Fill SuperAdmin Credentials
-            </button>
+            </button> */}
 
             <button
               type="submit"

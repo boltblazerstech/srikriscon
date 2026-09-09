@@ -24,9 +24,14 @@ import { slugify, extractApiError } from "@/src/lib/utils";
 const variantSchema = z.object({
   type:          z.string().min(1, "Required"),
   value:         z.string().min(1, "Required"),
-  price:         z.number().min(0),
+  price:         z.preprocess((val) => val === "" || val === undefined || val === null || isNaN(Number(val)) ? null : Number(val), z.number().min(0).nullable().optional()),
   stockQuantity: z.number().int().min(0),
   active:        z.boolean(),
+});
+
+const faqSchema = z.object({
+  question: z.string().min(1, "Question is required"),
+  answer:   z.string().min(1, "Answer is required"),
 });
 
 const schema = z.object({
@@ -41,6 +46,7 @@ const schema = z.object({
   featured:        z.boolean(),
   images:          z.array(z.string()),
   variants:        z.array(variantSchema),
+  faqs:            z.array(faqSchema).optional(),
   metaTitle:       z.string().optional(),
   metaDescription: z.string().optional(),
 });
@@ -56,15 +62,22 @@ export default function NewProductPage() {
     register, handleSubmit, control, watch, setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
+<<<<<<< HEAD
       name: "", slug: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
       active: true, featured: false, images: [], variants: [],
+=======
+      name: "", slug: "", description: "", price: 0, stockQuantity: 0,
+      categoryId: "",
+      active: true, featured: false, images: [], variants: [], faqs: [],
+>>>>>>> origin/main
       metaTitle: "", metaDescription: "",
     },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "variants" });
+  const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({ control, name: "faqs" });
   const nameVal = watch("name");
   const watchPrice = watch("price");
   const watchComparePrice = watch("comparePrice");
@@ -104,7 +117,7 @@ export default function NewProductPage() {
             : undefined,
         categoryId: data.categoryId ? Number(data.categoryId) : undefined,
         variants: data.variants.map((v) => ({ ...v, id: undefined })),
-      });
+      } as any);
       toast.success("Product created");
       router.push("/products");
     } catch (err) {
@@ -262,18 +275,47 @@ export default function NewProductPage() {
                     className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg border border-border bg-muted/30"
                   >
                     <div className="col-span-2">
-                      <Input
-                        {...register(`variants.${i}.type`)}
-                        placeholder="Color"
-                        error={errors.variants?.[i]?.type?.message}
+                      <Controller
+                        control={control}
+                        name={`variants.${i}.type`}
+                        render={({ field: f, fieldState: { error } }) => (
+                          <Select
+                            value={f.value}
+                            onChange={f.onChange}
+                            error={error?.message}
+                            options={[
+                              { value: "SIZE", label: "Size" },
+                              { value: "DESIGN", label: "Design" },
+                              { value: "MATERIAL", label: "Material" },
+                              { value: "COLOR", label: "Color" },
+                            ]}
+                            placeholder="Type"
+                          />
+                        )}
                       />
                     </div>
                     <div className="col-span-2">
-                      <Input
-                        {...register(`variants.${i}.value`)}
-                        placeholder="Red"
-                        error={errors.variants?.[i]?.value?.message}
-                      />
+                      {watch(`variants.${i}.type`) === "COLOR" ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            {...register(`variants.${i}.value`)}
+                            placeholder="#C9A84C or Red"
+                            error={errors.variants?.[i]?.value?.message}
+                          />
+                          <input
+                            type="color"
+                            value={watch(`variants.${i}.value`)?.startsWith("#") ? watch(`variants.${i}.value`) : "#000000"}
+                            onChange={(e) => setValue(`variants.${i}.value`, e.target.value)}
+                            className="w-10 h-9 p-0.5 border border-border rounded-lg cursor-pointer bg-white flex-shrink-0"
+                          />
+                        </div>
+                      ) : (
+                        <Input
+                          {...register(`variants.${i}.value`)}
+                          placeholder="Red"
+                          error={errors.variants?.[i]?.value?.message}
+                        />
+                      )}
                     </div>
                     <div className="col-span-2">
                       <Input
@@ -324,6 +366,60 @@ export default function NewProductPage() {
               }
             >
               Add Variant
+            </Button>
+          </Section>
+
+          {/* Product FAQs */}
+          <Section title="Product FAQs">
+            <p className="text-xs text-muted-foreground mb-3">
+              Add frequently asked questions specific to this product (e.g. warranty, MOQ, custom printing).
+            </p>
+            {faqFields.length > 0 && (
+              <div className="space-y-4 mb-4">
+                {faqFields.map((field, i) => (
+                  <div
+                    key={field.id}
+                    className="p-4 rounded-xl border border-border bg-muted/20 space-y-3 relative group"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                        FAQ #{i + 1}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive h-7 px-2"
+                        onClick={() => removeFaq(i)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                      </Button>
+                    </div>
+                    <Input
+                      label="Question"
+                      {...register(`faqs.${i}.question`)}
+                      error={errors.faqs?.[i]?.question?.message}
+                      placeholder="e.g. What is the minimum order quantity for custom printing?"
+                    />
+                    <Textarea
+                      label="Answer"
+                      {...register(`faqs.${i}.answer`)}
+                      error={errors.faqs?.[i]?.answer?.message}
+                      rows={2}
+                      placeholder="e.g. Our minimum order quantity for custom printed bags is 500 units."
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              icon={<Plus className="h-4 w-4" />}
+              onClick={() => appendFaq({ question: "", answer: "" })}
+            >
+              Add Product FAQ
             </Button>
           </Section>
 

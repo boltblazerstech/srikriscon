@@ -17,7 +17,7 @@ export const theme = {
 
     highlight:         "#B5A57A", // Muted Beige — hero sections, highlights
 
-    background:        "#FFFFFF", // main background for product sections
+    background:        "#F5F7F7", // main background for product sections
     foreground:        "#333333", // body text
 
     muted:             "#F5F5F5", // Light Gray — secondary backgrounds and cards

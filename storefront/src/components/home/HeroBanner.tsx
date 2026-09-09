@@ -10,6 +10,7 @@ import { ArrowRight } from "lucide-react";
 import Spinner from "@/src/components/ui/Spinner";
 import { useBanners } from "@/src/hooks/useBanners";
 import { theme } from "@/src/config/theme";
+import { useSetting } from "@/src/hooks/useSettings";
 
 const FALLBACK = [
   {
@@ -26,6 +27,8 @@ export default function HeroBanner() {
   useEffect(() => setMounted(true), []);
 
   const sectionRef = useRef<HTMLElement>(null);
+  const { value: storeName } = useSetting("storeName");
+  const { value: storeTagline } = useSetting("storeTagline");
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -33,8 +36,18 @@ export default function HeroBanner() {
   // Image drifts down 80px as the hero scrolls out → appears to move slower than the page
   const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
+  const fallbackBanners = [
+    {
+      id: 0,
+      title: storeName || theme.business.name,
+      subtitle: storeTagline || theme.business.tagline,
+      imageUrl: "",
+      linkUrl: "/products",
+    },
+  ];
+
   const { data: banners, isLoading } = useBanners();
-  const slides = banners && banners.length > 0 ? banners : FALLBACK;
+  const slides = banners && banners.length > 0 ? banners : fallbackBanners;
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden bg-primary">
@@ -52,7 +65,7 @@ export default function HeroBanner() {
             pagination={{ clickable: true, dynamicBullets: true }}
             navigation
             loop={slides.length > 1}
-            className="w-full h-[75vh] sm:h-[82vh] lg:h-[88vh] group"
+            className="w-full h-[75vh] min-h-[480px] sm:h-[82vh] sm:min-h-[580px] lg:h-[88vh] group"
           >
             {slides.map((banner, i) => (
               <SwiperSlide key={banner.id}>
@@ -95,7 +108,7 @@ export default function HeroBanner() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.5, duration: 0.7 }}
-                          className="flex items-center gap-3 mb-6"
+                          className="flex items-center gap-3 mb-4 sm:mb-6"
                         >
                           <div className="h-px w-8 bg-accent" />
                           <span className="inline-flex items-center gap-2 text-[10px] font-extrabold tracking-[0.25em] text-white/70 uppercase">
@@ -105,7 +118,7 @@ export default function HeroBanner() {
                         </motion.div>
 
                         {/* Headline — display serif */}
-                        <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold text-white leading-[1.0] tracking-tight text-balance drop-shadow-lg">
+                        <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.0] tracking-tight text-balance drop-shadow-lg">
                           {banner.title}
                         </h1>
 
@@ -114,7 +127,7 @@ export default function HeroBanner() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.7, duration: 0.8 }}
-                            className="mt-6 text-base sm:text-lg text-white/65 font-light max-w-lg leading-relaxed tracking-wide"
+                            className="mt-4 sm:mt-6 text-sm sm:text-base lg:text-lg text-white/65 font-light max-w-lg leading-relaxed tracking-wide"
                           >
                             {banner.subtitle}
                           </motion.p>
@@ -126,11 +139,11 @@ export default function HeroBanner() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.85, duration: 0.7 }}
-                            className="mt-10 flex flex-wrap gap-4"
+                            className="mt-6 sm:mt-8 md:mt-10 flex flex-wrap gap-3 sm:gap-4"
                           >
                             <Link
                               href={banner.linkUrl}
-                              className="inline-flex items-center gap-2 justify-center rounded-full bg-accent px-8 py-4 text-sm font-bold text-white hover:bg-[#C2006A] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_28px_rgba(230,0,126,0.45)] group/btn"
+                              className="inline-flex items-center gap-2 justify-center rounded-full bg-accent px-6 py-3 text-xs sm:px-8 sm:py-4 sm:text-sm font-bold text-white hover:bg-[#C2006A] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_28px_rgba(230,0,126,0.45)] group/btn"
                             >
                               Shop Collection
                               <ArrowRight
@@ -140,7 +153,7 @@ export default function HeroBanner() {
                             </Link>
                             <Link
                               href="/categories"
-                              className="inline-flex items-center justify-center rounded-full border border-white/30 px-8 py-4 text-sm font-bold text-white hover:bg-white/10 hover:border-white/60 transition-all duration-300 backdrop-blur-sm"
+                              className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-xs sm:px-8 sm:py-4 sm:text-sm font-bold text-white hover:bg-white/10 hover:border-white/60 transition-all duration-300 backdrop-blur-sm"
                             >
                               Explore Categories
                             </Link>
@@ -159,7 +172,7 @@ export default function HeroBanner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2, duration: 1 }}
-            className="absolute bottom-12 right-8 sm:right-12 z-20 flex flex-col items-center gap-2 pointer-events-none"
+            className="absolute bottom-12 right-8 sm:right-12 z-20 hidden sm:flex flex-col items-center gap-2 pointer-events-none"
           >
             <div className="relative h-10 w-px bg-white/20 overflow-hidden">
               <motion.div

@@ -15,7 +15,7 @@ export function formatPrice(amount: number, currency = "INR"): string {
   }).format(amount);
 }
 
-export function formatDate(dateStr: string, fmt = "dd MMM yyyy"): string {
+export function formatDate(dateStr: string, fmt = "dd-MM-yyyy"): string {
   try {
     return format(parseISO(dateStr), fmt);
   } catch {
@@ -24,7 +24,7 @@ export function formatDate(dateStr: string, fmt = "dd MMM yyyy"): string {
 }
 
 export function formatDateTime(dateStr: string): string {
-  return formatDate(dateStr, "dd MMM yyyy, hh:mm a");
+  return formatDate(dateStr, "dd-MM-yyyy hh:mm a");
 }
 
 export function slugify(text: string): string {
@@ -48,10 +48,39 @@ export function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+function cleanErrorMessage(msg: string): string {
+  if (!msg) return "An unexpected error occurred. Please try again.";
+  const lower = msg.toLowerCase();
+  
+  if (lower.includes("json parse") || lower.includes("malformed json") || lower.includes("cannot deserialize")) {
+    return "Invalid data format received. Please check your inputs.";
+  }
+  if (lower.includes("constraint") || lower.includes("sql") || lower.includes("foreign key") || lower.includes("duplicate entry")) {
+    if (lower.includes("duplicate") || lower.includes("already exists")) {
+      return "This record or value already exists.";
+    }
+    return "A database conflict occurred. Please verify your data.";
+  }
+  if (lower.includes("nullpointer") || lower.includes("exception") || lower.includes("java.") || lower.includes("hibernate")) {
+    return "Internal server error. Please contact support.";
+  }
+  if (lower.includes("jwt expired") || lower.includes("token expired")) {
+    return "Your session has expired. Please log in again.";
+  }
+  if (lower.includes("access is denied") || lower.includes("forbidden") || lower.includes("unauthorized")) {
+    return "You do not have permission to perform this action.";
+  }
+  if (lower.includes("network error") || lower.includes("timeout") || lower.includes("failed to fetch")) {
+    return "Network connection issue. Please check your internet connection.";
+  }
+  return msg;
+}
+
 export function extractApiError(err: unknown): string {
   if (err && typeof err === "object") {
     const e = err as { response?: { data?: { message?: string } }; message?: string };
-    return e.response?.data?.message ?? e.message ?? "An error occurred";
+    const rawMessage = e.response?.data?.message ?? e.message ?? "An error occurred";
+    return cleanErrorMessage(rawMessage);
   }
   return "An error occurred";
 }

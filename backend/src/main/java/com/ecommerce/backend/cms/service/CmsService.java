@@ -37,14 +37,28 @@ public class CmsService {
                         .orElseThrow(() -> new ResourceNotFoundException("Page", "slug", slug)));
     }
 
+    @Transactional(readOnly = true)
+    public CmsPageResponse findBySlug(String slug) {
+        return CmsPageResponse.from(
+                cmsPageRepository.findBySlug(slug)
+                        .orElseThrow(() -> new ResourceNotFoundException("Page", "slug", slug)));
+    }
+
     @Transactional
     public CmsPageResponse create(CmsPageRequest req) {
         if (cmsPageRepository.existsBySlug(req.getSlug())) {
             throw new ConflictException("Slug already in use: " + req.getSlug());
         }
+        CmsPage.Status status = req.getStatus();
+        if (req.getActive() != null) {
+            status = req.getActive() ? CmsPage.Status.PUBLISHED : CmsPage.Status.DRAFT;
+        } else if (status == null) {
+            status = CmsPage.Status.DRAFT;
+        }
+        
         CmsPage page = CmsPage.builder()
                 .title(req.getTitle()).slug(req.getSlug()).content(req.getContent())
-                .excerpt(req.getExcerpt()).status(req.getStatus())
+                .excerpt(req.getExcerpt()).status(status)
                 .metaTitle(req.getMetaTitle()).metaDescription(req.getMetaDescription())
                 .build();
         return CmsPageResponse.from(cmsPageRepository.save(page));
@@ -59,7 +73,15 @@ public class CmsService {
         }
         page.setTitle(req.getTitle()); page.setSlug(req.getSlug());
         page.setContent(req.getContent()); page.setExcerpt(req.getExcerpt());
-        page.setStatus(req.getStatus());
+        
+        CmsPage.Status status = req.getStatus();
+        if (req.getActive() != null) {
+            status = req.getActive() ? CmsPage.Status.PUBLISHED : CmsPage.Status.DRAFT;
+        }
+        if (status != null) {
+            page.setStatus(status);
+        }
+        
         page.setMetaTitle(req.getMetaTitle()); page.setMetaDescription(req.getMetaDescription());
         return CmsPageResponse.from(cmsPageRepository.save(page));
     }

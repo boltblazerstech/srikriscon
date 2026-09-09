@@ -36,4 +36,5 @@ public class OrderRequest {
 
     private String shippingCountry = "India";
     private String notes;
+    private String paymentMethod = "RAZORPAY";
 }

@@ -36,12 +36,12 @@ export default function Modal({
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-in fade-in duration-150" />
         <Dialog.Content
           className={cn(
-            "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full bg-surface rounded-2xl border border-border shadow-xl focus:outline-none animate-in fade-in zoom-in-95 duration-150",
+            "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] md:w-full bg-surface rounded-2xl border border-border shadow-xl focus:outline-none animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[calc(100dvh-2rem)] md:max-h-[calc(100vh-4rem)]",
             sizeClasses[size]
           )}
         >
           {(title || !hideClose) && (
-            <div className="flex items-start justify-between p-5 border-b border-border">
+            <div className="flex items-start justify-between p-5 border-b border-border flex-shrink-0">
               <div>
                 {title && (
                   <Dialog.Title className="text-base font-semibold text-foreground">
@@ -64,7 +64,7 @@ export default function Modal({
               )}
             </div>
           )}
-          <div className="p-5">{children}</div>
+          <div className="p-5 overflow-y-auto flex-1">{children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
