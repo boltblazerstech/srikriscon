@@ -5,9 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import {
-  Calendar, Clock, Share2, ArrowLeft, ArrowRight,
-  Search, CheckCircle2, Copy, Bookmark,
-  Tag, BookOpen, ChevronRight, Check, Send, Sparkles,
+  Calendar, Clock, Share2, ArrowLeft,
+  Search, Copy, Bookmark,
+  Tag, ChevronRight, Check, Send, Sparkles,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
@@ -67,7 +67,7 @@ export default function BlogPostPage() {
       return;
     }
     setIsSubmitting(true);
-    const msg = `*Free Consultation Request*\n\nName: ${consultForm.name}\nPhone: ${consultForm.phone}\nEmail: ${consultForm.email || "N/A"}\nRequirement: ${consultForm.message || "Consultation requested from blog: " + post.title}`;
+    const msg = `*Free Consultation Request*\n\nName: ${consultForm.name}\nPhone: ${consultForm.phone}\nEmail: ${consultForm.email || "N/A"}\nRequirement: ${consultForm.message || "Consultation requested from blog: " + (post?.title ?? "Unknown Article")}`;
     const whatsappNum = theme.business.whatsapp || "917999921111";
     window.open(whatsappLink(whatsappNum, msg), "_blank");
     toast.success("Consultation request submitted! Our team will call you shortly.");
@@ -87,7 +87,7 @@ export default function BlogPostPage() {
   async function handleShareNative() {
     const shareUrl = typeof window !== "undefined" ? window.location.href : "";
     if (typeof navigator !== "undefined" && navigator.share) {
-      try { await navigator.share({ title: post.title, url: shareUrl }); return; } catch {}
+      try { await navigator.share({ title: post!.title, url: shareUrl }); return; } catch {}
     }
     handleCopyLink();
   }
@@ -95,7 +95,7 @@ export default function BlogPostPage() {
   function handleSharePlatform(platform: string) {
     if (typeof window === "undefined") return;
     const url   = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(post.title || "");
+    const title = encodeURIComponent((post!.title || ""));
     const map: Record<string, string> = {
       whatsapp: `https://api.whatsapp.com/send?text=${title}%20${url}`,
       twitter:  `https://twitter.com/intent/tweet?text=${title}&url=${url}`,
@@ -128,7 +128,7 @@ export default function BlogPostPage() {
               </>
             )}
             <ChevronRight className="h-3 w-3 text-zinc-400" />
-            <span className="text-zinc-900 font-semibold truncate max-w-xs">{post.title}</span>
+            <span className="text-zinc-900 font-semibold truncate max-w-xs">{post!.title}</span>
           </nav>
         </div>
       </div>
@@ -152,14 +152,14 @@ export default function BlogPostPage() {
 
             {/* Author & Publish Metadata */}
             <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-xs text-zinc-500 border-t border-zinc-100 pt-5">
-              {(post.author || post.authorName) && (
+              {(post.author) && (
                 <div className="flex items-center gap-2.5">
                   <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                    {(post.author || post.authorName || "S")[0]}
+                    {(post.author || "S")[0]}
                   </div>
                   <div>
                     <span className="block text-zinc-200 text-[10px] uppercase font-bold tracking-wider">Author</span>
-                    <span className="font-semibold text-zinc-400 text-xs">{post.author || post.authorName}</span>
+                    <span className="font-semibold text-zinc-400 text-xs">{post.author}</span>
                   </div>
                 </div>
               )}

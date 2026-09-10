@@ -35,20 +35,21 @@ const faqSchema = z.object({
 });
 
 const schema = z.object({
-  name:            z.string().min(1, "Required"),
-  slug:            z.string().min(1, "Required"),
-  description:     z.string().optional(),
-  price:           z.number().min(0, "Price must be >= 0"),
-  comparePrice:    z.number().min(0).optional(),
-  stockQuantity:   z.number().int().min(0),
-  categoryId:      z.string().optional(),
-  active:          z.boolean(),
-  featured:        z.boolean(),
-  images:          z.array(z.string()),
-  variants:        z.array(variantSchema),
-  faqs:            z.array(faqSchema).optional(),
-  metaTitle:       z.string().optional(),
-  metaDescription: z.string().optional(),
+  name:             z.string().min(1, "Required"),
+  slug:             z.string().min(1, "Required"),
+  shortDescription: z.string().max(500, "Short description must be under 500 characters").optional(),
+  description:      z.string().optional(),
+  price:            z.number().min(0, "Price must be >= 0"),
+  comparePrice:     z.number().min(0).optional(),
+  stockQuantity:    z.number().int().min(0),
+  categoryId:       z.string().optional(),
+  active:           z.boolean(),
+  featured:         z.boolean(),
+  images:           z.array(z.string()),
+  variants:         z.array(variantSchema),
+  faqs:             z.array(faqSchema).optional(),
+  metaTitle:        z.string().optional(),
+  metaDescription:  z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -64,7 +65,7 @@ export default function NewProductPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-      name: "", slug: "", description: "", price: 0, stockQuantity: 0,
+      name: "", slug: "", shortDescription: "", description: "", price: 0, stockQuantity: 0,
       categoryId: "",
       active: true, featured: false, images: [], variants: [], faqs: [],
       metaTitle: "", metaDescription: "",
@@ -105,6 +106,7 @@ export default function NewProductPage() {
     try {
       await create.mutateAsync({
         ...data,
+        shortDescription: data.shortDescription?.trim() || undefined,
         price: Number(data.price),
         comparePrice:
           data.comparePrice != null && !isNaN(Number(data.comparePrice)) && Number(data.comparePrice) > 0
@@ -147,12 +149,23 @@ export default function NewProductPage() {
               />
             </div>
 
+            {/* Short Description */}
+            <Textarea
+              label="Short Description"
+              {...register("shortDescription")}
+              error={errors.shortDescription?.message}
+              rows={3}
+              placeholder="Brief summary shown near the price and product title (max 500 chars)..."
+              hint="Appears right under the price on the product detail page"
+            />
+
+            {/* Long / Detailed Description */}
             <Controller
               control={control}
               name="description"
               render={({ field }) => (
                 <RichTextEditor
-                  label="Description"
+                  label="Detailed Description (Long)"
                   value={field.value ?? ""}
                   onChange={field.onChange}
                 />

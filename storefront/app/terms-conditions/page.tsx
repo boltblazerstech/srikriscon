@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import Spinner from "@/src/components/ui/Spinner";
 import { useCmsPage } from "@/src/hooks/useCmsPage";
-import { FileCheck, Shield, FileText, Mail, Phone, MapPin, CheckCircle, ChevronRight, Scale, Clock } from "lucide-react";
+import { FileCheck, Shield, Clock, Mail, Phone, MapPin, ChevronRight, Scale } from "lucide-react";
 import Link from "next/link";
 import { theme } from "@/src/config/theme";
 
@@ -16,18 +16,7 @@ export default function TermsConditionsPage() {
       </div>
     );
 
-  if (page?.content && page.content.trim().length > 100) {
-    return (
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-14 font-sans">
-        <h1 className="text-3xl sm:text-4xl font-black text-foreground mb-3">{page.title}</h1>
-        <p className="text-xs text-muted-foreground mb-8">Last updated: September 2026</p>
-        <div
-          className="prose prose-sm sm:prose max-w-none text-foreground leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: page.content }}
-        />
-      </article>
-    );
-  }
+  const cmsContent = page?.content && page.content.trim().length > 100 ? page.content : null;
 
   return (
     <div className="min-h-screen bg-[#fafaf9] font-sans text-zinc-800 pb-20">
@@ -54,7 +43,7 @@ export default function TermsConditionsPage() {
             Terms of Service
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Terms & Conditions
+            {page?.title || "Terms & Conditions"}
           </h1>
           <p className="text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">
             Legal terms governing product ordering, custom manufacturing, and use of Sri Kriscon services.
@@ -102,65 +91,81 @@ export default function TermsConditionsPage() {
         </div>
       </div>
 
-      {/* ── Structured Policy Sections ─────────────────────────────────── */}
+      {/* ── Structured Policy Sections / CMS Content ────────────────────── */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 mt-10 space-y-6">
         
-        {/* Section 1 */}
-        <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
-          <div className="flex items-center gap-3">
-            <span className="h-7 w-7 rounded-lg bg-primary text-white text-xs font-bold flex items-center justify-center font-mono">
-              01
-            </span>
-            <h2 className="text-xl font-bold text-zinc-900">Agreement to Terms</h2>
+        {cmsContent ? (
+          <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-10 shadow-xs">
+            <div
+              className="prose prose-sm sm:prose-base max-w-none text-zinc-700 leading-relaxed
+                         prose-headings:font-bold prose-headings:text-primary
+                         prose-h2:text-xl prose-h2:sm:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                         prose-h3:text-lg prose-h3:font-semibold prose-h3:text-[#B5A57A]
+                         prose-p:mb-4 prose-ul:list-disc prose-ul:pl-5 prose-li:mb-2
+                         prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-zinc-50 prose-blockquote:p-4 prose-blockquote:rounded-r-xl prose-blockquote:italic"
+              dangerouslySetInnerHTML={{ __html: cmsContent }}
+            />
           </div>
-          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
-            These Terms & Conditions constitute a legally binding contract between you and <strong>Sri Kriscon Industries</strong>, governing your purchases, catalog orders, and manufacturing inquiries. By accessing our platform or confirming an order, you accept these terms in full.
-          </p>
-        </div>
+        ) : (
+          <>
+            {/* Section 1 */}
+            <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="h-7 w-7 rounded-lg bg-primary text-white text-xs font-bold flex items-center justify-center font-mono">
+                  01
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900">Agreement to Terms</h2>
+              </div>
+              <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
+                These Terms & Conditions constitute a legally binding contract between you and <strong>Sri Kriscon Industries</strong>, governing your purchases, catalog orders, and manufacturing inquiries. By accessing our platform or confirming an order, you accept these terms in full.
+              </p>
+            </div>
 
-        {/* Section 2 */}
-        <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
-          <div className="flex items-center gap-3">
-            <span className="h-7 w-7 rounded-lg bg-[#B5A57A] text-white text-xs font-bold flex items-center justify-center font-mono">
-              02
-            </span>
-            <h2 className="text-xl font-bold text-zinc-900">Products, Samples & Custom Printing</h2>
-          </div>
-          <ul className="pl-10 space-y-2 text-sm text-zinc-600 list-disc">
-            <li>Sri Kriscon manufactures rigid boxes, mono cartons, sweet boxes, and heavy-duty corrugated cartons.</li>
-            <li>Custom printed orders enter production strictly after customer digital proof or sample approval.</li>
-            <li>Due to printing substrate variations and display color profiles, slight color shifts within accepted industrial tolerances may occur.</li>
-          </ul>
-        </div>
+            {/* Section 2 */}
+            <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="h-7 w-7 rounded-lg bg-[#B5A57A] text-white text-xs font-bold flex items-center justify-center font-mono">
+                  02
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900">Products, Samples & Custom Printing</h2>
+              </div>
+              <ul className="pl-10 space-y-2 text-sm text-zinc-600 list-disc">
+                <li>Sri Kriscon manufactures rigid boxes, mono cartons, sweet boxes, and heavy-duty corrugated cartons.</li>
+                <li>Custom printed orders enter production strictly after customer digital proof or sample approval.</li>
+                <li>Due to printing substrate variations and display color profiles, slight color shifts within accepted industrial tolerances may occur.</li>
+              </ul>
+            </div>
 
-        {/* Section 3 */}
-        <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
-          <div className="flex items-center gap-3">
-            <span className="h-7 w-7 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center font-mono">
-              03
-            </span>
-            <h2 className="text-xl font-bold text-zinc-900">Pricing, Tax Invoices & GST</h2>
-          </div>
-          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
-            All prices are stated in Indian Rupees (₹). Official GST tax invoices are generated for all orders under <strong>GSTIN: 23DZAPS6347N1ZU</strong>. Corporate customers must provide a valid GST number during order placement to receive input tax credit.
-          </p>
-        </div>
+            {/* Section 3 */}
+            <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="h-7 w-7 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center font-mono">
+                  03
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900">Pricing, Tax Invoices & GST</h2>
+              </div>
+              <p className="text-zinc-600 text-sm sm:text-base leading-relaxed pl-10">
+                All prices are stated in Indian Rupees (₹). Official GST tax invoices are generated for all orders under <strong>GSTIN: 23DZAPS6347N1ZU</strong>. Corporate customers must provide a valid GST number during order placement to receive input tax credit.
+              </p>
+            </div>
 
-        {/* Section 4 */}
-        <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
-          <div className="flex items-center gap-3">
-            <span className="h-7 w-7 rounded-lg bg-[#E6007E] text-white text-xs font-bold flex items-center justify-center font-mono">
-              04
-            </span>
-            <h2 className="text-xl font-bold text-zinc-900">Payment Terms & Cancellations</h2>
-          </div>
-          <div className="pl-10 space-y-2.5 text-sm text-zinc-600">
-            <p>We accept Razorpay UPI, Net Banking, Credit/Debit cards, and direct Bank RTGS/NEFT transfers.</p>
-            <p>Standard in-stock catalog orders can be cancelled within 12 hours of order placement prior to carrier dispatch. Custom manufactured orders cannot be cancelled once board slitting or printing has commenced.</p>
-          </div>
-        </div>
+            {/* Section 4 */}
+            <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="h-7 w-7 rounded-lg bg-[#E6007E] text-white text-xs font-bold flex items-center justify-center font-mono">
+                  04
+                </span>
+                <h2 className="text-xl font-bold text-zinc-900">Payment Terms & Cancellations</h2>
+              </div>
+              <div className="pl-10 space-y-2.5 text-sm text-zinc-600">
+                <p>We accept Razorpay UPI, Net Banking, Credit/Debit cards, and direct Bank RTGS/NEFT transfers.</p>
+                <p>Standard in-stock catalog orders can be cancelled within 12 hours of order placement prior to carrier dispatch. Custom manufactured orders cannot be cancelled once board slitting or printing has commenced.</p>
+              </div>
+            </div>
+          </>
+        )}
 
-        {/* Section 5: Contact Card */}
+        {/* Contact Card */}
         <div className="bg-gradient-to-br from-primary/5 via-white to-[#B5A57A]/10 rounded-2xl border-2 border-primary/20 p-6 sm:p-8 shadow-sm">
           <h3 className="text-lg font-bold text-zinc-900 mb-2">Need Contract or Custom Wholesale Terms?</h3>
           <p className="text-xs sm:text-sm text-zinc-600 mb-4">

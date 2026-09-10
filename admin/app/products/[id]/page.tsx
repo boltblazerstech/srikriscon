@@ -38,20 +38,21 @@ const faqSchema = z.object({
 });
 
 const schema = z.object({
-  name:            z.string().min(1, "Required"),
-  slug:            z.string().min(1, "Required"),
-  description:     z.string().optional(),
-  price:           z.number().min(0, "Price must be >= 0"),
-  comparePrice:    z.number().min(0).optional(),
-  stockQuantity:   z.number().int().min(0),
-  categoryId:      z.string().optional(),
-  active:          z.boolean(),
-  featured:        z.boolean(),
-  images:          z.array(z.string()),
-  variants:        z.array(variantSchema),
-  faqs:            z.array(faqSchema).optional(),
-  metaTitle:       z.string().optional(),
-  metaDescription: z.string().optional(),
+  name:             z.string().min(1, "Required"),
+  slug:             z.string().min(1, "Required"),
+  shortDescription: z.string().max(500, "Short description must be under 500 characters").optional(),
+  description:      z.string().optional(),
+  price:            z.number().min(0, "Price must be >= 0"),
+  comparePrice:     z.number().min(0).optional(),
+  stockQuantity:    z.number().int().min(0),
+  categoryId:       z.string().optional(),
+  active:           z.boolean(),
+  featured:         z.boolean(),
+  images:           z.array(z.string()),
+  variants:         z.array(variantSchema),
+  faqs:             z.array(faqSchema).optional(),
+  metaTitle:        z.string().optional(),
+  metaDescription:  z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -65,12 +66,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const update = useUpdateProduct();
 
   const {
-    register, handleSubmit, control, reset, watch,
+    register, handleSubmit, control, reset, watch, setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-      name: "", slug: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
+      name: "", slug: "", shortDescription: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
       active: true, featured: false, images: [], variants: [],
       faqs: [],
       metaTitle: "", metaDescription: "",
@@ -100,25 +101,26 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     if (product && categories) {
       reset({
-        name:            product.name,
-        slug:            product.slug,
-        description:     product.description ?? "",
-        price:           product.price,
-        comparePrice:    product.comparePrice ?? undefined,
-        stockQuantity:   product.stockQuantity,
-        categoryId:      product.categoryId ? String(product.categoryId) : "",
-        active:          product.active,
-        featured:        product.featured,
-        images:          product.images.map((img) => img.url),
-        variants:        product.variants.map((v) => ({
+        name:             product.name,
+        slug:             product.slug,
+        shortDescription: product.shortDescription ?? "",
+        description:      product.description ?? "",
+        price:            product.price,
+        comparePrice:     product.comparePrice ?? undefined,
+        stockQuantity:    product.stockQuantity,
+        categoryId:       product.categoryId ? String(product.categoryId) : "",
+        active:           product.active,
+        featured:         product.featured,
+        images:           product.images.map((img) => img.url),
+        variants:         product.variants.map((v) => ({
           id: v.id, type: v.type, value: v.value,
           price: v.price, stockQuantity: v.stockQuantity, active: v.active,
         })),
-        faqs:            (product.faqs ?? []).map((f) => ({
+        faqs:             (product.faqs ?? []).map((f) => ({
           id: f.id, question: f.question, answer: f.answer,
         })),
-        metaTitle:       product.metaTitle ?? "",
-        metaDescription: product.metaDescription ?? "",
+        metaTitle:        product.metaTitle ?? "",
+        metaDescription:  product.metaDescription ?? "",
       });
     }
   }, [product, categories, reset]);
@@ -134,6 +136,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         id: productId,
         body: {
           ...data,
+          shortDescription: data.shortDescription?.trim() || undefined,
           price: Number(data.price),
           comparePrice:
             data.comparePrice != null && !isNaN(Number(data.comparePrice)) && Number(data.comparePrice) > 0
@@ -159,10 +162,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  function setValue(arg0: string, value: string): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <AdminLayout>
       <div className="p-6 max-w-4xl mx-auto">
@@ -184,12 +183,23 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               <Input label="Slug" {...register("slug")} error={errors.slug?.message} />
             </div>
 
+            {/* Short Description */}
+            <Textarea
+              label="Short Description"
+              {...register("shortDescription")}
+              error={errors.shortDescription?.message}
+              rows={3}
+              placeholder="Brief summary shown near the price and product title (max 500 chars)..."
+              hint="Appears right under the price on the product detail page"
+            />
+
+            {/* Long / Detailed Description */}
             <Controller
               control={control}
               name="description"
               render={({ field }) => (
                 <RichTextEditor
-                  label="Description"
+                  label="Detailed Description (Long)"
                   value={field.value ?? ""}
                   onChange={field.onChange}
                 />
@@ -270,6 +280,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             </div>
           </Section>
 
+          {/* Images */}
           <Section title="Product Images">
             <Controller
               control={control}
@@ -280,15 +291,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   onChange={field.onChange}
                   folder="products"
                   maxFiles={8}
-                  label="Upload images — drag to reorder"
+                  label="Upload up to 8 images — drag to reorder"
                 />
               )}
             />
           </Section>
 
+          {/* Variants */}
           <Section title="Variants">
             <p className="text-xs text-muted-foreground mb-3">
-              Edit existing variants or add new ones. Existing variants retain their IDs.
+              Add variants (e.g. Size: S/M/L or Color: Red/Blue). Leave empty if the product has no variants.
             </p>
             {fields.length > 0 && (
               <div className="space-y-2 mb-3">
@@ -402,7 +414,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           {/* Product FAQs */}
           <Section title="Product FAQs">
             <p className="text-xs text-muted-foreground mb-3">
-              Manage frequently asked questions specific to this product (e.g. warranty, MOQ, custom printing).
+              Add frequently asked questions specific to this product (e.g. warranty, MOQ, custom printing).
             </p>
             {faqFields.length > 0 && (
               <div className="space-y-4 mb-4">
@@ -453,11 +465,22 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             </Button>
           </Section>
 
+          {/* SEO */}
           <Section title="SEO">
-            <Input label="Meta Title" {...register("metaTitle")} />
-            <Textarea label="Meta Description" {...register("metaDescription")} rows={2} />
+            <Input
+              label="Meta Title"
+              {...register("metaTitle")}
+              hint="Defaults to product name if empty"
+            />
+            <Textarea
+              label="Meta Description"
+              {...register("metaDescription")}
+              rows={2}
+              hint="Recommended: 150–160 characters"
+            />
           </Section>
 
+          {/* Submit */}
           <div className="flex gap-3 justify-end pb-6">
             <Link href="/products">
               <Button variant="outline" type="button">Cancel</Button>
@@ -480,4 +503,3 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ShoppingCart, Minus, Plus, Share2, ShieldCheck, Truck, RefreshCw } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Share2, ShieldCheck, Truck, RefreshCw, FileText } from "lucide-react";
 import WhatsAppIcon from "@/src/components/ui/WhatsAppIcon";
 import toast from "react-hot-toast";
 import { useProduct, useProducts } from "@/src/hooks/useProducts";
@@ -9,6 +9,8 @@ import { useCart } from "@/src/hooks/useCart";
 import ImageGallery from "@/src/components/product/ImageGallery";
 import VariantSelector from "@/src/components/product/VariantSelector";
 import ProductGrid from "@/src/components/product/ProductGrid";
+import ProductReviews from "@/src/components/product/ProductReviews";
+import FaqSection from "@/src/components/home/FaqSection";
 import Button from "@/src/components/ui/Button";
 import Badge from "@/src/components/ui/Badge";
 import Spinner from "@/src/components/ui/Spinner";
@@ -26,7 +28,7 @@ export default function ProductDetailClient({ slug }: Props) {
 
   const [selectedVariants, setSelectedVariants] = useState<
     Record<VariantType, number | undefined>
-  >({ SIZE: undefined, DESIGN: undefined, MATERIAL: undefined });
+  >({ SIZE: undefined, DESIGN: undefined, MATERIAL: undefined, COLOR: undefined });
   const [qty, setQty] = useState(1);
 
   // Related products from same category
@@ -56,6 +58,7 @@ export default function ProductDetailClient({ slug }: Props) {
       SIZE: undefined,
       DESIGN: undefined,
       MATERIAL: undefined,
+      COLOR: undefined,
       [type]: id,
     }));
   }
@@ -133,14 +136,14 @@ export default function ProductDetailClient({ slug }: Props) {
         <span className="text-foreground truncate max-w-xs">{product.name}</span>
       </nav>
 
-      {/* Main grid */}
+      {/* ── Main Top Grid: Gallery (Left) | Purchase Options & Short Description (Right) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
         {/* Images */}
         <div>
           <ImageGallery images={product.images} />
         </div>
 
-        {/* Info */}
+        {/* Info & Purchase Options */}
         <div className="flex flex-col">
           {product.category && (
             <span className="text-xs font-bold text-primary uppercase tracking-wider mb-2">
@@ -151,7 +154,7 @@ export default function ProductDetailClient({ slug }: Props) {
             {product.name}
           </h1>
 
-          {/* Pricing Display matching reference screenshot */}
+          {/* Pricing Display */}
           <div className="mt-5 space-y-2">
             <div className="flex items-baseline gap-3">
               <span className="text-3xl sm:text-4xl font-black text-zinc-900 tracking-tight">
@@ -188,12 +191,6 @@ export default function ProductDetailClient({ slug }: Props) {
               </div>
             )}
           </div>
-
-          {product.shortDescription && (
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              {product.shortDescription}
-            </p>
-          )}
 
           {/* Stock indicator */}
           {outOfStock ? (
@@ -271,7 +268,7 @@ export default function ProductDetailClient({ slug }: Props) {
             </button>
           </div>
 
-          {/* Task 9: Chat with us button directly below Add to cart */}
+          {/* Chat with us button directly below Add to cart */}
           <button
             onClick={handleChatWithUs}
             type="button"
@@ -280,6 +277,18 @@ export default function ProductDetailClient({ slug }: Props) {
             <WhatsAppIcon className="h-5 w-5 text-white" />
             <span>Chat with us on WhatsApp</span>
           </button>
+
+          {/* ── Short Description placed below Add to Cart & WhatsApp button ── */}
+          {product.shortDescription && (
+            <div className="mt-5 p-4 rounded-xl bg-zinc-50 border border-zinc-200/80">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                Overview
+              </span>
+              <p className="text-sm text-zinc-600 leading-relaxed font-normal">
+                {product.shortDescription}
+              </p>
+            </div>
+          )}
 
           {/* Value props */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-border text-xs text-muted-foreground">
@@ -297,23 +306,41 @@ export default function ProductDetailClient({ slug }: Props) {
             </div>
           </div>
 
-          {/* Description */}
-          {product.description && (
-            <div className="mt-8">
-              <h2 className="font-bold text-base text-foreground mb-2">Product Description</h2>
-              <div
-                className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              />
-            </div>
-          )}
-
           {/* Meta */}
           {product.sku && (
             <p className="mt-4 text-xs text-muted-foreground font-mono">SKU: {product.sku}</p>
           )}
         </div>
       </div>
+
+      {/* ── Full Width Section: Long / Detailed Description below top grid ── */}
+      {product.description && (
+        <section className="mt-16 pt-12 border-t border-border">
+          <div className="max-w-5xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+              <FileText className="h-3.5 w-3.5" />
+              Full Specifications
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight mb-6">
+              Product Description
+            </h2>
+            <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-10 shadow-xs">
+              <div
+                className="text-sm sm:text-base text-zinc-700 leading-relaxed prose prose-zinc max-w-none
+                           prose-headings:font-bold prose-headings:text-primary
+                           prose-h2:text-xl prose-h2:sm:text-2xl prose-h2:mt-6 prose-h2:mb-3
+                           prose-h3:text-lg prose-h3:font-semibold prose-h3:text-[#B5A57A]
+                           prose-p:mb-4 prose-ul:list-disc prose-ul:pl-5 prose-li:mb-2
+                           prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-zinc-50 prose-blockquote:p-4 prose-blockquote:rounded-r-xl prose-blockquote:italic"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Product Reviews */}
+      <ProductReviews productId={product.id} />
 
       {/* Related products */}
       {related.length > 0 && (
@@ -324,6 +351,9 @@ export default function ProductDetailClient({ slug }: Props) {
           <ProductGrid products={related} />
         </section>
       )}
+
+      {/* Product FAQ Section */}
+      <FaqSection items={product.faqs} isProductPage={true} className="mt-20 md:mt-24 px-0 max-w-none border-t border-border pt-16" />
     </div>
   );
 }

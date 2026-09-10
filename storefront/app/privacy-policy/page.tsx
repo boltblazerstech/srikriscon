@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import Spinner from "@/src/components/ui/Spinner";
 import { useCmsPage } from "@/src/hooks/useCmsPage";
-import { Shield, Lock, FileText, Mail, Phone, MapPin, CheckCircle, ChevronRight } from "lucide-react";
+import { Shield, Mail, Phone, MapPin, ChevronRight, Lock, FileText, CheckCircle2, ShieldCheck, Eye, Database, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { theme } from "@/src/config/theme";
 
@@ -16,22 +16,9 @@ export default function PrivacyPolicyPage() {
       </div>
     );
 
-  if (page?.content && page.content.trim().length > 100) {
-    return (
-      <article className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-14 font-sans">
-        <h1 className="text-3xl sm:text-4xl font-black text-foreground mb-3">{page.title}</h1>
-        <p className="text-xs text-muted-foreground mb-8">Last updated: September 2026</p>
-        <div
-          className="prose prose-sm sm:prose max-w-none text-foreground leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: page.content }}
-        />
-      </article>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#fafaf9] font-sans text-zinc-800 pb-20">
-      
+
       {/* ── Breadcrumb ─────────────────────────────────────────────────── */}
       <div className="border-b border-zinc-200/80 bg-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-3.5">
@@ -51,7 +38,7 @@ export default function PrivacyPolicyPage() {
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#B5A57A]/20 text-[#B5A57A] text-xs font-bold tracking-wider uppercase mb-4 border border-[#B5A57A]/30">
             <Shield className="h-3.5 w-3.5" />
-            Security & Transparency
+            Data Protection & Security
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
             Privacy Policy
@@ -83,7 +70,7 @@ export default function PrivacyPolicyPage() {
           </div>
           <div className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-md flex items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <Shield className="h-5 w-5" />
+              <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
               <p className="text-xs text-zinc-500 font-semibold">Zero Data Selling</p>
@@ -104,7 +91,7 @@ export default function PrivacyPolicyPage() {
 
       {/* ── Structured Policy Sections ─────────────────────────────────── */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 mt-10 space-y-6">
-        
+
         {/* Section 1 */}
         <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
           <div className="flex items-center gap-3">
@@ -137,6 +124,14 @@ export default function PrivacyPolicyPage() {
                 <p className="font-bold text-xs text-zinc-900 mb-1">Business & GSTIN Information</p>
                 <p className="text-xs text-zinc-600">Enterprise name, billing addresses, and registered GST number for input tax credit invoices.</p>
               </div>
+              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80">
+                <p className="font-bold text-xs text-zinc-900 mb-1">Product & Order Details</p>
+                <p className="text-xs text-zinc-600">Product specifications, custom box dimensions, and order quantities.</p>
+              </div>
+              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80">
+                <p className="font-bold text-xs text-zinc-900 mb-1">Payment Information</p>
+                <p className="text-xs text-zinc-600">Payment transaction details securely processed via Razorpay.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -147,13 +142,14 @@ export default function PrivacyPolicyPage() {
             <span className="h-7 w-7 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center font-mono">
               03
             </span>
-            <h2 className="text-xl font-bold text-zinc-900">How We Use Your Data</h2>
+            <h2 className="text-xl font-bold text-zinc-900">How We Use Your Information</h2>
           </div>
           <ul className="pl-10 space-y-2 text-sm text-zinc-600 list-disc">
             <li>Processing, die-cutting, printing, and shipping your product packaging orders.</li>
-            <li>Issuing legitimate GST tax invoices and complying with Indian taxation statutes.</li>
+            <li>Issuing legitimate GST tax invoices and complying with Indian taxation statutes under <strong>GSTIN: 23DZAPS6347N1ZU</strong>.</li>
             <li>Transmitting shipment tracking updates via SMS, email, and WhatsApp notifications.</li>
             <li>Providing direct customer support for custom box dimensions and quotes.</li>
+            <li>Never selling your data to third-party marketing companies.</li>
           </ul>
         </div>
 
@@ -170,7 +166,20 @@ export default function PrivacyPolicyPage() {
           </p>
         </div>
 
-        {/* Section 5: Contact Card */}
+        {/* Section 5 */}
+        <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="h-7 w-7 rounded-lg bg-primary text-white text-xs font-bold flex items-center justify-center font-mono">
+              05
+            </span>
+            <h2 className="text-xl font-bold text-zinc-900">Your Data Rights</h2>
+          </div>
+          <div className="pl-10 space-y-2 text-sm text-zinc-600">
+            <p>You have the right to access, update, or request removal of your personal information at any time. To exercise your rights, contact us at <a href="mailto:info@srikriscon.com" className="text-primary font-bold hover:underline">info@srikriscon.com</a>.</p>
+          </div>
+        </div>
+
+        {/* Contact Card */}
         <div className="bg-gradient-to-br from-primary/5 via-white to-[#B5A57A]/10 rounded-2xl border-2 border-primary/20 p-6 sm:p-8 shadow-sm">
           <h3 className="text-lg font-bold text-zinc-900 mb-2">Have Questions About Your Privacy?</h3>
           <p className="text-xs sm:text-sm text-zinc-600 mb-4">

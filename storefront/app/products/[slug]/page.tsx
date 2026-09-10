@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ProductDetailClient from "./ProductDetailClient";
+import { getPrimaryImage } from "@/src/lib/utils";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -7,7 +8,7 @@ interface Props {
 
 async function getProduct(slug: string) {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://srikriscon-be-13514095818.asia-south1.run.app";
     const res = await fetch(`${apiUrl}/api/products/${slug}`, {
       next: { revalidate: 60 },
     });
@@ -31,12 +32,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // Primary image
-  const primaryImg =
-    product.images?.[0]?.url || "/product_images/SKI_SWEET-BOXES (1).webp";
-  const imageUrl = primaryImg.startsWith("http")
-    ? primaryImg
-    : `${siteUrl}${primaryImg.startsWith("/") ? "" : "/"}${primaryImg}`;
+  // Determine primary or first image
+  const rawImage =
+    (product.images && getPrimaryImage(product.images)) ||
+    product.images?.[0]?.url ||
+    "/Sri Kriscon logo png.webp";
+
+  const imageUrl = rawImage.startsWith("http")
+    ? rawImage
+    : `${siteUrl.replace(/\/$/, "")}/${rawImage.replace(/^\//, "")}`;
 
   const title = `${product.name} | Sri Kriscon Industries`;
   const description =
@@ -52,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `${siteUrl}/products/${slug}`,
+      url: `${siteUrl.replace(/\/$/, "")}/products/${slug}`,
       siteName: "Sri Kriscon Industries",
       images: [
         {
@@ -63,6 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
       type: "website",
+      locale: "en_IN",
     },
     twitter: {
       card: "summary_large_image",
