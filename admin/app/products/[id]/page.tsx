@@ -65,29 +65,19 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const update = useUpdateProduct();
 
   const {
-<<<<<<< HEAD
     register, handleSubmit, control, reset, watch,
-=======
-    register, handleSubmit, control, reset, watch, setValue,
->>>>>>> origin/main
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-<<<<<<< HEAD
       name: "", slug: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
       active: true, featured: false, images: [], variants: [],
-=======
-      name: "", slug: "", description: "", price: 0, stockQuantity: 0,
-      categoryId: "",
-      active: true, featured: false, images: [], variants: [], faqs: [],
->>>>>>> origin/main
+      faqs: [],
       metaTitle: "", metaDescription: "",
     },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "variants" });
-<<<<<<< HEAD
   const watchPrice = watch("price");
   const watchComparePrice = watch("comparePrice");
 
@@ -105,9 +95,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     Number(watchComparePrice) > Number(watchPrice)
       ? Number(watchComparePrice) - Number(watchPrice)
       : null;
-=======
   const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({ control, name: "faqs" });
->>>>>>> origin/main
 
   useEffect(() => {
     if (product && categories) {
@@ -169,6 +157,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         </div>
       </AdminLayout>
     );
+  }
+
+  function setValue(arg0: string, value: string): void {
+    throw new Error("Function not implemented.");
   }
 
   return (
