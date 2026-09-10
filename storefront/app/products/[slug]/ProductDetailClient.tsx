@@ -158,7 +158,7 @@ export default function ProductDetailClient({ slug }: Props) {
                 {formatPrice(displayPrice)}
               </span>
               {comparePrice != null && comparePrice > displayPrice && (
-                <span className="text-lg sm:text-xl text-zinc-400 font-normal line-through">
+                <span className="text-base sm:text-lg text-zinc-400 font-normal line-through">
                   {formatPrice(comparePrice)}
                 </span>
               )}

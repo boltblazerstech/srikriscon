@@ -64,14 +64,9 @@ export default function NewProductPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-<<<<<<< HEAD
-      name: "", slug: "", description: "", price: 0, comparePrice: undefined, stockQuantity: 0,
-      active: true, featured: false, images: [], variants: [],
-=======
       name: "", slug: "", description: "", price: 0, stockQuantity: 0,
       categoryId: "",
       active: true, featured: false, images: [], variants: [], faqs: [],
->>>>>>> origin/main
       metaTitle: "", metaDescription: "",
     },
   });
