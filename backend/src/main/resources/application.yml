@@ -1,11 +1,16 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ecommerce}}
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ecommerce}?sslmode=disable&authenticationMethod=md5}
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
-
     hikari:
+      connection-test-query: SELECT 1
+      initialization-fail-timeout: 1
+      isolation-level-read-only: false
+      read-only: false
+      register-mbeans: false
+      allow-pool-suspension: false
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 20000
@@ -14,12 +19,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: false
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        default_batch_fetch_size: 20
+      show-sql: false
+      open-in-view: false
+      properties:
+        hibernate:
+          format_sql: true
+          default_batch_fetch_size: 20
 
   flyway:
     enabled: true
@@ -67,7 +72,7 @@ jwt:
   admin-access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:86400000} # 1 day
   refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:604800000} # 7 days
 
-# ─── Cloudflare R2 (S3-compatible object storage) ────────────────────────────
+# ─── Cloudflare R2 (S3-compatible object storage) ────────────
 cloudflare:
   r2:
     access-key: ${R2_ACCESS_KEY:}
@@ -77,21 +82,21 @@ cloudflare:
     public-url: ${R2_PUBLIC_URL:}     # https://pub-<hash>.r2.dev  (or custom domain)
     region: auto                      # R2 uses "auto"
 
-# ─── Razorpay ─────────────────────────────────────────────────────────────────
+# ─── Razorpay ─────────────────────────────────────────────────
 razorpay:
   key-id: ${RAZORPAY_KEY_ID:}
   key-secret: ${RAZORPAY_KEY_SECRET:}
   webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
   currency: ${RAZORPAY_CURRENCY:INR}
 
-# ─── Shiprocket ───────────────────────────────────────────────────────────────
+# ─── Shiprocket ───────────────────────────────────────────────
 shiprocket:
   email: ${SHIPROCKET_EMAIL:}
   password: ${SHIPROCKET_PASSWORD:}
   base-url: ${SHIPROCKET_BASE_URL:https://apiv2.shiprocket.in/v1/external}
   token-refresh-interval-hours: ${SHIPROCKET_TOKEN_REFRESH_HOURS:9}  # token valid for ~10 h
 
-# ─── CORS ─────────────────────────────────────────────────────────────────────
+# ─── CORS ─────────────────────────────────────────────────────
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001,https://srikriscon.com,https://admin.srikriscon.com,https://www.srikriscon.com}
   allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
@@ -99,12 +104,12 @@ cors:
   allow-credentials: true
   max-age: 3600
 
-# ─── Email defaults ───────────────────────────────────────────────────────────
+# ─── Email defaults ───────────────────────────────────────────
 email:
   from: ${EMAIL_FROM:noreply@example.com}
   from-name: ${EMAIL_FROM_NAME:Ecommerce Store}
 
-# ─── OpenAPI / Swagger ────────────────────────────────────────────────────────
+# ─── OpenAPI / Swagger ────────────────────────────────────────
 springdoc:
   api-docs:
     path: /api-docs
@@ -114,13 +119,13 @@ springdoc:
     operations-sorter: alpha
   show-actuator: false
 
-# ─── App URLs (used in email links) ──────────────────────────────────────────
+# ─── App URLs (used in email links) ──────────────────────────
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
   admin-url: ${ADMIN_URL:http://localhost:3001}
   reset-token-expiry-mins: ${RESET_TOKEN_EXPIRY_MINS:30}
 
-# ─── Logging ──────────────────────────────────────────────────────────────────
+# ─── Logging ──────────────────────────────────────────────────
 logging:
   level:
     com.ecommerce: DEBUG

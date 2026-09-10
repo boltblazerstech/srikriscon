@@ -134,7 +134,7 @@ export default function BlogPostPage() {
       </div>
 
       {/* ── Article Header ──────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-zinc-200/80 pt-10 pb-12">
+      <header className="bg-gradient-to-b from-[#0B3A42] to-[#0F505B] border-b border-zinc-200/80 pt-10 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             {/* Category badge */}
@@ -146,7 +146,7 @@ export default function BlogPostPage() {
             )}
 
             {/* Title */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-zinc-900 leading-[1.15] tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.15] tracking-tight mb-6">
               {post.title}
             </h1>
 
@@ -158,8 +158,8 @@ export default function BlogPostPage() {
                     {(post.author || post.authorName || "S")[0]}
                   </div>
                   <div>
-                    <span className="block text-zinc-400 text-[10px] uppercase font-bold tracking-wider">Author</span>
-                    <span className="font-semibold text-zinc-800 text-xs">{post.author || post.authorName}</span>
+                    <span className="block text-zinc-200 text-[10px] uppercase font-bold tracking-wider">Author</span>
+                    <span className="font-semibold text-zinc-400 text-xs">{post.author || post.authorName}</span>
                   </div>
                 </div>
               )}
@@ -168,22 +168,17 @@ export default function BlogPostPage() {
 
               {formattedDate && (
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span>{formattedDate}</span>
+                  <Calendar className="h-4 w-4 text-white" />
+                  <span className="text-zinc-300">{formattedDate}</span>
                 </div>
               )}
 
               {post.readTime && (
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span>{post.readTime}</span>
+                  <Clock className="h-4 w-4 text-white" />
+                  <span className="text-zinc-300">{post.readTime}</span>
                 </div>
               )}
-
-              <div className="flex items-center gap-2 text-zinc-600">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-                <span>Sri Kriscon Knowledge Desk</span>
-              </div>
             </div>
           </div>
         </div>

@@ -11,22 +11,23 @@ import { formatDate, cn } from "@/src/lib/utils";
 import Spinner from "@/src/components/ui/Spinner";
 
 export default function BlogListingPage() {
-  const { data: blogs, isLoading } = useBlogs();
-  
+  const { data: blogsData, isLoading } = useBlogs();
+  const blogs = blogsData?.content ?? [];
+
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Extract unique categories dynamically
   const categories = useMemo(() => {
-    if (!blogs) return [];
+    if (!blogs || blogs.length === 0) return [];
     const cats = blogs.map((b) => b.category).filter(Boolean);
     return Array.from(new Set(cats));
   }, [blogs]);
 
   // Filter blogs based on Search & Category selections
   const filteredBlogs = useMemo(() => {
-    if (!blogs) return [];
+    if (!blogs || blogs.length === 0) return [];
     return blogs.filter((post) => {
       const matchesCategory =
         selectedCategory === "All" || post.category === selectedCategory;
@@ -39,9 +40,9 @@ export default function BlogListingPage() {
   }, [blogs, selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] to-[#F8F9FA] pb-24">
       {/* ── Blog Hero (with Search Box) ─────────────────────────────────── */}
-      <section className="bg-[#0B3A42] pt-20 pb-24 text-center relative overflow-hidden">
+      <section className="bg-gradient-to-b from-[#0B3A42] to-[#0F505B] pt-20 pb-24 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full filter blur-3xl" />
           <div className="absolute bottom-5 right-10 w-96 h-96 bg-white rounded-full filter blur-3xl" />
@@ -51,7 +52,7 @@ export default function BlogListingPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-2 text-accent text-xs font-black uppercase tracking-[0.3em] mb-6"
+            className="flex items-center justify-center gap-2 text-white text-xs font-black uppercase tracking-[0.3em] mb-6"
           >
             <span className="h-px w-8 bg-accent/30" />
             Our Journal

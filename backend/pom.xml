@@ -73,8 +73,8 @@
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
     </dependency>
-  
 
+    
     <!-- ─── JWT (jjwt 0.12.x) ─────────────────────────────────────────── -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
@@ -158,6 +158,15 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${parent.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>

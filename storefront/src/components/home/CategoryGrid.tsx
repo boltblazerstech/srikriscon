@@ -121,14 +121,14 @@ export default function CategoryGrid() {
       {/* Scrollable Row — centered when items fit */}
       <div className="relative mx-auto max-w-7xl">
         {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 z-10 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 sm:w-16 z-10 bg-gradient-to-r from-white to-transparent" />
         {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 z-10 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 sm:w-16 z-10 bg-gradient-to-l from-white to-transparent" />
 
         <div
           ref={scrollRef}
           onMouseDown={onMouseDown}
-          className="flex gap-6 sm:gap-8 overflow-x-auto scroll-smooth select-none cursor-grab px-6 sm:px-16 pt-4 pb-8 justify-start lg:justify-center items-center"
+          className="flex gap-6 sm:gap-8 overflow-x-auto scroll-smooth select-none cursor-grab px-6 sm:px-16 pt-4 pb-8 justify-start items-center"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {active.map((cat, idx) => (

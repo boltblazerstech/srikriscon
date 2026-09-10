@@ -9,7 +9,8 @@ import { fadeUp, staggerContainer, staggerItem } from "@/src/lib/animations";
 import { formatDate } from "@/src/lib/utils";
 
 export default function BlogSection() {
-  const { data: blogs, isLoading } = useBlogs();
+  const { data: blogsData, isLoading } = useBlogs();
+  const blogs = blogsData?.content || [];
 
   if (isLoading || !blogs || blogs.length === 0) return null;
 

@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:ecommerce;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    hikari:
+      connection-test-query: SELECT 1
+      initialization-fail-timeout: 1
+      isolation-level-read-only: false
+      read-only: false
+      register-mbeans: false
+      allow-pool-suspension: false
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+
+# Override other settings as needed for development
+jwt:
+  secret: dGVzdC1zZWNyZXQta2V5LXRoYXQtaXMtbG9uZy1lbm91Z2gtZm9yLUhTMjU2 # Base64-encoded 256-bit key
+  access-token-expiry-ms: 900000     # 15 min
+  admin-access-token-expiry-ms: 86400000 # 1 day
+  refresh-token-expiry-ms: 604800000 # 7 days
