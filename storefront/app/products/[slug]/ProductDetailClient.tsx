@@ -157,21 +157,34 @@ export default function ProductDetailClient({ slug }: Props) {
               <span className="text-3xl sm:text-4xl font-black text-zinc-900 tracking-tight">
                 {formatPrice(displayPrice)}
               </span>
-              {comparePrice != null && comparePrice > displayPrice && (
+              {comparePrice != null && comparePrice !== displayPrice && (
                 <span className="text-base sm:text-lg text-zinc-400 font-normal line-through">
                   {formatPrice(comparePrice)}
                 </span>
               )}
             </div>
 
-            {comparePrice != null && comparePrice > displayPrice && (
+            {comparePrice != null && comparePrice !== displayPrice && (
               <div className="flex items-center gap-2.5">
-                <span className="bg-[#DCFCE7] text-[#15803D] font-extrabold text-xs px-2.5 py-1 rounded-md tracking-wide">
-                  {discountPercent}% OFF
-                </span>
-                <span className="text-[#16A34A] font-bold text-sm sm:text-base">
-                  You Save {formatPrice(comparePrice - displayPrice)}
-                </span>
+                {comparePrice > displayPrice ? (
+                  <>
+                    <span className="bg-[#DCFCE7] text-[#15803D] font-extrabold text-xs px-2.5 py-1 rounded-md tracking-wide">
+                      {discountPercent}% OFF
+                    </span>
+                    <span className="text-[#16A34A] font-bold text-sm sm:text-base">
+                      You Save {formatPrice(comparePrice - displayPrice)}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="bg-[#FEE2E2] text-[#991B1B] font-extrabold text-xs px-2.5 py-1 rounded-md tracking-wide">
+                      {Math.round(((displayPrice - comparePrice) / comparePrice) * 100)}% MARKUP
+                    </span>
+                    <span className="text-[#DC2626] font-bold text-sm sm:text-base">
+                      You Pay Extra {formatPrice(displayPrice - comparePrice)}
+                    </span>
+                  </>
+                )}
               </div>
             )}
           </div>

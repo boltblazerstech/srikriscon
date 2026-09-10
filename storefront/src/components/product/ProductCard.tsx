@@ -71,10 +71,15 @@ export default function ProductCard({ product, hero = false }: Props) {
 
   const comparePrice = product.comparePrice ?? null;
   const hasDiscount = comparePrice != null && comparePrice > currentPrice;
+  const hasMarkup = comparePrice != null && comparePrice < currentPrice;
   const discountPercent = hasDiscount
     ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100)
     : 0;
+  const markupPercent = hasMarkup
+    ? Math.round(((currentPrice - comparePrice) / comparePrice) * 100)
+    : 0;
   const savings = hasDiscount ? comparePrice - currentPrice : 0;
+  const markupAmount = hasMarkup ? currentPrice - comparePrice : 0;
 
   return (
     <motion.div
@@ -178,21 +183,34 @@ export default function ProductCard({ product, hero = false }: Props) {
                 <span className={cn("font-black text-zinc-900 tracking-tight", hero ? "text-2xl" : "text-base sm:text-lg")}>
                   ₹{currentPrice.toFixed(0)}
                 </span>
-                {hasDiscount && (
+                {comparePrice != null && comparePrice !== currentPrice && (
                   <span className="text-xs sm:text-sm text-zinc-400 line-through">
                     ₹{comparePrice.toFixed(0)}
                   </span>
                 )}
               </div>
 
-              {hasDiscount && (
+              {comparePrice != null && comparePrice !== currentPrice && (
                 <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                  <span className="bg-[#DCFCE7] text-[#15803D] font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wide">
-                    {discountPercent}% OFF
-                  </span>
-                  <span className="text-[#16A34A] font-bold text-[11px]">
-                    You Save ₹{savings.toFixed(0)}
-                  </span>
+                  {comparePrice > currentPrice ? (
+                    <>
+                      <span className="bg-[#DCFCE7] text-[#15803D] font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wide">
+                        {discountPercent}% OFF
+                      </span>
+                      <span className="text-[#16A34A] font-bold text-[11px]">
+                        You Save ₹{savings.toFixed(0)}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="bg-[#FEE2E2] text-[#991B1B] font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wide">
+                        {markupPercent}% MARKUP
+                      </span>
+                      <span className="text-[#DC2626] font-bold text-[11px]">
+                        You Pay Extra ₹{markupAmount.toFixed(0)}
+                      </span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
